@@ -1,0 +1,2 @@
+-r ./base.txt
+click>=6.6
