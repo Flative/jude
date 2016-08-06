@@ -1,0 +1,11 @@
+{
+  "presets": ["es2015", "stage-3", "react"],
+  "plugins": [
+    "transform-es2015-destructuring",
+    "transform-object-rest-spread",
+    ["transform-runtime", {
+      "polyfill": true,
+      "regenerator": true
+    }]
+  ]
+}

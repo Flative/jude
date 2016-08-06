@@ -1,0 +1,12 @@
+.tab {
+  list-style: none;
+  padding: 4px;
+
+  .tab-item {
+    display: inline-block;
+    font-size: 24px;
+    &:nth-child(n+2) {
+      margin-left: 14px;
+    }
+  }
+}

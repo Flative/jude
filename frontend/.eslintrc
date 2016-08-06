@@ -1,0 +1,27 @@
+{
+  "extends": "airbnb",
+  "rules": {
+    "arrow-body-style": [0, "as-needed"],
+    "new-cap": 0,
+    "space-before-function-paren": 0,
+    "no-trailing-spaces": 0,
+    "camelcase": 0,
+    "no-underscore-dangle": 0,
+    "no-use-before-define": ["error", { "functions": false }],
+    "global-require": 0,
+    "quote-props": [2, "consistent"],
+    "no-alert": 0
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "jasmine": true,
+    "es6": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "ecmaFeatures": {
+      "experimentalObjectRestSpread": true
+    }
+  }
+}

@@ -1,0 +1,28 @@
+.btn {
+  border: none;
+  background-color: #fff;
+  position: relative;
+  &-navy {
+    background-color: $navy;
+    color: #fff;
+  }
+  &-white {
+    background-color: #fff;
+    color: #111111;
+  }
+  &-cream {
+    background-color: $cream;
+    color: #111111;
+  }
+  &-border-left {
+    &:after {
+      content: '';
+      height: 100%;
+      width: 1px;
+      background-color: #cccccc;
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+  }
+}

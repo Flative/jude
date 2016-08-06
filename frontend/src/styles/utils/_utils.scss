@@ -1,0 +1,17 @@
+.inline-block {
+  display: inline-block;
+}
+.clearfix { clear: both; }
+
+.red { color: $red; }
+.blue { color: $blue; }
+.green { color: $green; }
+.wrapper {
+  max-width: $max-width;
+  margin: 0 auto;
+  overflow: auto;
+}
+.wrapper {
+  max-width: 1100px;
+  margin: 0 auto;
+}
