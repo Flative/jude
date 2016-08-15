@@ -2,7 +2,7 @@ import React from 'react';
 
 const SearchResult = ({ query, items }) => {
   return (
-    <div>
+    <div className="search__result">
       <h1>{query}</h1>
       <ul>
         {items.map(item => (
