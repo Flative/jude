@@ -1,12 +1,25 @@
 import React from 'react';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
-import OAuthContainer from './OAuthContainer';
+import qs from 'query-string';
+import { CLIENT_ID } from '../appInfo';
 
 class Main extends React.Component {
   constructor(props) {
     super(props);
     this.handleTitleClick = this.handleTitleClick.bind(this);
+    this.handleAuthButtonClick = this.handleAuthButtonClick.bind(this);
+  }
+
+  handleAuthButtonClick() {
+    const queryString = qs.stringify({
+      client_id: CLIENT_ID,
+      response_type: 'token',
+      redirect_uri: 'http://localhost:1111/auth', // TODO
+      scope: 'https://www.googleapis.com/auth/youtube',
+    });
+
+    location.replace(`https://accounts.google.com/o/oauth2/auth?${queryString}`);
   }
 
   handleTitleClick() {
@@ -26,7 +39,7 @@ class Main extends React.Component {
           : (
             <div>
               <h1>Need to login</h1>
-              <OAuthContainer />
+              <button onClick={this.handleAuthButtonClick}>Auth</button>
             </div>
           )
         }
