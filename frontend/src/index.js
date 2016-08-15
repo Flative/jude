@@ -7,8 +7,7 @@ import configureStore from './store/configureStore';
 import { syncHistoryWithStore } from 'react-router-redux';
 
 import Main from './containers/IndexContainer';
-import Join from './containers/Join';
-import Articles from './containers/Articles';
+import AuthContainer from './containers/AuthContainer';
 import './styles/index.scss';
 import 'whatwg-fetch';
 
@@ -20,6 +19,7 @@ const history = syncHistoryWithStore(browserHistory, store);
 render((
   <Provider store={store}>
     <Router history={history}>
+      <Route path="/auth" component={AuthContainer} />
       <Route path="/" component={Main}>
         {/*<Route path="join" component={Join} />*/}
       </Route>

@@ -44,7 +44,7 @@ const common = {
 // Development config
 const dev = merge(common, {
   port: PORT,
-  devtool: 'source-map',
+  devtool: 'eval',
   entry: {
     jude: [
       `webpack-dev-server/client?http://0.0.0.0:${PORT}`,

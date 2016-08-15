@@ -1,6 +1,7 @@
 import React from 'react';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
+import OAuthContainer from './OAuthContainer';
 
 class Main extends React.Component {
   constructor(props) {
@@ -13,17 +14,23 @@ class Main extends React.Component {
   }
 
   render() {
-    const { router, dispatch, children, information } = this.props;
-    const childProps = { router, dispatch, information };
+    const { router, dispatch, children, auth } = this.props;
 
     return (
       <div className="page-main">
-        <div className="wrapper">
-          <h1 className="title" onClick={this.handleTitleClick}>
-            Jude
-          </h1>
-          {children}
-        </div>
+        <h1 onClick={this.handleTitleClick}>
+          Jude
+        </h1>
+        {auth.isLoggedIn
+          ? <h2>I'm logged in</h2>
+          : (
+            <div>
+              <h1>Need to login</h1>
+              <OAuthContainer />
+            </div>
+          )
+        }
+        {children}
       </div>
     );
   }
@@ -33,17 +40,11 @@ Main.propTypes = {
   children: React.PropTypes.node,
   router: React.PropTypes.object,
   dispatch: React.PropTypes.func,
-  information: React.PropTypes.shape({
-    email: React.PropTypes.string,
-    password: React.PropTypes.string,
-  }),
 };
 Main.defaultProps = {};
 
 export default withRouter(connect(
-  (state) => {
-    return {
-      information: state.main.information,
-    };
-  }
+  (state) => ({
+    auth: state.auth,
+  })
 )(Main));
