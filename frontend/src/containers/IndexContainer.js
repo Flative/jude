@@ -3,7 +3,7 @@ import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import qs from 'query-string';
 import { search } from '../utils/youtube';
-import { SearchResult } from '../components';
+import { SearchResult, Navbar } from '../components';
 import { CLIENT_ID } from '../appInfo';
 
 class Main extends React.Component {
@@ -56,10 +56,8 @@ class Main extends React.Component {
     const { query, searchResult } = this.state;
 
     return (
-      <div className="page-main">
-        <h1 onClick={this.handleTitleClick}>
-          Jude
-        </h1>
+      <div>
+        <Navbar />
         <input type="text" onKeyPress={this.handleSearchInputKeyPress} />
         <SearchResult query={query} items={searchResult} />
         {auth.isLoggedIn

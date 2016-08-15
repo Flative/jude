@@ -1,0 +1,12 @@
+$navbar-height: 60px;
+
+.navbar {
+  height: $navbar-height;
+  background-color: #efefef;
+
+  &__title {
+    font-size: 30px;
+    line-height: $navbar-height;
+    float: left;
+  }
+}
