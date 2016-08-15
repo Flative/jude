@@ -23,7 +23,6 @@ render((
       <Route path="/" component={Main}>
         {/*<Route path="join" component={Join} />*/}
       </Route>
-      {/*<Route path="/articles" component={Articles} />*/}
       <Redirect from="*" to="/" />
     </Router>
   </Provider>

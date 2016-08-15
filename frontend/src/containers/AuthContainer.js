@@ -8,14 +8,18 @@ import { updateToken } from '../actions/authAction';
 class AuthContainer extends React.Component {
   componentDidMount() {
     const { dispatch, router } = this.props;
+    const accessToken = qs.parse(window.location.hash).access_token;
 
     axios.get('https://www.googleapis.com/oauth2/v1/tokeninfo', {
       params: {
-        access_token: qs.parse(window.location.hash).access_token,
+        access_token: accessToken,
       },
     }).then(res => {
       if (res.status === 200) {
-        dispatch(updateToken(res.data));
+        dispatch(updateToken({
+          ...res.data,
+          accessToken,
+        }));
         router.push({ pathname: '/' });
       } else {
         // TODO: Need to do something
