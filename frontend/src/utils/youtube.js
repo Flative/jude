@@ -9,6 +9,7 @@ const fetch = axios.create({
   },
 });
 
+// TODO: Search video only, not channels
 // www.googleapis.com/youtube/v3/search?q=beenzino&part=snippet&key=AIzaSyCUEGaOyO0O7Q8Yewd9o47Yg-OkJuQcfRs
 export function search(query) {
   return fetch.get('search', {

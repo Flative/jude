@@ -1,6 +1,9 @@
 import React from 'react';
+import { withRouter } from 'react-router';
+import { connect } from 'react-redux';
 import { search } from '../utils/youtube';
-import { SearchResult } from '../components';
+import { SearchResult, Playlist } from '../components';
+import { addPlaylist, removePlaylist } from '../actions/playlistAction';
 
 class SearchContainer extends React.Component {
   constructor(props) {
@@ -8,7 +11,7 @@ class SearchContainer extends React.Component {
     this.handleSearchInputKeyPress = this.handleSearchInputKeyPress.bind(this);
 
     this.state = {
-      query: 'No result found',
+      query: null,
       searchResult: [],
     };
   }
@@ -28,6 +31,7 @@ class SearchContainer extends React.Component {
 
   render() {
     const { query, searchResult } = this.state;
+    const { dispatch, playlist } = this.props;
 
     return (
       <div className="search">
@@ -36,7 +40,11 @@ class SearchContainer extends React.Component {
           type="text"
           onKeyPress={this.handleSearchInputKeyPress}
         />
-        <SearchResult query={query} items={searchResult} />
+        <SearchResult
+          query={query}
+          items={searchResult}
+          handleOnClick={(id, title) => dispatch(addPlaylist(id, title))}
+        />
       </div>
     );
   }
@@ -45,4 +53,6 @@ class SearchContainer extends React.Component {
 SearchContainer.propTypes = {};
 SearchContainer.defaultProps = {};
 
-export default SearchContainer;
+export default withRouter(connect(
+  state => state
+)(SearchContainer));

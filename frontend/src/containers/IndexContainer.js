@@ -2,7 +2,7 @@ import React from 'react';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import qs from 'query-string';
-import { Navbar } from '../components';
+import { Navbar, Playlist } from '../components';
 import { SearchContainer } from './';
 import { CLIENT_ID } from '../appInfo';
 
@@ -30,12 +30,13 @@ class Main extends React.Component {
   }
 
   render() {
-    const { router, dispatch, children, auth } = this.props;
+    const { router, dispatch, children, auth, playlist } = this.props;
 
     return (
-      <div>
+      <div className="main">
         <Navbar />
         <SearchContainer />
+        <Playlist data={playlist.data} />
         {/*{auth.isLoggedIn*/}
           {/*? (*/}
             {/*<div>*/}
@@ -65,5 +66,6 @@ Main.defaultProps = {};
 export default withRouter(connect(
   (state) => ({
     auth: state.auth,
+    playlist: state.playlist,
   })
 )(Main));

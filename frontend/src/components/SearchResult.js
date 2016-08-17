@@ -1,21 +1,28 @@
 import React from 'react';
 
-const SearchResult = ({ query, items }) => {
-  return (
-    <div className="search__result">
-      <h1>{query}</h1>
-      <ul>
-        {items.map(item => (
-          <li key={item.id.videoId}>
-            <img src={item.snippet.thumbnails.high.url} alt=""/>
-            <h2>{item.snippet.title}</h2>
-            <p>{item.snippet.description}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};
+class SearchResult extends React.Component {
+  render() {
+    const { query, items = [], handleOnClick } = this.props;
+
+    return (
+      <div className="search__result">
+        <h1>{query || 'No Result Found'}</h1>
+        <ul>
+          {items.map(item => (
+            <li key={item.id.videoId}>
+              <img src={item.snippet.thumbnails.high.url} alt=""/>
+              <h2>{item.snippet.title}</h2>
+              <p>{item.snippet.description}</p>
+              <button onClick={() => handleOnClick(item.id.videoId, item.snippet.title)}>
+                Add to playlist
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
+}
 
 SearchResult.propTypes = {
   query: React.PropTypes.string,
@@ -37,9 +44,6 @@ SearchResult.propTypes = {
     }),
   })),
 };
-SearchResult.defaultProps = {
-  query: 'No result found',
-  items: [],
-};
+SearchResult.defaultProps = {};
 
 export default SearchResult;
