@@ -9,13 +9,13 @@ const fetch = axios.create({
   },
 });
 
-// TODO: Search video only, not channels
-// www.googleapis.com/youtube/v3/search?q=beenzino&part=snippet&key=AIzaSyCUEGaOyO0O7Q8Yewd9o47Yg-OkJuQcfRs
+// API Documentation: https://developers.google.com/youtube/v3/docs/search/list
 export function search(query) {
   return fetch.get('search', {
     params: {
       q: query,
       part: 'snippet',
+      type: 'video',
       key: API_KEY,
     },
   })
