@@ -2,7 +2,7 @@ import React from 'react';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import qs from 'query-string';
-import { Navbar, Playlist } from '../components';
+import { Navbar, Playlist, Player } from '../components';
 import { SearchContainer } from './';
 import { CLIENT_ID } from '../appInfo';
 
@@ -37,6 +37,7 @@ class Main extends React.Component {
         <Navbar />
         <SearchContainer />
         <Playlist data={playlist.data} />
+        <Player />
         {/*{auth.isLoggedIn*/}
           {/*? (*/}
             {/*<div>*/}
