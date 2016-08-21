@@ -18,6 +18,9 @@
     "jasmine": true,
     "es6": true
   },
+  "globals": {
+    "YT": true
+  },
   "parserOptions": {
     "ecmaVersion": 6,
     "ecmaFeatures": {
