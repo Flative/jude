@@ -26,28 +26,35 @@ export function youtubeTimeWatcher(player, cb) {
   const { ENDED, PLAYING, PAUSED, BUFFERING, CUED } = YT.PlayerState;
   const duration = player.getDuration;
 
+  let prevTime = -1;
   let currentTime = 0;
-  let timerHandler;
-  const startTimer = () => timerHandler = setInterval(() => {
-    currentTime += 1 / 60;
-  }, 1000 / 60);
-  const stopTimer = () => clearTimeout(timerHandler);
+  const updateTime = () => {
+    prevTime = currentTime;
+    currentTime = Math.floor(player.getCurrentTime());
+    if (Math.abs(prevTime - currentTime) > 0) {
+      cb(currentTime);
+    }
+  };
+  const timer = {
+    handler: null,
+    start: () => timer.handler = setInterval(() => updateTime(), 100),
+    stop: () => clearTimeout(timer.handler),
+  };
 
   player.addEventListener('onStateChange', (e) => {
     switch(e.data) {
       case PLAYING:
         console.log('PLAYING');
-        if (timerHandler) {
-          stopTimer();
-        }
-        startTimer();
+        timer.stop();
+        timer.start();
         break;
       case ENDED:
         console.log('ENDED');
         break;
       case PAUSED:
+        timer.stop();
+        updateTime();
         console.log('PAUSED:', player.getCurrentTime(), currentTime);
-        stopTimer();
         break;
       case BUFFERING:
         console.log('BUFFERING');
