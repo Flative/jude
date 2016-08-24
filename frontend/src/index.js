@@ -1,3 +1,5 @@
+import 'whatwg-fetch';
+
 import React from 'react';
 import { render } from 'react-dom';
 import { Router, Route, useRouterHistory, Redirect } from 'react-router';
@@ -7,23 +9,22 @@ import configureStore from './store/configureStore';
 import { syncHistoryWithStore } from 'react-router-redux';
 
 import Main from './containers/IndexContainer';
-import Join from './containers/Join';
-import Articles from './containers/Articles';
+import AuthContainer from './containers/AuthContainer';
+
 import './styles/index.scss';
-import 'whatwg-fetch';
+import 'react-progress-bar-plus/lib/progress-bar.css';
 
 const store = configureStore();
-
 const browserHistory = useRouterHistory(createHistory)({});
 const history = syncHistoryWithStore(browserHistory, store);
 
 render((
   <Provider store={store}>
     <Router history={history}>
+      <Route path="/auth" component={AuthContainer} />
       <Route path="/" component={Main}>
         {/*<Route path="join" component={Join} />*/}
       </Route>
-      {/*<Route path="/articles" component={Articles} />*/}
       <Redirect from="*" to="/" />
     </Router>
   </Provider>

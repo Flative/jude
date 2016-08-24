@@ -1,11 +1,11 @@
 import { combineReducers } from 'redux';
 import { routerReducer } from 'react-router-redux';
 
-import main from './mainReducer';
-
 const reducer = combineReducers({
-  main,
   routing: routerReducer,
+  auth: require('./authReducer').default,
+  playlist: require('./playlistReducer').default,
+  player: require('./playerReducer').default,
 });
 
 export default reducer;

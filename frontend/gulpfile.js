@@ -15,6 +15,7 @@ gulp.task('webpack-dev-server', () =>
       publicPath: webpackConfig.dev.output.publicPath,
       hot: true,
       historyApiFallback: true,
+      quiet: true,
     }).listen(webpackConfig.dev.port, '0.0.0.0')
 );
 

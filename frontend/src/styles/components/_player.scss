@@ -1,0 +1,14 @@
+.player {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+
+  &__youtube {
+    //visibility: hidden;
+  }
+
+  .react-progress-bar.player__progressbar {
+    position: static;
+  }
+}
