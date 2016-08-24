@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { API_KEY } from '../appInfo';
+import { playPlayer, pausePlayer, startFetch, finishFetch } from '../actions/playerAction';
 
 const fetch = axios.create({
   baseURL: 'https://www.googleapis.com/youtube/v3/',
@@ -24,7 +25,6 @@ export function search(query) {
 
 export function youtubeTimeWatcher(player, cb) {
   const { ENDED, PLAYING, PAUSED, BUFFERING, CUED } = YT.PlayerState;
-  const duration = player.getDuration;
 
   let prevTime = -1;
   let currentTime = 0;
@@ -63,6 +63,31 @@ export function youtubeTimeWatcher(player, cb) {
         console.log('CUED');
         break;
       default: break;
+    }
+  });
+}
+
+export function youtubeStateWatcher(player, dispatch) {
+  const { ENDED, PLAYING, PAUSED, BUFFERING, CUED } = YT.PlayerState;
+  let isBufferingStarted = false;
+
+  player.addEventListener('onStateChange', (e) => {
+    switch(e.data) {
+      case BUFFERING:
+        isBufferingStarted = true;
+        dispatch(startFetch());
+        break;
+      case PLAYING:
+      case PAUSED:
+        if (isBufferingStarted) {
+          dispatch(finishFetch());
+          isBufferingStarted = false;
+        }
+        break;
+      case ENDED:
+      case CUED:
+      default:
+        break;
     }
   });
 }
