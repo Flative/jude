@@ -15,9 +15,20 @@ def status(request):
     return api_response()
 
 
+WSS = []
+def notify_all(data):
+    for ws in WSS:
+        try:
+            ws.send_json(data)
+        except RuntimeError:
+            WSS.remove(ws)
+
+
 @api_v1.route('/ws', is_websocket=True)
 async def web_socket(request, ws):
     await ws.prepare(request)
+
+    WSS.append(ws)
 
     async for message in ws:
         try:
@@ -37,13 +48,13 @@ async def web_socket(request, ws):
                 session.add(PlayList(title=title, song_id=song_id))
                 session.commit()
 
-                ws.send_json({'success': True, 'lists': PlayList.get_current_lists()})
+                notify_all({'success': True, 'lists': PlayList.get_current_lists()})
             elif data['command'] == 'delete':
                 song_pk = values.get('spk', '')
 
                 session.query(PlayList).filter(PlayList.id==song_pk).delete()
                 session.commit()
 
-                ws.send_json({'success': True, 'lists': PlayList.get_current_lists()})
+                notify_all({'success': True, 'lists': PlayList.get_current_lists()})
     return ws
 
