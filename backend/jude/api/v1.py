@@ -37,6 +37,13 @@ async def web_socket(request, ws):
                 session.add(PlayList(title=title, song_id=song_id))
                 session.commit()
 
-                ws.send_json({'success': True})
+                ws.send_json({'success': True, 'lists': PlayList.get_current_lists()})
+            elif data['command'] == 'delete':
+                song_pk = values.get('spk', '')
+
+                session.query(PlayList).filter(PlayList.id==song_pk).delete()
+                session.commit()
+
+                ws.send_json({'success': True, 'lists': PlayList.get_current_lists()})
     return ws
 
