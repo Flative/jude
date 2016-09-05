@@ -23,7 +23,7 @@ STATUS = {'pk': PlayList.get_current_playing_pk(), 'action': 'stop', 'seconds': 
 def notify_all(data):
     for ws in WSS:
         try:
-            ws.send_json(data)
+            ws.send_str(json.dumps(data))
         except RuntimeError:
             WSS.remove(ws)
 
@@ -74,7 +74,7 @@ async def web_socket(request, ws):
             elif data['command'] == 'change':
                 try:
                     song_pk = values.get('spk', '')
-                    song_pk = session.query(PlayList).filter(PlayList.id==song_pk).id
+                    song_pk = session.query(PlayList).filter(PlayList.id==song_pk).one().id
                     STATUS['pk'], STATUS['action'] = song_pk, 'start'
 
                     notify_current_to_all()
