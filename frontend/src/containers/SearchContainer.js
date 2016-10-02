@@ -35,6 +35,7 @@ class SearchContainer extends React.Component {
 
     return (
       <div className="search">
+        <h2>Search</h2>
         <input
           className="search__input"
           type="text"

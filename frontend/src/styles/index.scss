@@ -1,13 +1,31 @@
+@import "~susy/sass/susy";
+
+$susy: (
+  columns: 12,
+  gutters: 0,
+  //container: 960px
+);
+$player-height: 80px;
+#jude {
+  width: 100%;
+  height: 100%;
+}
+
 @import "base/reset";
 @import "base/variables";
 @import "base/default";
 @import "base/grid";
 
+@import "fonts/spoqaHanSans";
+
 @import "utils/utils";
 @import "utils/animations";
+
+@import "containers/main";
 
 @import "components/button";
 @import "components/tab";
 @import "components/navbar";
 @import "components/search";
 @import "components/player";
+@import "components/playlist";

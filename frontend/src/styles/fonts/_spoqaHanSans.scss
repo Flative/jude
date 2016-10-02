@@ -1,0 +1,39 @@
+/*
+ * Spoqa Han Sans
+ * http://www.spoqa-han-sans.com
+ * https://github.com/spoqa/spoqa-han-sans
+ */
+@font-face {
+    font-family: 'Spoqa Han Sans';
+    font-style: normal;
+    font-weight: 400;
+    src: local('SpoqaHanSans Regular'),
+    url(fonts/SpoqaHanSans-Regular.eot) format('eot'),
+    url(fonts/SpoqaHanSans-Regular.woff) format('woff'),
+    url(fonts/SpoqaHanSans-Regular.ttf) format('truetype'),
+    url(fonts/SpoqaHanSans-Regular.svg) format('svg');
+}
+
+@font-face {
+    font-family: 'Spoqa Han Sans';
+    font-style: normal;
+    font-weight: 200;
+    src: local('SpoqaHanSans Thin'),
+    url(fonts/SpoqaHanSans-Thin.eot) format('eot'),
+    url(fonts/SpoqaHanSans-Thin.woff) format('woff'),
+    url(fonts/SpoqaHanSans-Thin.ttf) format('truetype'),
+    url(fonts/SpoqaHanSans-Thin.svg) format('svg');
+}
+
+@font-face {
+    font-family: 'Spoqa Han Sans';
+    font-style: normal;
+    font-weight: 700;
+    src: local('SpoqaHanSans Bold'),
+    url(fonts/SpoqaHanSans-Bold.eot) format('eot'),
+    url(fonts/SpoqaHanSans-Bold.woff) format('woff'),
+    url(fonts/SpoqaHanSans-Bold.ttf) format('truetype'),
+    url(fonts/SpoqaHanSans-Bold.svg) format('svg');
+}
+
+

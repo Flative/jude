@@ -1,6 +1,10 @@
 .search {
+  @include span(8 of 12);
+  background-color: #beefa1;
+  height: 100%;
+
   &__input {
-    width: 100%;
+    //width: 100%;
   }
   &__result {
 

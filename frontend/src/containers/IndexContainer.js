@@ -34,9 +34,12 @@ class Main extends React.Component {
 
     return (
       <div className="main">
-        <Navbar />
+        {/*<Navbar />*/}
         <SearchContainer />
-        <Playlist data={playlist.data} />
+        <Playlist
+          className={"playlist"}
+          data={playlist.data}
+        />
         <Player />
         {/*{auth.isLoggedIn*/}
           {/*? (*/}

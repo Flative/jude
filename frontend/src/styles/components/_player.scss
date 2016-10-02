@@ -1,8 +1,12 @@
 .player {
+  @include span(12);
+  //width: 100%;
   position: fixed;
   left: 0;
+  right: 0;
   bottom: 0;
-  width: 100%;
+  height: $player-height;
+  background-color: #efcaa4;
 
   &__youtube {
     //visibility: hidden;

@@ -2,11 +2,11 @@ import React from 'react';
 
 class Playlist extends React.Component {
   render() {
-    const { data = [] } = this.props;
+    const { data = [], className } = this.props;
 
     return (
-      <div>
-        <h1>Playlist</h1>
+      <div className={className}>
+        <h2>Playlist</h2>
         <ul>
           {data.map(item =>
             <li key={item.id}>{item.title}</li>)
@@ -22,6 +22,7 @@ Playlist.propTypes = {
     id: React.PropTypes.string,
     title: React.PropTypes.string,
   })),
+  className: React.PropTypes.string,
 };
 Playlist.defaultProps = {};
 
