@@ -65,6 +65,7 @@
     "redux-logger": "^2.6.1",
     "redux-thunk": "^2.1.0",
     "sass-loader": "^3.2.3",
+    "sockjs-client": "^1.1.1",
     "strip-loader": "^0.1.2",
     "style-loader": "^0.13.1",
     "susy": "^2.2.12",

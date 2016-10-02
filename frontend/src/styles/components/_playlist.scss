@@ -1,6 +1,11 @@
 .playlist {
   @include span(4 of 12 last);
-  background-color: #72c0ef;
   height: 100%;
+  background-color: #efefef;
+  padding: $common-padding;
+
+  //&__title {
+  //  margin: $common-padding;
+  //}
 }
 

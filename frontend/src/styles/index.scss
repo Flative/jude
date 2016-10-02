@@ -1,15 +1,15 @@
 @import "~susy/sass/susy";
 
+// Susy2 Global Setting
 $susy: (
   columns: 12,
   gutters: 0,
-  //container: 960px
 );
-$player-height: 80px;
-#jude {
-  width: 100%;
-  height: 100%;
-}
+
+// Global variables
+$player-height: 180px;
+$navbar-height: 60px;
+$common-padding: 20px;
 
 @import "base/reset";
 @import "base/variables";

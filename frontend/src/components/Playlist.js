@@ -5,8 +5,8 @@ class Playlist extends React.Component {
     const { data = [], className } = this.props;
 
     return (
-      <div className={className}>
-        <h2>Playlist</h2>
+      <div className="playlist">
+        <h2 className="playlist__title">Playlist</h2>
         <ul>
           {data.map(item =>
             <li key={item.id}>{item.title}</li>)

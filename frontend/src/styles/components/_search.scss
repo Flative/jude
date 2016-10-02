@@ -1,7 +1,7 @@
 .search {
   @include span(8 of 12);
-  background-color: #beefa1;
   height: 100%;
+  padding: $common-padding;
 
   &__input {
     //width: 100%;

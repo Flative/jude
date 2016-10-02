@@ -4,8 +4,14 @@
   padding-bottom: $player-height;
   box-sizing: border-box;
 
+  h1 {
+    font-size: 20px;
+    font-family: "Spoqa Han Sans";
+    font-weight: lighter;
+  }
+
   h2 {
-    font-size: 40px;
+    font-size: 24px;
     font-family: "Spoqa Han Sans";
     font-weight: lighter;
   }
