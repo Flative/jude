@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { search } from '../utils/youtube';
 import { SearchResult, Playlist } from '../components';
 import { addPlaylist, removePlaylist } from '../actions/playlistAction';
+import SearchIcon from 'react-icons/lib/md/search';
 
 class SearchContainer extends React.Component {
   constructor(props) {
@@ -35,12 +36,16 @@ class SearchContainer extends React.Component {
 
     return (
       <div className="search">
-        <h2 className="search__title">Search</h2>
-        <input
-          className="search__input"
-          type="text"
-          onKeyPress={this.handleSearchInputKeyPress}
-        />
+        {/*<h2 className="search__title">Search</h2>*/}
+        <div className="search__input__container">
+          <SearchIcon className="search__input__icon" />
+          <input
+            className="search__input"
+            placeholder="Search"
+            type="text"
+            onKeyPress={this.handleSearchInputKeyPress}
+          />
+        </div>
         <SearchResult
           query={query}
           items={searchResult}
