@@ -1,8 +1,6 @@
 .main {
   @include container;
   height: 100%;
-  padding-bottom: $player-height;
-  box-sizing: border-box;
 
   h1 {
     font-size: 20px;
@@ -12,6 +10,12 @@
 
   h2 {
     font-size: 24px;
+    font-family: "Spoqa Han Sans";
+    font-weight: lighter;
+  }
+
+  h3 {
+    font-size: 20px;
     font-family: "Spoqa Han Sans";
     font-weight: lighter;
   }

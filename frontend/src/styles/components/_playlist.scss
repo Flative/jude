@@ -1,6 +1,6 @@
 .playlist {
   @include span(4 of 12 last);
-  height: 100%;
+  height: calc(100% - #{$navbar-height} - #{$player-height});
   background-color: #efefef;
   padding: $common-padding;
 

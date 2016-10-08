@@ -1,6 +1,6 @@
 .search {
   @include span(8 of 12);
-  height: 100%;
+  height: calc(100% - #{$navbar-height} - #{$player-height});
   padding: $common-padding;
 
   &__input {
