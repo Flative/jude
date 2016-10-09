@@ -1,11 +1,21 @@
 .playlist {
   @include span(4 of 12 last);
   height: calc(100% - #{$navbar-height} - #{$player-height});
-  background-color: #efefef;
-  padding: $common-padding;
+  border-left: solid 1px #e1e1e1;
+  //background-color: #efefef;
 
-  //&__title {
-  //  margin: $common-padding;
-  //}
+  &__header {
+    background-color: #fafafa;
+    padding: 0 $common-padding;
+    border-bottom: solid 1px #e1e1e1;
+    height: 74px;
+    line-height: 74px;
+  }
+
+  &__title {
+    //margin: $common-padding;
+    font-size: 18px;
+    font-weight: lighter;
+  }
 }
 

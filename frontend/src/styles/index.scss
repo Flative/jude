@@ -4,6 +4,7 @@
 $susy: (
   columns: 12,
   gutters: 0,
+  //container: 1200px,
 );
 
 // Global variables
@@ -29,3 +30,4 @@ $common-padding: 20px;
 @import "components/search";
 @import "components/player";
 @import "components/playlist";
+@import "components/divider";

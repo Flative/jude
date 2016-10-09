@@ -1,5 +1,5 @@
 import React from 'react';
-import PlusIcon from 'react-icons/lib/fa/plus-circle';
+import PlusIcon from 'react-icons/lib/fa/plus';
 
 class SearchResult extends React.Component {
   render() {
@@ -11,21 +11,17 @@ class SearchResult extends React.Component {
         <ul className="search__result__list">
           {items.map(item => (
             <li className="search__result__item" key={item.id.videoId}>
-              <img className="search__result__thumbnail" src={item.snippet.thumbnails.high.url} />
-              <div className="search__result__title">{item.snippet.title}</div>
-              <div
-                className="search__result__item__cover"
-                onClick={() => handleOnClick(item.id.videoId, item.snippet.title)}
-              >
-                <PlusIcon />
-                &nbsp;Add to Playlist
+              <div className="search__result__item__pad">
+                <img className="search__result__thumbnail" src={item.snippet.thumbnails.high.url} />
+                <div className="search__result__title">{item.snippet.title}</div>
+                <div
+                  className="search__result__item__cover"
+                  onClick={() => handleOnClick(item.id.videoId, item.snippet.title)}
+                >
+                  <PlusIcon />
+                  {/*&nbsp;Add to Playlist*/}
+                </div>
               </div>
-              {/*<p className="search__result__desc">{item.snippet.description}</p>*/}
-              {/*<button*/}
-                {/*className="search__result__add-btn"*/}
-                {/*onClick={() => handleOnClick(item.id.videoId, item.snippet.title)}>*/}
-                {/*Add to playlist*/}
-              {/*</button>*/}
             </li>
           ))}
         </ul>

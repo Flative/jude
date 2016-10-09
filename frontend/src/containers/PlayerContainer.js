@@ -65,7 +65,6 @@ class PlayerContainer extends React.Component {
     const isPlayerInitialized = !!player.instance;
 
     if (isPlayerInitialized) {
-      console.log(player)
       const videoId = player.instance.getVideoData().video_id;
       style.backgroundImage = `url(http://img.youtube.com/vi/${videoId}/maxresdefault.jpg)`;
     }

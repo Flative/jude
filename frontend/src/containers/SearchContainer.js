@@ -36,16 +36,19 @@ class SearchContainer extends React.Component {
 
     return (
       <div className="search">
-        {/*<h2 className="search__title">Search</h2>*/}
-        <div className="search__input__container">
-          <SearchIcon className="search__input__icon" />
-          <input
-            className="search__input"
-            placeholder="Search"
-            type="text"
-            onKeyPress={this.handleSearchInputKeyPress}
-          />
+        <div className="search__header">
+          <h2 className="search__title">Search</h2>
+          <div className="search__input__container">
+            <SearchIcon className="search__input__icon" />
+            <input
+              className="search__input"
+              placeholder="Well, what do you want to listen?"
+              type="text"
+              onKeyPress={this.handleSearchInputKeyPress}
+            />
+          </div>
         </div>
+        {/*<hr className="divider" />*/}
         <SearchResult
           query={query}
           items={searchResult}
