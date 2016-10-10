@@ -8,14 +8,38 @@
     background-color: #fafafa;
     padding: 0 $common-padding;
     border-bottom: solid 1px #e1e1e1;
-    height: 74px;
-    line-height: 74px;
+    height: $panel-header-height;
+    line-height: $panel-header-height;
   }
 
   &__title {
     //margin: $common-padding;
     font-size: 18px;
     font-weight: lighter;
+  }
+
+  &__content {
+    position: relative;
+    height: calc(100% - #{$panel-header-height});
+  }
+
+  &__blankslate {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    text-align: center;
+    margin-top: -48px;
+    width: 100%;
+
+    &__title {
+      font-size: 24px;
+      font-weight: normal;
+    }
+
+    &__subtitle {
+      font-size: 14px;
+      margin-top: 10px;
+    }
   }
 }
 
