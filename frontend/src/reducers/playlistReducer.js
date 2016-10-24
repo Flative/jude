@@ -1,7 +1,11 @@
 import * as actions from '../actions/playlistAction';
 
 const defaultState = {
-  data: [],
+  data: [{
+    id: 1234,
+    uuid: '1234',
+    title: '12341234123421341234342341234123142123431423124341212343421'
+  }],
 };
 
 export default function playlistReducer(state = defaultState, action) {

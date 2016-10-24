@@ -82,6 +82,7 @@
     "exports-loader": "^0.6.3",
     "imports-loader": "^0.6.5",
     "isomorphic-fetch": "^2.2.1",
+    "node-uuid": "^1.4.7",
     "react-icons": "^2.1.0",
     "react-progress-bar-plus": "^1.2.0",
     "redux-persist": "^3.1.1",
