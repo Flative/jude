@@ -14,9 +14,9 @@ export function addPlaylist(id, title) {
   };
 }
 
-export function removePlaylist(item) {
+export function removePlaylist(uuid) {
   return {
     type: PLAYLIST_REMOVED,
-    item,
+    uuid,
   };
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import qs from 'query-string';
-import SockJS from 'sockjs-client';
+import { removePlaylist } from '../actions/playlistAction';
 import { Navbar, Playlist, Player } from '../components';
 import { SearchContainer } from './';
 import { CLIENT_ID } from '../appInfo';
@@ -12,7 +12,7 @@ class Main extends React.Component {
     super(props);
     this.handleTitleClick = this.handleTitleClick.bind(this);
     this.handleAuthButtonClick = this.handleAuthButtonClick.bind(this);
-
+    this.handlePlaylistClearButtonClick = this.handlePlaylistClearButtonClick.bind(this);
   }
 
   handleAuthButtonClick() {
@@ -26,9 +26,12 @@ class Main extends React.Component {
     location.replace(`https://accounts.google.com/o/oauth2/auth?${queryString}`);
   }
 
-
   handleTitleClick() {
     this.props.router.push({ pathname: '/' });
+  }
+
+  handlePlaylistClearButtonClick(uuid) {
+    this.props.dispatch(removePlaylist(uuid));
   }
 
   componentDidMount() {
@@ -56,6 +59,7 @@ class Main extends React.Component {
         <Playlist
           className={"playlist"}
           data={playlist.data}
+          onClearButtonClick={this.handlePlaylistClearButtonClick}
         />
         {/*{auth.isLoggedIn*/}
           {/*? (*/}

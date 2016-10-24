@@ -15,7 +15,9 @@ export default function playlistReducer(state = defaultState, action) {
         data: [...state.data, action.item],
       };
     case actions.PLAYLIST_REMOVED:
-      return state;
+      return {
+        data: state.data.filter(item => item.uuid !== action.uuid),
+      };
     default:
       return state;
   }

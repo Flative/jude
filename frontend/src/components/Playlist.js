@@ -2,8 +2,12 @@ import React from 'react';
 import ClearIcon from 'react-icons/lib/md/clear';
 
 class Playlist extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
   render() {
-    const { data = [], className } = this.props;
+    const { data = [], onClearButtonClick } = this.props;
 
     return (
       <div className="playlist">
@@ -19,7 +23,10 @@ class Playlist extends React.Component {
                 key={item.uuid}
               >
                 {item.title}
-                <ClearIcon className="playlist__item__clear" />
+                <ClearIcon
+                  className="playlist__item__clear"
+                  onClick={() => onClearButtonClick(item.uuid)}
+                />
               </li>
             )
             : <div className="playlist__blankslate">
