@@ -9,7 +9,7 @@ import NextIcon from 'react-icons/lib/md/skip-next';
 import PlayIcon from 'react-icons/lib/md/play-circle-outline';
 import PauseIcon from 'react-icons/lib/md/pause-circle-outline';
 
-import { playPlayer, pausePlayer, startFetch, finishFetch, initializePlayer } from '../actions/playerAction';
+import { playPlayer, pausePlayer, initializePlayer } from '../actions/playerAction';
 import { youtubeTimeWatcher, youtubeStateWatcher } from '../utils/youtube';
 
 class PlayerContainer extends React.Component {
@@ -52,7 +52,7 @@ class PlayerContainer extends React.Component {
 
   render() {
     const { player } = this.props;
-    const { isPaused, isFetching } = player;
+    const { isPaused, isFetching, currentVideoId, instance } = player;
     const youtubeOptions = {
       height: '0',
       width: '0',
@@ -66,6 +66,8 @@ class PlayerContainer extends React.Component {
 
     if (isPlayerInitialized) {
       const videoId = player.instance.getVideoData().video_id;
+
+      // TODO: Thumbnail image can't be loaded
       style.backgroundImage = `url(http://img.youtube.com/vi/${videoId}/maxresdefault.jpg)`;
     }
 
@@ -74,14 +76,16 @@ class PlayerContainer extends React.Component {
         className="player"
         style={style}
       >
-        <YouTube
-          className="player__youtube"
-          videoId="27VeWkC-Eg8"
-          onReady={this.onYouTubeReady}
-          opts={youtubeOptions}
-        />
+        {currentVideoId &&
+          <YouTube
+            className="player__youtube"
+            videoId={currentVideoId}
+            onReady={this.onYouTubeReady}
+            opts={youtubeOptions}
+          />
+        }
         <h3 className="player__title">
-          {isPlayerInitialized && player.instance.getVideoData().title}
+          {isPlayerInitialized && instance.getVideoData().title}
         </h3>
         <div className="player__controller">
           <div className="player__controller__left">

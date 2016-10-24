@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { API_KEY } from '../appInfo';
-import { playPlayer, pausePlayer, startFetch, finishFetch } from '../actions/playerAction';
+import { startFetch, finishPlayer, finishFetch } from '../actions/playerAction';
 
 const fetch = axios.create({
   baseURL: 'https://www.googleapis.com/youtube/v3/',
@@ -85,6 +85,7 @@ export function youtubeStateWatcher(player, dispatch) {
         }
         break;
       case ENDED:
+        dispatch(finishPlayer());
       case CUED:
       default:
         break;
