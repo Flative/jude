@@ -2,6 +2,7 @@ import React from 'react';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import qs from 'query-string';
+import SockJS from 'sockjs-client';
 import { Navbar, Playlist, Player } from '../components';
 import { SearchContainer } from './';
 import { CLIENT_ID } from '../appInfo';
@@ -11,6 +12,7 @@ class Main extends React.Component {
     super(props);
     this.handleTitleClick = this.handleTitleClick.bind(this);
     this.handleAuthButtonClick = this.handleAuthButtonClick.bind(this);
+
   }
 
   handleAuthButtonClick() {
@@ -29,15 +31,32 @@ class Main extends React.Component {
     this.props.router.push({ pathname: '/' });
   }
 
+  componentDidMount() {
+    const sock = new WebSocket('ws://192.168.0.79:8080/api/v1/ws');
+    sock.onopen = function() {
+      console.log('open');
+      window.sock = sock;
+    };
+    sock.onmessage = function(e) {
+      console.log('message', e.data);
+    };
+    sock.onclose = function() {
+      console.log('close');
+    };
+  }
+
   render() {
     const { router, dispatch, children, auth, playlist } = this.props;
 
     return (
       <div className="main">
         <Navbar />
-        <SearchContainer />
-        <Playlist data={playlist.data} />
         <Player />
+        <SearchContainer />
+        <Playlist
+          className={"playlist"}
+          data={playlist.data}
+        />
         {/*{auth.isLoggedIn*/}
           {/*? (*/}
             {/*<div>*/}

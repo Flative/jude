@@ -4,6 +4,10 @@ import { connect } from 'react-redux';
 
 import YouTube from 'react-youtube';
 import ProgressBar from 'react-progress-bar-plus';
+import PrevIcon from 'react-icons/lib/md/skip-previous';
+import NextIcon from 'react-icons/lib/md/skip-next';
+import PlayIcon from 'react-icons/lib/md/play-circle-outline';
+import PauseIcon from 'react-icons/lib/md/pause-circle-outline';
 
 import { playPlayer, pausePlayer, startFetch, finishFetch, initializePlayer } from '../actions/playerAction';
 import { youtubeTimeWatcher, youtubeStateWatcher } from '../utils/youtube';
@@ -47,7 +51,8 @@ class PlayerContainer extends React.Component {
   }
 
   render() {
-    const { isPaused, isFetching } = this.props.player;
+    const { player } = this.props;
+    const { isPaused, isFetching } = player;
     const youtubeOptions = {
       height: '0',
       width: '0',
@@ -56,26 +61,54 @@ class PlayerContainer extends React.Component {
       },
     };
 
+    const style = {};
+    const isPlayerInitialized = !!player.instance;
+
+    if (isPlayerInitialized) {
+      const videoId = player.instance.getVideoData().video_id;
+      style.backgroundImage = `url(http://img.youtube.com/vi/${videoId}/maxresdefault.jpg)`;
+    }
+
     return (
-      <div className="player">
+      <div
+        className="player"
+        style={style}
+      >
         <YouTube
           className="player__youtube"
           videoId="27VeWkC-Eg8"
           onReady={this.onYouTubeReady}
           opts={youtubeOptions}
         />
-        <button
-          onClick={this.handlePPButtonClick}
-        >{isPaused
-          ? '재생'
-          : '일시정지'
-        }</button>
-        <ProgressBar
-          className="player__progressbar"
-          percent={this.state.percent}
-          spinner={false}
-          onTop={false}
-        />
+        <h3 className="player__title">
+          {isPlayerInitialized && player.instance.getVideoData().title}
+        </h3>
+        <div className="player__controller">
+          <div className="player__controller__left">
+            <PrevIcon className="player__btn-prev">prev</PrevIcon>
+            {isPaused
+              ? <PlayIcon
+                className="player__btn-pp"
+                onClick={this.handlePPButtonClick}
+              />
+              : <PauseIcon
+                className="player__btn-pp"
+                onClick={this.handlePPButtonClick}
+              />
+            }
+            <NextIcon className="player__btn-next">next</NextIcon>
+          </div>
+          <ProgressBar
+            className="player__progressbar"
+            percent={this.state.percent}
+            spinner={false}
+            onTop={false}
+          />
+          <div className="player__controller__right">
+
+          </div>
+
+        </div>
       </div>
     );
   }

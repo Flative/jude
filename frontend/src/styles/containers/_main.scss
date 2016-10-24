@@ -1,66 +1,22 @@
-$form-width: 330px;
-
-.page-main {
-  width: 100%;
+.main {
+  @include container;
   height: 100%;
-  background-image: url(/static/img/debut.png);
-  background-repeat: repeat;
-  text-align: center;
-  color: white;
-  .title {
-    font-size: 2.4em;
-    letter-spacing: -0.05em;
-    font-weight: 500;
-    margin-top: 200px;
-    cursor: pointer;
-  }
-  .btn-wrapper {
-    margin: 20px auto 0 auto;
-    width: $form-width;
-  }
-  .btn-main {
-    display: inline-block;
-    margin: 0 auto;
-    width: 50%;
-    height: 45px;
-    font-size: 16px;
-  }
-  .btn-join {
-    display: inline-block;
-    margin: 0 auto;
-    width: 100%;
-    height: 45px;
-    font-size: 16px;
-  }
-  .form {
-    border-radius: 3px;
-    overflow: hidden;
-    margin-top: 40px;
-  }
-  .input {
-    position: relative;
-    margin: 0 auto;
-    display: block;
-    input {
-      width: $form-width;
-      height: 45px;
-      font-size: 16px;
-      background-color: #fff;
-      border: none;
-      box-sizing: border-box;
-      padding: 10px;
-    }
-    &:nth-child(n+2) {
-      &:after {
-        content: '';
-        width: $form-width;
-        height: 1px;
-        position: absolute;
-        top: 0;
-        left: 50%;
-        margin-left: -($form-width / 2);
-        background-color: #cccccc;
-      }
-    }
-  }
+
+  //h1 {
+  //  font-size: 20px;
+  //  font-family: "Spoqa Han Sans";
+  //  font-weight: lighter;
+  //}
+  //
+  //h2 {
+  //  font-size: 24px;
+  //  font-family: "Spoqa Han Sans";
+  //  font-weight: lighter;
+  //}
+  //
+  //h3 {
+  //  font-size: 20px;
+  //  font-family: "Spoqa Han Sans";
+  //  font-weight: lighter;
+  //}
 }

@@ -1,3 +1,16 @@
 html, body {
   height: 100%;
+  box-sizing: border-box;
+  font-family: 'Spoqa Han Sans';
+  font-weight: lighter;
+  //background-color: #efefef;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+#jude {
+  width: 100%;
+  height: 100%;
 }

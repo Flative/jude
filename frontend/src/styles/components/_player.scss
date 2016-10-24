@@ -1,14 +1,64 @@
 .player {
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  width: 100%;
+  @include span(12);
+  position: relative;
+  height: $player-height;
+  background-color: #45525e;
+  background-size: cover;
+  background-repeat: no-repeat;
+
+  &__title {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    text-align: left;
+    font-size: 18px;
+    font-weight: lighter;
+    color: #ffffff;
+  }
 
   &__youtube {
-    //visibility: hidden;
+    visibility: hidden;
+  }
+
+  &__controller {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 60px;
+    background-color: rgba(255, 255, 255, 0.5);
+    color: #FFFFFF;
+
+    &__left,
+    &__right {
+      @include span(3);
+      font-size: 30px;
+      margin-top: 12px;
+      text-align: center;
+    }
+  }
+
+  &__btn-pp {
+    margin: 0 20px;
+    font-size: 34px;
+  }
+
+  &__btn-prev,
+  &__btn-next {
+    font-size: 24px;
   }
 
   .react-progress-bar.player__progressbar {
+    @include span(6);
     position: static;
+    display: inline-block;
+    margin-top: 30px;
+    background: rgba(255, 255, 255, 0.7);
+    //box-shadow: 0 0 10px #FFF, 0 0 5px #FFF;
+
+    .react-progress-bar-percent {
+      background-color: #fff;
+      box-shadow: 0 0 10px #fff, 0 0 5px #fff;
+    }
   }
 }

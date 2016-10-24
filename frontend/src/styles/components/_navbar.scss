@@ -1,11 +1,11 @@
-$navbar-height: 60px;
-
 .navbar {
   height: $navbar-height;
   background-color: #efefef;
+  padding: 0 $common-padding;
 
   &__title {
-    font-size: 30px;
+    font-size: 22px;
+    font-weight: lighter;
     line-height: $navbar-height;
     float: left;
   }
