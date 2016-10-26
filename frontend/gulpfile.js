@@ -1,11 +1,7 @@
 const gulp = require('gulp');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
-const merge = require('webpack-merge');
 const gulpWebpack = require('gulp-webpack');
-const del = require('del');
-const babel = require('gulp-babel');
-const nodemon = require('gulp-nodemon');
 
 // Config file
 const webpackConfig = require('./webpack.config');

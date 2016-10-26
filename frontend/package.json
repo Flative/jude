@@ -1,5 +1,5 @@
 {
-  "name": "realfact-frontend",
+  "name": "jude",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -10,14 +10,12 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "babel-cli": "^6.7.7",
     "babel-core": "^6.4.5",
     "babel-loader": "^6.2.1",
     "babel-plugin-transform-es2015-destructuring": "^6.9.0",
-    "babel-plugin-transform-es3-member-expression-literals": "^6.5.0",
-    "babel-plugin-transform-es3-property-literals": "^6.5.0",
     "babel-plugin-transform-object-rest-spread": "^6.8.0",
     "babel-plugin-transform-runtime": "^6.8.0",
     "babel-plugin-uglify": "^1.0.2",
@@ -29,8 +27,6 @@
     "classnames": "^2.2.5",
     "cors": "^2.7.1",
     "css-loader": "^0.23.1",
-    "del": "^2.2.0",
-    "es3ify-loader": "^0.2.0",
     "es6-promise": "^3.1.2",
     "eslint": "^2.13.1",
     "eslint-config-airbnb": "^9.0.1",
@@ -38,15 +34,10 @@
     "eslint-plugin-jsx-a11y": "^1.5.3",
     "eslint-plugin-react": "^5.2.2",
     "file-loader": "^0.9.0",
-    "forever": "^0.15.2",
-    "forever-monitor": "^1.7.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
-    "gulp-nodemon": "^2.1.0",
     "gulp-util": "^3.0.7",
     "gulp-webpack": "^1.5.0",
-    "history": "^2.1.1",
-    "html-webpack-plugin": "^2.17.0",
     "node-sass": "^3.7.0",
     "react": "^0.14.8",
     "react-dom": "^0.14.8",
@@ -73,14 +64,13 @@
   },
   "dependencies": {
     "axios": "^0.12.0",
+    "babel-preset-es2015": "^6.18.0",
     "babel-runtime": "^6.6.1",
     "es6-promise": "^3.2.1",
     "exports-loader": "^0.6.3",
     "imports-loader": "^0.6.5",
     "node-uuid": "^1.4.7",
     "react-icons": "^2.1.0",
-    "react-progress-bar-plus": "^1.2.0",
-    "redux-persist": "^3.1.1",
-    "superagent": "^2.0.0"
+    "react-progress-bar-plus": "^1.2.0"
   }
 }
