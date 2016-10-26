@@ -1,5 +1,4 @@
 import React from 'react';
-import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
 
 import YouTube from 'react-youtube';
@@ -124,8 +123,8 @@ PlayerContainer.propTypes = {
 };
 PlayerContainer.defaultProps = {};
 
-export default withRouter(connect(
+export default connect(
   (state) => ({
     player: state.player,
   })
-)(PlayerContainer));
+)(PlayerContainer);

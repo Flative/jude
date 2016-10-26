@@ -1,5 +1,4 @@
 import React from 'react';
-import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import { search } from '../utils/youtube';
 import { SearchResult, Playlist } from '../components';
@@ -62,6 +61,6 @@ class SearchContainer extends React.Component {
 SearchContainer.propTypes = {};
 SearchContainer.defaultProps = {};
 
-export default withRouter(connect(
+export default connect(
   state => state
-)(SearchContainer));
+)(SearchContainer);

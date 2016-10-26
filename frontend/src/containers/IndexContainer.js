@@ -1,5 +1,4 @@
 import React from 'react';
-import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import qs from 'query-string';
 import { removePlaylist } from '../actions/playlistAction';
@@ -61,19 +60,6 @@ class Main extends React.Component {
           data={playlist.data}
           onClearButtonClick={this.handlePlaylistClearButtonClick}
         />
-        {/*{auth.isLoggedIn*/}
-          {/*? (*/}
-            {/*<div>*/}
-              {/*<h2>I'm logged in</h2>*/}
-            {/*</div>*/}
-          {/*)*/}
-          {/*: (*/}
-            {/*<div>*/}
-              {/*<h1>Need to login</h1>*/}
-              {/*<button onClick={this.handleAuthButtonClick}>Auth</button>*/}
-            {/*</div>*/}
-          {/*)*/}
-        {/*}*/}
         {children}
       </div>
     );
@@ -87,9 +73,9 @@ Main.propTypes = {
 };
 Main.defaultProps = {};
 
-export default withRouter(connect(
+export default connect(
   (state) => ({
     auth: state.auth,
     playlist: state.playlist,
   })
-)(Main));
+)(Main);
