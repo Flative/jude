@@ -1,15 +1,15 @@
 import React from 'react';
 import { connect } from 'react-redux';
-
 import YouTube from 'react-youtube';
+
+import { playPlayer, pausePlayer, initializePlayer } from '../reducers/playerReducer';
+import { youtubeTimeWatcher, youtubeStateWatcher } from '../utils/youtube';
+
 import ProgressBar from 'react-progress-bar-plus';
 import PrevIcon from 'react-icons/lib/md/skip-previous';
 import NextIcon from 'react-icons/lib/md/skip-next';
 import PlayIcon from 'react-icons/lib/md/play-circle-outline';
 import PauseIcon from 'react-icons/lib/md/pause-circle-outline';
-
-import { playPlayer, pausePlayer, initializePlayer } from '../actions/playerAction';
-import { youtubeTimeWatcher, youtubeStateWatcher } from '../utils/youtube';
 
 class PlayerContainer extends React.Component {
   constructor(props) {
@@ -22,6 +22,22 @@ class PlayerContainer extends React.Component {
     };
   }
 
+  onYouTubeReady(e) {
+    const { dispatch } = this.props;
+    const player = e.target;
+    const duration = player.getDuration();
+
+    dispatch(initializePlayer(player));
+    player.mute(); // For development
+
+    youtubeStateWatcher(player, dispatch);
+    youtubeTimeWatcher(player, (sec) => {
+      this.setState({ percent: (sec / duration) * 100 });
+    });
+
+    dispatch(playPlayer(player));
+  }
+
   handlePPButtonClick() {
     const { isPaused, instance } = this.props.player;
     const { dispatch } = this.props;
@@ -31,22 +47,6 @@ class PlayerContainer extends React.Component {
     } else {
       dispatch(pausePlayer(instance));
     }
-  }
-
-  onYouTubeReady(e) {
-    const { dispatch } = this.props;
-    const player = e.target;
-    const duration = player.getDuration();
-
-    dispatch(initializePlayer(player));
-    player.mute(); // For development
-
-    youtubeStateWatcher(player, this.props.dispatch);
-    youtubeTimeWatcher(player, (sec) => {
-      this.setState({ percent: (sec / duration) * 100 });
-    });
-
-    dispatch(playPlayer(player));
   }
 
   render() {

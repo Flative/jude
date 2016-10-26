@@ -2,9 +2,9 @@ import React from 'react';
 import ClearIcon from 'react-icons/lib/md/clear';
 
 class Playlist extends React.Component {
-  constructor(props) {
-    super(props);
-  }
+  // constructor(props) {
+  //   super(props);
+  // }
 
   render() {
     const { data = [], onClearButtonClick } = this.props;

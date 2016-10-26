@@ -1,2 +1,2 @@
-export const IndexContainer = require('./IndexContainer').default;
+export const IndexContainer = require('./AppContainer').default;
 export const SearchContainer = require('./SearchContainer').default;

@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { search } from '../utils/youtube';
-import { SearchResult, Playlist } from '../components';
-import { addPlaylist, removePlaylist } from '../actions/playlistAction';
+import { SearchResult } from '../components';
+import { addPlaylist, removePlaylist } from '../reducers/playlistReducer';
 import SearchIcon from 'react-icons/lib/md/search';
 
 class SearchContainer extends React.Component {
