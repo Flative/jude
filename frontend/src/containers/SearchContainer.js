@@ -23,7 +23,7 @@ class SearchContainer extends React.Component {
         .then(data => {
           this.setState({
             query,
-            searchResult: data.items,
+            searchResult: data,
           });
         });
     }

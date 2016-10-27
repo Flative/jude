@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { removePlaylist } from '../actions/playlistAction';
+import { removePlaylist } from '../reducers/playlistReducer';
 import { Navbar, Playlist, Player } from '../components';
 import { SearchContainer } from './';
 

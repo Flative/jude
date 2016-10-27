@@ -42,6 +42,8 @@
 
   &__result {
     padding: 7px 0;
+    overflow-y: auto;
+    height: 100%;
 
     &__list {
       list-style: none;
