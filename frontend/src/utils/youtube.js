@@ -11,7 +11,7 @@ const fetch = axios.create({
 });
 
 // API Documentation: https://developers.google.com/youtube/v3/docs/search/list
-export async function search(query) {
+export async function searchVideos(query) {
   let result = [];
   let pageToken;
 
