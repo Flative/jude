@@ -86,6 +86,7 @@ class PlayerContainer extends React.Component {
         <h3 className="player__title">
           {isPlayerInitialized && instance.getVideoData().title}
         </h3>
+        <div className="player__cover"></div>
         <div className="player__controller">
           <div className="player__controller__left">
             <PrevIcon className="player__btn-prev">prev</PrevIcon>
