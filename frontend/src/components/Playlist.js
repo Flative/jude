@@ -2,12 +2,30 @@ import React from 'react';
 import ClearIcon from 'react-icons/lib/md/clear';
 
 class Playlist extends React.Component {
-  // constructor(props) {
-  //   super(props);
-  // }
+  renderActiveItemInidicator() {
+    return (
+      <div id="bars">
+        <div className="bar"></div>
+        <div className="bar"></div>
+        <div className="bar"></div>
+        <div className="bar"></div>
+        <div className="bar"></div>
+        <div className="bar"></div>
+        <div className="bar"></div>
+        <div className="bar"></div>
+        <div className="bar"></div>
+        <div className="bar"></div>
+      </div>
+    );
+  }
 
   render() {
-    const { data = [], onClearButtonClick } = this.props;
+    const {
+      items,
+      activeItemUUID,
+      onItemClick,
+      onClearButtonClick,
+    } = this.props;
 
     return (
       <div className="playlist">
@@ -16,19 +34,31 @@ class Playlist extends React.Component {
         </div>
         <ul className="playlist__body">
           {
-            data.length
-            ? data.map(item =>
-              <li
-                className="playlist__item"
-                key={item.uuid}
-              >
-                {item.title}
-                <ClearIcon
-                  className="playlist__item__clear"
-                  onClick={() => onClearButtonClick(item.uuid)}
-                />
-              </li>
-            )
+            items.length
+            ? items.map(item => {
+              const itemStatusClass = item.uuid === activeItemUUID ? 'playlist__item--active' : '';
+              return (
+                <li
+                  className={`playlist__item ${itemStatusClass}`}
+                  key={item.uuid}
+                >
+                  {itemStatusClass &&
+                    <div className="playlist__item__indicator">
+                      <div className="bar"></div>
+                      <div className="bar"></div>
+                      <div className="bar"></div>
+                      <div className="bar"></div>
+                      <div className="bar"></div>
+                    </div>
+                  }
+                  {item.title}
+                  <ClearIcon
+                    className="playlist__item__btn-clear"
+                    onClick={() => onClearButtonClick(item.uuid)}
+                  />
+                </li>
+              );
+            })
             : <div className="playlist__blankslate">
               <h3 className="playlist__blankslate__title">
                 Playlist is empty
@@ -45,7 +75,7 @@ class Playlist extends React.Component {
 }
 
 Playlist.propTypes = {
-  data: React.PropTypes.arrayOf(React.PropTypes.shape({
+  items: React.PropTypes.arrayOf(React.PropTypes.shape({
     id: React.PropTypes.string,
     uuid: React.PropTypes.string,
     title: React.PropTypes.string,

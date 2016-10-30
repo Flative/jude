@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { removePlaylist } from '../reducers/playlistReducer';
+import { removePlaylist, updateActiveItem } from '../reducers/playlistReducer';
 import { Navbar, Playlist, Player } from '../components';
 import { SearchContainer } from './';
 
@@ -9,6 +9,7 @@ class AppContainer extends React.Component {
     super(props);
     this.handleTitleClick = this.handleTitleClick.bind(this);
     this.handlePlaylistClearButtonClick = this.handlePlaylistClearButtonClick.bind(this);
+    this.handlePlaylistItemClick = this.handlePlaylistItemClick.bind(this);
   }
 
   componentDidMount() {
@@ -33,6 +34,10 @@ class AppContainer extends React.Component {
     this.props.dispatch(removePlaylist(uuid));
   }
 
+  handlePlaylistItemClick(uuid) {
+    this.props.dispatch(updateActiveItem(uuid));
+  }
+
   render() {
     const { router, dispatch, children, auth, playlist } = this.props;
 
@@ -43,7 +48,9 @@ class AppContainer extends React.Component {
         <SearchContainer />
         <Playlist
           className={"playlist"}
-          data={playlist.data}
+          items={playlist.items}
+          activeItemUUID={playlist.activeItemUUID}
+          onItemClick={this.handlePlaylistItemClick}
           onClearButtonClick={this.handlePlaylistClearButtonClick}
         />
         {children}

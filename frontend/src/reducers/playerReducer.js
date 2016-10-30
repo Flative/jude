@@ -1,3 +1,5 @@
+import { updateActiveItem } from './playlistReducer';
+
 export const actions = {
   PLAYER_INITIALIZED: 'PLAYER_INITIALIZED',
   PLAYER_VIDEO_UPDATED: 'PLAYER_VIDEO_UPDATED',
@@ -42,6 +44,7 @@ export function finishPlayer() {
     dispatch({ type: actions.PLAYER_FINISHED });
     if (currentVideoIndex < playlist.data.length - 1) {
       dispatch(updateVideo(playlist.data[currentVideoIndex + 1].id, currentVideoIndex + 1));
+      dispatch(updateActiveItem(playlist.data[currentVideoIndex + 1].uuid));
     }
   };
 }
