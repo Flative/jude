@@ -58,38 +58,6 @@
     }
   }
 
-  &__item__indicator {
-    position: absolute;
-    left: 5px;
-    top: 33px;
-
-    @keyframes sound {
-      0% {
-        opacity: .35;
-        height: 3px;
-      }
-      100% {
-        opacity: 0.7;
-        height: 12px;
-      }
-    }
-
-    div {
-      position: absolute;
-      background: #d54b5f;
-      bottom: 1px;
-      height: 2px;
-      width: 3px;
-      animation: sound 0ms -900ms linear infinite alternate;
-    }
-
-    .bar:nth-child(1)  { left: 1px; animation-duration: 500ms; }
-    .bar:nth-child(2)  { left: 5px; animation-duration: 600ms; }
-    .bar:nth-child(3)  { left: 9px; animation-duration: 700ms; }
-    .bar:nth-child(4)  { left: 13px; animation-duration: 800ms; }
-    .bar:nth-child(5)  { left: 17px; animation-duration: 900ms; }
-  }
-
   &__body {
     position: relative;
     height: calc(100% - #{$panel-header-height});

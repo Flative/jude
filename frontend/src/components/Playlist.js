@@ -2,23 +2,6 @@ import React from 'react';
 import ClearIcon from 'react-icons/lib/md/clear';
 
 class Playlist extends React.Component {
-  renderActiveItemInidicator() {
-    return (
-      <div id="bars">
-        <div className="bar"></div>
-        <div className="bar"></div>
-        <div className="bar"></div>
-        <div className="bar"></div>
-        <div className="bar"></div>
-        <div className="bar"></div>
-        <div className="bar"></div>
-        <div className="bar"></div>
-        <div className="bar"></div>
-        <div className="bar"></div>
-      </div>
-    );
-  }
-
   render() {
     const {
       items,
@@ -42,15 +25,6 @@ class Playlist extends React.Component {
                   className={`playlist__item ${itemStatusClass}`}
                   key={item.uuid}
                 >
-                  {itemStatusClass &&
-                    <div className="playlist__item__indicator">
-                      <div className="bar"></div>
-                      <div className="bar"></div>
-                      <div className="bar"></div>
-                      <div className="bar"></div>
-                      <div className="bar"></div>
-                    </div>
-                  }
                   {item.title}
                   <ClearIcon
                     className="playlist__item__btn-clear"
