@@ -1,5 +1,5 @@
 import UUID from 'node-uuid';
-import { updateVideo } from './playerReducer';
+import { updatePlayerVideo } from './playerReducer';
 
 export const actions = {
   PLAYLIST_ADDED: 'PLAYLIST_ADDED',
@@ -7,44 +7,44 @@ export const actions = {
   PLAYLIST_ACTIVE_ITEM_UPDATED: 'PLAYLIST_ACTIVE_ITEM_UPDATED',
 };
 
-export function addPlaylist(id, title) {
+export function addItemToPlaylist(id, title) {
   return (dispatch, getState) => {
-    const { playlist, player } = getState();
+    const { playlist } = getState();
+    const { activeItem } = playlist;
+
     const uuid = UUID.v4();
+    const index = activeItem && activeItem.index ? activeItem.index + 1 : 0;
+    const item = { id, title, uuid, index };
 
-    dispatch({
-      type: actions.PLAYLIST_ADDED,
-      item: {
-        id,
-        title,
-        uuid,
-      },
-    });
+    dispatch({ type: actions.PLAYLIST_ADDED, item });
 
-    if (!playlist.items.length && !player.currentVideoId) {
-      dispatch(updateVideo(id, 0));
-      dispatch(updateActiveItem(uuid));
+    if (!activeItem) {
+      dispatch(updateActiveItemInPlaylist(item));
     }
   };
 }
 
-export function removePlaylist(uuid) {
+export function removeItemFromPlaylist(uuid) {
   return {
     type: actions.PLAYLIST_REMOVED,
     uuid,
   };
 }
 
-export function updateActiveItem(uuid) {
-  return {
-    type: actions.PLAYLIST_ACTIVE_ITEM_UPDATED,
-    uuid,
+export function updateActiveItemInPlaylist(item) {
+  return (dispatch, getState) => {
+    dispatch({
+      type: actions.PLAYLIST_ACTIVE_ITEM_UPDATED,
+      doesNextItemExist: !!getState().playlist.items[item.index + 1],
+      item,
+    });
   };
 }
 
 export const initialState = {
   items: [],
-  activeItemUUID: null,
+  doesNextItemExist: false,
+  activeItem: null,
 };
 
 export default (state = initialState, action) => {
@@ -53,14 +53,18 @@ export default (state = initialState, action) => {
       return { ...state,
         items: [...state.items, action.item],
       };
+
     case actions.PLAYLIST_REMOVED:
       return { ...state,
         items: state.items.filter(item => item.uuid !== action.uuid),
       };
+
     case actions.PLAYLIST_ACTIVE_ITEM_UPDATED:
       return { ...state,
-        activeItemUUID: action.uuid,
+        activeItem: action.item,
+        doesNextItemExist: action.doesNextItemExist,
       };
+
     default:
       return state;
   }

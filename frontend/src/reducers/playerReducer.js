@@ -1,4 +1,4 @@
-import { updateActiveItem } from './playlistReducer';
+import { updateActiveItemInPlaylist } from './playlistReducer';
 
 export const actions = {
   PLAYER_INITIALIZED: 'PLAYER_INITIALIZED',
@@ -10,24 +10,31 @@ export const actions = {
   PLAYER_FETCHING_FINISHED: 'PLAYER_FETCHING_FINISHED',
 };
 
-export function updateVideo(id, index) {
-  return { type: actions.PLAYER_VIDEO_UPDATED, id, index };
-}
-
-export function initializePlayer(instance) {
+// Store player instance to redux state tree when initializing
+export function registerPlayer(instance) {
   return { type: actions.PLAYER_INITIALIZED, instance };
 }
 
-export function pausePlayer(instance) {
-  instance.pauseVideo();
-  return { type: actions.PLAYER_PAUSED };
+export function pausePlayer() {
+  return (dispatch, getState) => {
+    getState().player.instance.pauseVideo();
+    dispatch({ type: actions.PLAYER_PAUSED });
+  };
 }
 
-export function playPlayer(instance) {
-  instance.playVideo();
-  return { type: actions.PLAYER_PLAYED };
+export function playPlayer() {
+  return (dispatch, getState) => {
+    getState().player.instance.playVideo();
+    dispatch({ type: actions.PLAYER_PLAYED });
+  };
 }
 
+// Play new song
+export function updatePlayerVideo(id, index) {
+  return { type: actions.PLAYER_VIDEO_UPDATED, id, index };
+}
+
+// Fetching (buffering)
 export function startFetch() {
   return { type: actions.PLAYER_FETCHING_STARTED };
 }
@@ -36,15 +43,16 @@ export function finishFetch() {
   return { type: actions.PLAYER_FETCHING_FINISHED };
 }
 
+// Play next song and update playlist when the song finished
 export function finishPlayer() {
   return (dispatch, getState) => {
     const { player, playlist } = getState();
     const currentVideoIndex = player.currentVideoIndex;
 
     dispatch({ type: actions.PLAYER_FINISHED });
-    if (currentVideoIndex < playlist.data.length - 1) {
-      dispatch(updateVideo(playlist.data[currentVideoIndex + 1].id, currentVideoIndex + 1));
-      dispatch(updateActiveItem(playlist.data[currentVideoIndex + 1].uuid));
+    if (currentVideoIndex < playlist.items.length - 1) {
+      dispatch(updatePlayerVideo(playlist.items[currentVideoIndex + 1].id, currentVideoIndex + 1));
+      dispatch(updateActiveItemInPlaylist(playlist.items[currentVideoIndex + 1].uuid));
     }
   };
 }

@@ -2,8 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import YouTube from 'react-youtube';
 
-import { playPlayer, pausePlayer, initializePlayer } from '../reducers/playerReducer';
-import { youtubeTimeWatcher, youtubeStateWatcher } from '../utils/youtube';
+import { playPlayer, pausePlayer, registerPlayer, finishFetch, startFetch, finishPlayer } from '../reducers/playerReducer';
+import { youtubeTimeWatcher } from '../utils/youtube';
 
 import ProgressBar from 'react-progress-bar-plus';
 import PrevIcon from 'react-icons/lib/md/skip-previous';
@@ -17,25 +17,46 @@ class PlayerContainer extends React.Component {
     this.onYouTubeReady = this.onYouTubeReady.bind(this);
     this.handlePPButtonClick = this.handlePPButtonClick.bind(this);
     this.state = {
-      player: null,
       percent: 0,
     };
+  }
+
+  shouldComponentUpdate(nextProps) {
+    return !this.props.player.instance ||
+      this.props.playlist.activeItem.id !== nextProps.playlist.activeItem.id;
+  }
+
+  youtubeStateWatcher(player) {
+    const { dispatch } = this.props;
+    const { ENDED, PAUSED, BUFFERING } = YT.PlayerState;
+    let isBufferingStarted = false;
+
+    player.addEventListener('onStateChange', (e) => {
+      switch(e.data) {
+        case BUFFERING:
+          isBufferingStarted = true;
+          dispatch(startFetch());
+          break;
+        case PAUSED:
+          if (isBufferingStarted) {
+            dispatch(finishFetch());
+            isBufferingStarted = false;
+          }
+          break;
+        case ENDED:
+          dispatch(finishPlayer());
+          break;
+        default:
+          break;
+      }
+    });
   }
 
   onYouTubeReady(e) {
     const { dispatch } = this.props;
     const player = e.target;
-    const duration = player.getDuration();
-
-    dispatch(initializePlayer(player));
+    dispatch(registerPlayer(player));
     player.mute(); // For development
-
-    youtubeStateWatcher(player, dispatch);
-    youtubeTimeWatcher(player, (sec) => {
-      this.setState({ percent: (sec / duration) * 100 });
-    });
-
-    dispatch(playPlayer(player));
   }
 
   handlePPButtonClick() {
@@ -43,15 +64,29 @@ class PlayerContainer extends React.Component {
     const { dispatch } = this.props;
 
     if (isPaused) {
-      dispatch(playPlayer(instance));
+      playPlayer(instance);
     } else {
-      dispatch(pausePlayer(instance));
+      pausePlayer(instance);
     }
   }
 
+  playSong() {
+    const { dispatch } = this.props;
+    const { instance } = this.props.player;
+    const duration = instance.getDuration();
+
+    this.youtubeStateWatcher(instance);
+    youtubeTimeWatcher(instance, (sec) => {
+      this.setState({ percent: (sec / duration) * 100 });
+    });
+
+    dispatch(playPlayer(instance));
+  }
+
   render() {
-    const { player } = this.props;
+    const { player, playlist, dispatch } = this.props;
     const { isPaused, isFetching, currentVideoId, instance } = player;
+    const { activeItem } = playlist;
     const youtubeOptions = {
       height: '0',
       width: '0',
@@ -63,11 +98,11 @@ class PlayerContainer extends React.Component {
     const style = {};
     const isPlayerInitialized = !!player.instance;
 
+    // console.log('isPlayerInitialized', isPlayerInitialized);
     if (isPlayerInitialized) {
-      const videoId = player.instance.getVideoData().video_id;
-
+      this.playSong();
       // TODO: Thumbnail image can't be loaded
-      style.backgroundImage = `url(http://img.youtube.com/vi/${videoId}/maxresdefault.jpg)`;
+      style.backgroundImage = `url(http://img.youtube.com/vi/${activeItem.id}/maxresdefault.jpg)`;
     }
 
     return (
@@ -75,10 +110,10 @@ class PlayerContainer extends React.Component {
         className="player"
         style={style}
       >
-        {currentVideoId &&
+        {activeItem && activeItem.id &&
           <YouTube
             className="player__youtube"
-            videoId={currentVideoId}
+            videoId={activeItem.id}
             onReady={this.onYouTubeReady}
             opts={youtubeOptions}
           />
@@ -127,5 +162,6 @@ PlayerContainer.defaultProps = {};
 export default connect(
   (state) => ({
     player: state.player,
+    playlist: state.playlist,
   })
 )(PlayerContainer);

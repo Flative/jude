@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { searchVideos } from '../utils/youtube';
 import { SearchResult } from '../components';
-import { addPlaylist, removePlaylist } from '../reducers/playlistReducer';
+import { addItemToPlaylist, removeItemFromPlaylist } from '../reducers/playlistReducer';
 import SearchIcon from 'react-icons/lib/md/search';
 
 class SearchContainer extends React.Component {
@@ -63,7 +63,7 @@ class SearchContainer extends React.Component {
         <SearchResult
           query={query}
           items={searchResult}
-          handleOnClick={(id, title) => dispatch(addPlaylist(id, title))}
+          handleOnClick={(id, title) => dispatch(addItemToPlaylist(id, title))}
         />
       </div>
     );

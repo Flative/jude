@@ -1,11 +1,12 @@
 import React from 'react';
+import className from 'classnames';
 import ClearIcon from 'react-icons/lib/md/clear';
 
 class Playlist extends React.Component {
   render() {
     const {
       items,
-      activeItemUUID,
+      activeItem,
       onItemClick,
       onClearButtonClick,
     } = this.props;
@@ -19,11 +20,15 @@ class Playlist extends React.Component {
           {
             items.length
             ? items.map(item => {
-              const itemStatusClass = item.uuid === activeItemUUID ? 'playlist__item--active' : '';
+              const itemClass = className({
+                'playlist__item': true,
+                'playlist__item--active': activeItem && (activeItem.uuid === item.uuid),
+              });
               return (
                 <li
-                  className={`playlist__item ${itemStatusClass}`}
+                  className={itemClass}
                   key={item.uuid}
+                  onClick={() => onItemClick(item)}
                 >
                   {item.title}
                   <ClearIcon

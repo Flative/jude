@@ -24,7 +24,6 @@ class SearchResult extends React.Component {
                     onClick={() => handleOnClick(item.id.videoId, item.snippet.title)}
                   >
                     <PlusIcon />
-                    {/*&nbsp;Add to Playlist*/}
                   </div>
                 </div>
               </li>

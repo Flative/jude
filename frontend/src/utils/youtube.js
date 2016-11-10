@@ -78,6 +78,7 @@ export function youtubeStateWatcher(player, dispatch) {
         dispatch(startFetch());
         break;
       case PLAYING:
+        break;
       case PAUSED:
         if (isBufferingStarted) {
           dispatch(finishFetch());
@@ -87,6 +88,7 @@ export function youtubeStateWatcher(player, dispatch) {
       case ENDED:
         dispatch(finishPlayer());
       case CUED:
+        break;
       default:
         break;
     }
