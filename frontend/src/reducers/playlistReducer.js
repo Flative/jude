@@ -1,5 +1,5 @@
 import UUID from 'node-uuid';
-import { updatePlayerVideo } from './playerReducer';
+import { updatePlayerVideo, playPlayer } from './playerReducer';
 
 export const actions = {
   PLAYLIST_ADDED: 'PLAYLIST_ADDED',
@@ -16,7 +16,11 @@ export function addItemToPlaylist(id, title) {
     const index = activeItem && activeItem.index ? activeItem.index + 1 : 0;
     const item = { id, title, uuid, index };
 
-    dispatch({ type: actions.PLAYLIST_ADDED, item });
+    dispatch({
+      type: actions.PLAYLIST_ADDED,
+      doesNextItemExist: activeItem ? true : false,
+      item
+    });
 
     if (!activeItem) {
       dispatch(updateActiveItemInPlaylist(item));
@@ -52,6 +56,7 @@ export default (state = initialState, action) => {
     case actions.PLAYLIST_ADDED:
       return { ...state,
         items: [...state.items, action.item],
+        doesNextItemExist: action.doesNextItemExist,
       };
 
     case actions.PLAYLIST_REMOVED:

@@ -21,10 +21,10 @@ class PlayerContainer extends React.Component {
     };
   }
 
-  shouldComponentUpdate(nextProps) {
-    return !this.props.player.instance ||
-      this.props.playlist.activeItem.id !== nextProps.playlist.activeItem.id;
-  }
+  // shouldComponentUpdate(nextProps) {
+  //   return !this.props.player.instance ||
+  //     this.props.playlist.activeItem.id !== nextProps.playlist.activeItem.id;
+  // }
 
   youtubeStateWatcher(player) {
     const { dispatch } = this.props;
@@ -55,8 +55,18 @@ class PlayerContainer extends React.Component {
   onYouTubeReady(e) {
     const { dispatch } = this.props;
     const player = e.target;
+    const duration = player.getDuration();
+
     dispatch(registerPlayer(player));
     player.mute(); // For development
+
+
+    this.youtubeStateWatcher(player);
+    youtubeTimeWatcher(player, (sec) => {
+      this.setState({ percent: (sec / duration) * 100 });
+    });
+
+    dispatch(playPlayer(player));
   }
 
   handlePPButtonClick() {
@@ -71,16 +81,9 @@ class PlayerContainer extends React.Component {
   }
 
   playSong() {
-    const { dispatch } = this.props;
-    const { instance } = this.props.player;
-    const duration = instance.getDuration();
+    // const { dispatch } = this.props;
+    // const { instance } = this.props.player;
 
-    this.youtubeStateWatcher(instance);
-    youtubeTimeWatcher(instance, (sec) => {
-      this.setState({ percent: (sec / duration) * 100 });
-    });
-
-    dispatch(playPlayer(instance));
   }
 
   render() {
@@ -100,7 +103,6 @@ class PlayerContainer extends React.Component {
 
     // console.log('isPlayerInitialized', isPlayerInitialized);
     if (isPlayerInitialized) {
-      this.playSong();
       // TODO: Thumbnail image can't be loaded
       style.backgroundImage = `url(http://img.youtube.com/vi/${activeItem.id}/maxresdefault.jpg)`;
     }

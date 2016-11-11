@@ -2,7 +2,6 @@ import { updateActiveItemInPlaylist } from './playlistReducer';
 
 export const actions = {
   PLAYER_INITIALIZED: 'PLAYER_INITIALIZED',
-  PLAYER_VIDEO_UPDATED: 'PLAYER_VIDEO_UPDATED',
   PLAYER_PAUSED: 'PLAYER_PAUSED',
   PLAYER_PLAYED: 'PLAYER_PLAYED',
   PLAYER_FINISHED: 'PLAYER_FINISHED',
@@ -29,11 +28,6 @@ export function playPlayer() {
   };
 }
 
-// Play new song
-export function updatePlayerVideo(id, index) {
-  return { type: actions.PLAYER_VIDEO_UPDATED, id, index };
-}
-
 // Fetching (buffering)
 export function startFetch() {
   return { type: actions.PLAYER_FETCHING_STARTED };
@@ -47,20 +41,13 @@ export function finishFetch() {
 export function finishPlayer() {
   return (dispatch, getState) => {
     const { player, playlist } = getState();
-    const currentVideoIndex = player.currentVideoIndex;
 
     dispatch({ type: actions.PLAYER_FINISHED });
-    if (currentVideoIndex < playlist.items.length - 1) {
-      dispatch(updatePlayerVideo(playlist.items[currentVideoIndex + 1].id, currentVideoIndex + 1));
-      dispatch(updateActiveItemInPlaylist(playlist.items[currentVideoIndex + 1].uuid));
-    }
   };
 }
 
 export const initialState = {
   instance: null,
-  currentVideoId: null,
-  currentVideoIndex: null,
   isPaused: true,
   isFetching: true,
 };
@@ -71,14 +58,10 @@ export default (state = initialState, action) => {
       return { ...state,
         instance: action.instance,
       };
-    case actions.PLAYER_VIDEO_UPDATED:
-      return { ...state,
-        currentVideoId: action.id,
-      };
     case actions.PLAYER_FINISHED:
       return { ...state,
-        currentVideoId: null,
         isPaused: true,
+        instance: null,
       };
     case actions.PLAYER_PLAYED:
       return { ...state,
