@@ -23,14 +23,14 @@ export function searchVideos(query) {
   }).then(res => res.data.items);
 }
 
-export function youtubeTimeWatcher(player, cb) {
+export function youtubeTimeWatcher(youtubePlayer, cb) {
   const { ENDED, PLAYING, PAUSED, BUFFERING, CUED } = YT.PlayerState;
 
   let prevTime = -1;
   let currentTime = 0;
   const updateTime = () => {
     prevTime = currentTime;
-    currentTime = Math.floor(player.getCurrentTime());
+    currentTime = Math.floor(youtubePlayer.getCurrentTime());
     if (Math.abs(prevTime - currentTime) > 0) {
       cb(currentTime);
     }
@@ -41,7 +41,7 @@ export function youtubeTimeWatcher(player, cb) {
     stop: () => clearTimeout(timer.handler),
   };
 
-  player.addEventListener('onStateChange', (e) => {
+  youtubePlayer.addEventListener('onStateChange', (e) => {
     switch(e.data) {
       case PLAYING:
         console.log('PLAYING');
@@ -54,12 +54,13 @@ export function youtubeTimeWatcher(player, cb) {
       case PAUSED:
         timer.stop();
         updateTime();
-        console.log('PAUSED:', player.getCurrentTime(), currentTime);
+        console.log('PAUSED:', youtubePlayer.getCurrentTime(), currentTime);
         break;
       case BUFFERING:
         console.log('BUFFERING');
         break;
       case CUED:
+        youtubePlayer.playVideo();
         console.log('CUED');
         break;
       default: break;

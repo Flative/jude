@@ -1,4 +1,5 @@
 import { updateActiveItemInPlaylist } from './playlistReducer';
+import { youtubeTimeWatcher } from '../utils/youtube';
 
 export const actions = {
   PLAYER_INITIALIZED: 'PLAYER_INITIALIZED',
@@ -8,30 +9,72 @@ export const actions = {
   PLAYER_FINISHED: 'PLAYER_FINISHED',
   PLAYER_FETCHING_STARTED: 'PLAYER_FETCHING_STARTED',
   PLAYER_FETCHING_FINISHED: 'PLAYER_FETCHING_FINISHED',
+  PLAYER_UPDATE_PROGRESSBAR_PERCENTAGE: 'PLAYER_UPDATE_PROGRESSBAR_PERCENTAGE',
 };
 
 // Store player instance to redux state tree when initializing
-export function registerPlayer(instance) {
-  return { type: actions.PLAYER_INITIALIZED, instance };
+export function registerPlayer(youtubePlayer) {
+  return (dispatch, getState) => {
+    const { ENDED, PAUSED, BUFFERING } = YT.PlayerState;
+    let isBufferingStarted = false;
+
+    youtubeTimeWatcher(youtubePlayer, (sec) => {
+      const duration = youtubePlayer.getDuration();
+      dispatch(updateProgressBarPercentage((sec / duration) * 100));
+    });
+
+    youtubePlayer.addEventListener('onStateChange', (e) => {
+      switch(e.data) {
+        case BUFFERING:
+          isBufferingStarted = true;
+          dispatch(startFetch());
+          break;
+        case PAUSED:
+          if (isBufferingStarted) {
+            dispatch(finishFetch());
+            isBufferingStarted = false;
+          }
+          break;
+        case ENDED:
+          dispatch(finishPlayer());
+          break;
+        default:
+          break;
+      }
+    });
+
+    dispatch({ type: actions.PLAYER_INITIALIZED, youtubePlayer });
+  };
 }
 
 export function pausePlayer() {
   return (dispatch, getState) => {
-    getState().player.instance.pauseVideo();
+    getState().player.youtubePlayer.pauseVideo();
     dispatch({ type: actions.PLAYER_PAUSED });
   };
 }
 
-export function playPlayer() {
+export function playPlayer(isNewVideo) {
   return (dispatch, getState) => {
-    getState().player.instance.playVideo();
+    const youtubePlayer = getState().player.youtubePlayer;
+
     dispatch({ type: actions.PLAYER_PLAYED });
   };
 }
 
 // Play new song
 export function updatePlayerVideo(id, index) {
-  return { type: actions.PLAYER_VIDEO_UPDATED, id, index };
+  return (dispatch, getState) => {
+    dispatch({ type: actions.PLAYER_VIDEO_UPDATED, id, index });
+    dispatch(playPlayer(true));
+  };
+}
+
+export function updateProgressBarPercentage(progressBarPercentage) {
+  return {
+    type: actions.PLAYER_UPDATE_PROGRESSBAR_PERCENTAGE,
+    progressBarPercentage,
+  };
 }
 
 // Fetching (buffering)
@@ -58,9 +101,8 @@ export function finishPlayer() {
 }
 
 export const initialState = {
-  instance: null,
-  currentVideoId: null,
-  currentVideoIndex: null,
+  youtubePlayer: null,
+  progressBarPercentage: 0,
   isPaused: true,
   isFetching: true,
 };
@@ -69,12 +111,12 @@ export default (state = initialState, action) => {
   switch (action.type) {
     case actions.PLAYER_INITIALIZED:
       return { ...state,
-        instance: action.instance,
+        youtubePlayer: action.youtubePlayer,
       };
-    case actions.PLAYER_VIDEO_UPDATED:
-      return { ...state,
-        currentVideoId: action.id,
-      };
+    // case actions.PLAYER_VIDEO_UPDATED:
+    //   return { ...state,
+    //     currentVideoId: action.id,
+    //   };
     case actions.PLAYER_FINISHED:
       return { ...state,
         currentVideoId: null,
@@ -95,6 +137,10 @@ export default (state = initialState, action) => {
     case actions.PLAYER_FETCHING_FINISHED:
       return { ...state,
         isFetching: false,
+      };
+    case actions.PLAYER_UPDATE_PROGRESSBAR_PERCENTAGE:
+      return { ...state,
+        progressBarPercentage: action.progressBarPercentage,
       };
     default:
       return state;

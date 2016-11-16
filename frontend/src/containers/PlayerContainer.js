@@ -2,8 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import YouTube from 'react-youtube';
 
-import { playPlayer, pausePlayer, registerPlayer, finishFetch, startFetch, finishPlayer } from '../reducers/playerReducer';
-import { youtubeTimeWatcher } from '../utils/youtube';
+import { playPlayer, pausePlayer, registerPlayer, finishFetch, startFetch, finishPlayer, updatePlayerVideo } from '../reducers/playerReducer';
 
 import ProgressBar from 'react-progress-bar-plus';
 import PrevIcon from 'react-icons/lib/md/skip-previous';
@@ -11,81 +10,40 @@ import NextIcon from 'react-icons/lib/md/skip-next';
 import PlayIcon from 'react-icons/lib/md/play-circle-outline';
 import PauseIcon from 'react-icons/lib/md/pause-circle-outline';
 
+
 class PlayerContainer extends React.Component {
   constructor(props) {
     super(props);
     this.onYouTubeReady = this.onYouTubeReady.bind(this);
     this.handlePPButtonClick = this.handlePPButtonClick.bind(this);
-    this.state = {
-      percent: 0,
-    };
-  }
-
-  shouldComponentUpdate(nextProps) {
-    return !this.props.player.instance ||
-      this.props.playlist.activeItem.id !== nextProps.playlist.activeItem.id;
-  }
-
-  youtubeStateWatcher(player) {
-    const { dispatch } = this.props;
-    const { ENDED, PAUSED, BUFFERING } = YT.PlayerState;
-    let isBufferingStarted = false;
-
-    player.addEventListener('onStateChange', (e) => {
-      switch(e.data) {
-        case BUFFERING:
-          isBufferingStarted = true;
-          dispatch(startFetch());
-          break;
-        case PAUSED:
-          if (isBufferingStarted) {
-            dispatch(finishFetch());
-            isBufferingStarted = false;
-          }
-          break;
-        case ENDED:
-          dispatch(finishPlayer());
-          break;
-        default:
-          break;
-      }
-    });
   }
 
   onYouTubeReady(e) {
     const { dispatch } = this.props;
-    const player = e.target;
-    dispatch(registerPlayer(player));
-    player.mute(); // For development
+    const youtubePlayer = e.target;
+    dispatch(registerPlayer(youtubePlayer));
   }
 
   handlePPButtonClick() {
-    const { isPaused, instance } = this.props.player;
+    const { isPaused, youtubePlayer } = this.props.player;
     const { dispatch } = this.props;
 
     if (isPaused) {
-      playPlayer(instance);
+      playPlayer(youtubePlayer);
     } else {
-      pausePlayer(instance);
+      pausePlayer(youtubePlayer);
     }
   }
 
-  playSong() {
-    const { dispatch } = this.props;
-    const { instance } = this.props.player;
-    const duration = instance.getDuration();
-
-    this.youtubeStateWatcher(instance);
-    youtubeTimeWatcher(instance, (sec) => {
-      this.setState({ percent: (sec / duration) * 100 });
-    });
-
-    dispatch(playPlayer(instance));
+  componentWillUpdate(nextProps, nextState) {
+    if (this.props.playlist.activeItem !== nextProps.playlist.activeItem) {
+      const { id, index } = nextProps.playlist.activeItem;
+      this.props.dispatch(updatePlayerVideo(id, index));
+    }
   }
-
   render() {
     const { player, playlist, dispatch } = this.props;
-    const { isPaused, isFetching, currentVideoId, instance } = player;
+    const { isPaused, isFetching, currentVideoId, youtubePlayer, progressBarPercentage } = player;
     const { activeItem } = playlist;
     const youtubeOptions = {
       height: '0',
@@ -96,11 +54,7 @@ class PlayerContainer extends React.Component {
     };
 
     const style = {};
-    const isPlayerInitialized = !!player.instance;
-
-    // console.log('isPlayerInitialized', isPlayerInitialized);
-    if (isPlayerInitialized) {
-      this.playSong();
+    if (activeItem) {
       // TODO: Thumbnail image can't be loaded
       style.backgroundImage = `url(http://img.youtube.com/vi/${activeItem.id}/maxresdefault.jpg)`;
     }
@@ -110,16 +64,15 @@ class PlayerContainer extends React.Component {
         className="player"
         style={style}
       >
-        {activeItem && activeItem.id &&
-          <YouTube
-            className="player__youtube"
-            videoId={activeItem.id}
-            onReady={this.onYouTubeReady}
-            opts={youtubeOptions}
-          />
+        <YouTube
+          className="player__youtube"
+          onReady={this.onYouTubeReady}
+          opts={youtubeOptions}
+          videoId={activeItem ? activeItem.id : null}
+        />
         }
         <h3 className="player__title">
-          {isPlayerInitialized && instance.getVideoData().title}
+          {activeItem && youtubePlayer.getVideoData().title}
         </h3>
         <div className="player__cover"></div>
         <div className="player__controller">
@@ -139,7 +92,7 @@ class PlayerContainer extends React.Component {
           </div>
           <ProgressBar
             className="player__progressbar"
-            percent={this.state.percent}
+            percent={progressBarPercentage}
             spinner={false}
             onTop={false}
           />
