@@ -27,11 +27,11 @@ class PlayerContainer extends React.Component {
   handlePPButtonClick() {
     const { isPaused, youtubePlayer } = this.props.player;
     const { dispatch } = this.props;
-
+    
     if (isPaused) {
-      playPlayer(youtubePlayer);
+      dispatch(playPlayer(youtubePlayer));
     } else {
-      pausePlayer(youtubePlayer);
+      dispatch(pausePlayer(youtubePlayer));
     }
   }
 
@@ -53,8 +53,6 @@ class PlayerContainer extends React.Component {
       },
     };
 
-    console.log('rendered');
-
     const style = {};
     if (activeItem) {
       // TODO: Thumbnail image can't be loaded
@@ -73,7 +71,7 @@ class PlayerContainer extends React.Component {
           videoId={activeItem ? activeItem.id : null}
         />
         <h3 className="player__title">
-          {activeItem ? youtubePlayer.getVideoData().title : 'empty'}
+          {activeItem ? youtubePlayer.getVideoData().title : ''}
         </h3>
         <div className="player__cover"></div>
         <div className="player__controller">
