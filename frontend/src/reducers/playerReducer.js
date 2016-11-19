@@ -1,5 +1,6 @@
 import { updateActiveItemInPlaylist } from './playlistReducer';
 import { youtubeTimeWatcher } from '../utils/youtube';
+import { sleep } from '../utils/util';
 
 export const actions = {
   PLAYER_INITIALIZED: 'PLAYER_INITIALIZED',
@@ -107,13 +108,6 @@ export function updatePlayerVideo(id, index) {
   };
 }
 
-export function updateProgressBarPercentage(progressBarPercentage) {
-  return {
-    type: actions.PLAYER_UPDATE_PROGRESSBAR_PERCENTAGE,
-    progressBarPercentage,
-  };
-}
-
 // Fetching (buffering)
 export function startFetch() {
   return { type: actions.PLAYER_FETCHING_STARTED };
@@ -127,19 +121,23 @@ export function finishFetch() {
 export function finishPlayer() {
   return (dispatch, getState) => {
     const { player, playlist } = getState();
-    const { youtubePlayer } = player;
+    const { youtubePlayer, onPercentageChange } = player;
     const { items, activeItem } = playlist;
 
+    onPercentageChange(99.9);
     dispatch({ type: actions.PLAYER_FINISHED });
-    if (playlist.doesNextItemExist) {
-      const nextItem = items[activeItem.index + 1];
-      dispatch(updateActiveItemInPlaylist(nextItem));
 
-      if (nextItem.id === activeItem.id) {
-        youtubePlayer.seekTo(0);
-        youtubePlayer.playVideo();
-        dispatch(playPlayer());
-      }
+    if (playlist.doesNextItemExist) {
+      sleep(200).then(() => {
+        const nextItem = items[activeItem.index + 1];
+        dispatch(updateActiveItemInPlaylist(nextItem));
+
+        if (nextItem.id === activeItem.id) {
+          youtubePlayer.seekTo(0);
+          youtubePlayer.playVideo();
+          dispatch(playPlayer());
+        }
+      });
     }
   };
 }

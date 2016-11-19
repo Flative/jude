@@ -38,8 +38,10 @@ export function removeItemFromPlaylist(uuid) {
 export function updateActiveItemInPlaylist(item) {
   return (dispatch, getState) => {
     const { playlist, player } = getState();
-    const { youtubePlayer } = player;
+    const { youtubePlayer, onPercentageChange } = player;
     const { activeItem, items } = playlist;
+
+    onPercentageChange(0);
 
     dispatch({
       type: actions.PLAYLIST_ACTIVE_ITEM_UPDATED,
