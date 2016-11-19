@@ -10,10 +10,10 @@ export const actions = {
 export function addItemToPlaylist(id, title) {
   return (dispatch, getState) => {
     const { playlist } = getState();
-    const { activeItem } = playlist;
+    const { activeItem, items } = playlist;
 
     const uuid = UUID.v4();
-    const index = activeItem && activeItem.index ? activeItem.index + 1 : 0;
+    const index = activeItem ? items.length : 0;
     const item = { id, title, uuid, index };
 
     dispatch({
@@ -37,11 +37,21 @@ export function removeItemFromPlaylist(uuid) {
 
 export function updateActiveItemInPlaylist(item) {
   return (dispatch, getState) => {
+    const { playlist, player } = getState();
+    const { youtubePlayer } = player;
+    const { activeItem, items } = playlist;
+
     dispatch({
       type: actions.PLAYLIST_ACTIVE_ITEM_UPDATED,
-      doesNextItemExist: !!getState().playlist.items[item.index + 1],
+      doesNextItemExist: !!items[item.index + 1],
       item,
     });
+
+    if (activeItem && (item.id === activeItem.id)) {
+      youtubePlayer.seekTo(0);
+      youtubePlayer.playVideo();
+      dispatch(playPlayer());
+    }
   };
 }
 

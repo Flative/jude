@@ -2,9 +2,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import YouTube from 'react-youtube';
 
-import { playPlayer, pausePlayer, registerPlayer, finishFetch, startFetch, finishPlayer, updatePlayerVideo } from '../reducers/playerReducer';
+import { ProgressBar } from '../components';
+import { playPlayer, pausePlayer, registerPlayer, finishFetch, startFetch, finishPlayer, registerProgressBar } from '../reducers/playerReducer';
 
-import ProgressBar from 'react-progress-bar-plus';
 import PrevIcon from 'react-icons/lib/md/skip-previous';
 import NextIcon from 'react-icons/lib/md/skip-next';
 import PlayIcon from 'react-icons/lib/md/play-circle-outline';
@@ -38,9 +38,9 @@ class PlayerContainer extends React.Component {
   componentWillUpdate(nextProps, nextState) {
     if (this.props.playlist.activeItem !== nextProps.playlist.activeItem) {
       const { id, index } = nextProps.playlist.activeItem;
-      this.props.dispatch(updatePlayerVideo(id, index));
     }
   }
+
   render() {
     const { player, playlist, dispatch } = this.props;
     const { isPaused, isFetching, currentVideoId, youtubePlayer, progressBarPercentage } = player;
@@ -52,6 +52,8 @@ class PlayerContainer extends React.Component {
         autoplay: false,
       },
     };
+
+    console.log('rendered');
 
     const style = {};
     if (activeItem) {
@@ -70,9 +72,8 @@ class PlayerContainer extends React.Component {
           opts={youtubeOptions}
           videoId={activeItem ? activeItem.id : null}
         />
-        }
         <h3 className="player__title">
-          {activeItem && youtubePlayer.getVideoData().title}
+          {activeItem ? youtubePlayer.getVideoData().title : 'empty'}
         </h3>
         <div className="player__cover"></div>
         <div className="player__controller">
@@ -90,12 +91,11 @@ class PlayerContainer extends React.Component {
             }
             <NextIcon className="player__btn-next">next</NextIcon>
           </div>
+
           <ProgressBar
-            className="player__progressbar"
-            percent={progressBarPercentage}
-            spinner={false}
-            onTop={false}
+            registerProgressBar={onPercentageChange => dispatch(registerProgressBar(onPercentageChange))}
           />
+
           <div className="player__controller__right">
 
           </div>

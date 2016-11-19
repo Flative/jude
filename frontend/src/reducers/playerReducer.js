@@ -7,6 +7,7 @@ export const actions = {
   PLAYER_PAUSED: 'PLAYER_PAUSED',
   PLAYER_PLAYED: 'PLAYER_PLAYED',
   PLAYER_FINISHED: 'PLAYER_FINISHED',
+  PLAYER_REGISTER_PROGRESSBAR: 'PLAYER_REGISTER_PROGRESSBAR',
   PLAYER_FETCHING_STARTED: 'PLAYER_FETCHING_STARTED',
   PLAYER_FETCHING_FINISHED: 'PLAYER_FETCHING_FINISHED',
   PLAYER_UPDATE_PROGRESSBAR_PERCENTAGE: 'PLAYER_UPDATE_PROGRESSBAR_PERCENTAGE',
@@ -15,29 +16,64 @@ export const actions = {
 // Store player instance to redux state tree when initializing
 export function registerPlayer(youtubePlayer) {
   return (dispatch, getState) => {
-    const { ENDED, PAUSED, BUFFERING } = YT.PlayerState;
-    let isBufferingStarted = false;
+    const { ENDED, PLAYING, PAUSED, BUFFERING, CUED } = YT.PlayerState;
+    const { player } = getState();
+    const onPercentageChange = player.onPercentageChange;
 
-    youtubeTimeWatcher(youtubePlayer, (sec) => {
-      const duration = youtubePlayer.getDuration();
-      dispatch(updateProgressBarPercentage((sec / duration) * 100));
-    });
+    let isBufferingStarted = false;
+    let prevTime = -1;
+    let currentTime = 0;
+
+    const updateTime = () => {
+      prevTime = currentTime;
+      currentTime = Math.floor(youtubePlayer.getCurrentTime());
+      if (Math.abs(prevTime - currentTime) > 0) {
+        const duration = youtubePlayer.getDuration();
+        onPercentageChange((currentTime / duration) * 100);
+        // dispatch(updateProgressBarPercentage((currentTime / duration) * 100));
+      }
+    };
+
+    const timer = {
+      handler: null,
+      start: () => timer.handler = setInterval(() => updateTime(), 100),
+      stop: () => clearTimeout(timer.handler),
+    };
 
     youtubePlayer.addEventListener('onStateChange', (e) => {
       switch(e.data) {
+        case PLAYING:
+          console.log('PLAYING');
+          timer.stop();
+          timer.start();
+          dispatch(playPlayer());
+          break;
+
         case BUFFERING:
           isBufferingStarted = true;
           dispatch(startFetch());
           break;
+
         case PAUSED:
+          timer.stop();
+          updateTime();
+          console.log('PAUSED:', youtubePlayer.getCurrentTime(), currentTime);
           if (isBufferingStarted) {
             dispatch(finishFetch());
             isBufferingStarted = false;
           }
           break;
+
         case ENDED:
+          console.log('ENDED');
           dispatch(finishPlayer());
           break;
+
+        case CUED:
+          youtubePlayer.playVideo();
+          console.log('CUED');
+          break;
+
         default:
           break;
       }
@@ -45,6 +81,10 @@ export function registerPlayer(youtubePlayer) {
 
     dispatch({ type: actions.PLAYER_INITIALIZED, youtubePlayer });
   };
+}
+
+export function registerProgressBar(onPercentageChange) {
+  return { type: actions.PLAYER_REGISTER_PROGRESSBAR, onPercentageChange };
 }
 
 export function pausePlayer() {
@@ -56,8 +96,6 @@ export function pausePlayer() {
 
 export function playPlayer(isNewVideo) {
   return (dispatch, getState) => {
-    const youtubePlayer = getState().player.youtubePlayer;
-
     dispatch({ type: actions.PLAYER_PLAYED });
   };
 }
@@ -65,8 +103,7 @@ export function playPlayer(isNewVideo) {
 // Play new song
 export function updatePlayerVideo(id, index) {
   return (dispatch, getState) => {
-    dispatch({ type: actions.PLAYER_VIDEO_UPDATED, id, index });
-    dispatch(playPlayer(true));
+    // dispatch(playPlayer(true));
   };
 }
 
@@ -90,19 +127,26 @@ export function finishFetch() {
 export function finishPlayer() {
   return (dispatch, getState) => {
     const { player, playlist } = getState();
-    const currentVideoIndex = player.currentVideoIndex;
+    const { youtubePlayer } = player;
+    const { items, activeItem } = playlist;
 
     dispatch({ type: actions.PLAYER_FINISHED });
-    if (currentVideoIndex < playlist.items.length - 1) {
-      dispatch(updatePlayerVideo(playlist.items[currentVideoIndex + 1].id, currentVideoIndex + 1));
-      dispatch(updateActiveItemInPlaylist(playlist.items[currentVideoIndex + 1].uuid));
+    if (playlist.doesNextItemExist) {
+      const nextItem = items[activeItem.index + 1];
+      dispatch(updateActiveItemInPlaylist(nextItem));
+
+      if (nextItem.id === activeItem.id) {
+        youtubePlayer.seekTo(0);
+        youtubePlayer.playVideo();
+        dispatch(playPlayer());
+      }
     }
   };
 }
 
 export const initialState = {
   youtubePlayer: null,
-  progressBarPercentage: 0,
+  onPercentageChange: null,
   isPaused: true,
   isFetching: true,
 };
@@ -138,9 +182,9 @@ export default (state = initialState, action) => {
       return { ...state,
         isFetching: false,
       };
-    case actions.PLAYER_UPDATE_PROGRESSBAR_PERCENTAGE:
+    case actions.PLAYER_REGISTER_PROGRESSBAR:
       return { ...state,
-        progressBarPercentage: action.progressBarPercentage,
+        onPercentageChange: action.onPercentageChange,
       };
     default:
       return state;
