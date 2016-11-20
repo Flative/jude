@@ -51,13 +51,14 @@
 
   &__btn-pp {
     margin: 0 20px;
-    font-size: 34px;
+    font-size: 30px;
     cursor: pointer;
   }
 
   &__btn-prev,
   &__btn-next {
     font-size: 24px;
+    cursor: pointer;
   }
 
   .react-progress-bar.player__progressbar {

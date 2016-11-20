@@ -16,6 +16,7 @@ export const actions = {
 
 // Store player instance to redux state tree when initializing
 export function registerPlayer(youtubePlayer) {
+  window.player = youtubePlayer;
   return (dispatch, getState) => {
     const { ENDED, PLAYING, PAUSED, BUFFERING, CUED } = YT.PlayerState;
     const { player } = getState();

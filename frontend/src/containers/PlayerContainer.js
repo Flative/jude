@@ -4,6 +4,7 @@ import YouTube from 'react-youtube';
 
 import { ProgressBar } from '../components';
 import { playPlayer, pausePlayer, registerPlayer, finishFetch, startFetch, finishPlayer, registerProgressBar } from '../reducers/playerReducer';
+import { updateActiveItemInPlaylist } from '../reducers/playlistReducer';
 
 import PrevIcon from 'react-icons/lib/md/skip-previous';
 import NextIcon from 'react-icons/lib/md/skip-next';
@@ -16,6 +17,8 @@ class PlayerContainer extends React.Component {
     super(props);
     this.onYouTubeReady = this.onYouTubeReady.bind(this);
     this.handlePPButtonClick = this.handlePPButtonClick.bind(this);
+    this.handlePrevButtonClick = this.handlePrevButtonClick.bind(this);
+    this.handleNextButtonClick = this.handleNextButtonClick.bind(this);
   }
 
   onYouTubeReady(e) {
@@ -24,10 +27,34 @@ class PlayerContainer extends React.Component {
     dispatch(registerPlayer(youtubePlayer));
   }
 
+  handlePrevButtonClick() {
+    const { player, playlist, dispatch } = this.props;
+    const prevItem = playlist.items[playlist.activeItem.index - 1];
+
+    if (!prevItem) {
+      // TODO: Should give a feedback to user
+      console.log('Nothing there');
+      return;
+    }
+
+    dispatch(updateActiveItemInPlaylist(prevItem));
+  }
+
+  handleNextButtonClick() {
+    const { player, playlist, dispatch } = this.props;
+
+    if (!playlist.doesNextItemExist) {
+      // TODO: Should give a feedback to user
+      console.log('Nothing there');
+      return;
+    }
+    dispatch(updateActiveItemInPlaylist(playlist.items[playlist.activeItem.index + 1]));
+  }
+
   handlePPButtonClick() {
     const { isPaused, youtubePlayer } = this.props.player;
     const { dispatch } = this.props;
-    
+
     if (isPaused) {
       dispatch(playPlayer(youtubePlayer));
     } else {
@@ -76,7 +103,10 @@ class PlayerContainer extends React.Component {
         <div className="player__cover"></div>
         <div className="player__controller">
           <div className="player__controller__left">
-            <PrevIcon className="player__btn-prev">prev</PrevIcon>
+            <PrevIcon
+              className="player__btn-prev"
+              onClick={this.handlePrevButtonClick}
+            />
             {isPaused
               ? <PlayIcon
                 className="player__btn-pp"
@@ -87,7 +117,10 @@ class PlayerContainer extends React.Component {
                 onClick={this.handlePPButtonClick}
               />
             }
-            <NextIcon className="player__btn-next">next</NextIcon>
+            <NextIcon
+              className="player__btn-next"
+              onClick={this.handleNextButtonClick}
+            />
           </div>
 
           <ProgressBar
