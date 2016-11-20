@@ -8,17 +8,16 @@ import { SearchContainer, PlayerContainer } from './';
 class AppContainer extends React.Component {
   constructor(props) {
     super(props);
-    this.handlePlaylistClearButtonClick = this.handlePlaylistClearButtonClick.bind(this);
+    this.handlePlaylistRemoveButtonClick = this.handlePlaylistRemoveButtonClick.bind(this);
     this.handlePlaylistItemClick = this.handlePlaylistItemClick.bind(this);
   }
 
-  handlePlaylistClearButtonClick(uuid) {
-    this.props.removeSong(uuid);
+  handlePlaylistRemoveButtonClick(item) {
+    this.props.removeItemFromPlaylist(item);
   }
 
   handlePlaylistItemClick(item) {
     this.props.updateActiveItemInPlaylist(item);
-    // this.props.updatePlayerVideo
   }
 
   render() {
@@ -34,7 +33,7 @@ class AppContainer extends React.Component {
           items={playlist.items}
           activeItem={playlist.activeItem}
           onItemClick={this.handlePlaylistItemClick}
-          onClearButtonClick={this.handlePlaylistClearButtonClick}
+          onRemoveButtonClick={this.handlePlaylistRemoveButtonClick}
         />
         {children}
       </div>

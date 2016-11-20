@@ -8,7 +8,7 @@ class Playlist extends React.Component {
       items,
       activeItem,
       onItemClick,
-      onClearButtonClick,
+      onRemoveButtonClick,
     } = this.props;
 
     return (
@@ -28,12 +28,18 @@ class Playlist extends React.Component {
                 <li
                   className={itemClass}
                   key={item.uuid}
-                  onClick={() => onItemClick(item)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onItemClick(item);
+                  }}
                 >
                   {item.title}
                   <ClearIcon
                     className="playlist__item__btn-clear"
-                    onClick={() => onClearButtonClick(item.uuid)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onRemoveButtonClick(item);
+                    }}
                   />
                 </li>
               );

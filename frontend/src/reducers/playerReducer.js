@@ -1,4 +1,4 @@
-import { updateActiveItemInPlaylist } from './playlistReducer';
+import { updateActiveItemInPlaylist, getNextItem, getActiveItemIndex } from './playlistReducer';
 import { youtubeTimeWatcher } from '../utils/youtube';
 import { sleep } from '../utils/util';
 
@@ -72,8 +72,10 @@ export function registerPlayer(youtubePlayer) {
           break;
 
         case CUED:
-          youtubePlayer.playVideo();
           console.log('CUED');
+          if (getState().playlist.activeItem) {
+            youtubePlayer.playVideo();
+          }
           break;
 
         default:
@@ -130,7 +132,7 @@ export function finishPlayer() {
 
     if (playlist.doesNextItemExist) {
       sleep(200).then(() => {
-        const nextItem = items[activeItem.index + 1];
+        const nextItem = getNextItem(playlist);
         dispatch(updateActiveItemInPlaylist(nextItem));
 
         if (nextItem.id === activeItem.id) {
@@ -139,6 +141,8 @@ export function finishPlayer() {
           dispatch(playPlayer());
         }
       });
+    } else {
+      dispatch(updateActiveItemInPlaylist(null));
     }
   };
 }

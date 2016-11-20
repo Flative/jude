@@ -4,7 +4,7 @@ import YouTube from 'react-youtube';
 
 import { ProgressBar } from '../components';
 import { playPlayer, pausePlayer, registerPlayer, finishFetch, startFetch, finishPlayer, registerProgressBar } from '../reducers/playerReducer';
-import { updateActiveItemInPlaylist } from '../reducers/playlistReducer';
+import { updateActiveItemInPlaylist, getNextItem, getPrevItem } from '../reducers/playlistReducer';
 
 import PrevIcon from 'react-icons/lib/md/skip-previous';
 import NextIcon from 'react-icons/lib/md/skip-next';
@@ -29,7 +29,7 @@ class PlayerContainer extends React.Component {
 
   handlePrevButtonClick() {
     const { player, playlist, dispatch } = this.props;
-    const prevItem = playlist.items[playlist.activeItem.index - 1];
+    const prevItem = getPrevItem(playlist);
 
     if (!prevItem) {
       // TODO: Should give a feedback to user
@@ -42,29 +42,31 @@ class PlayerContainer extends React.Component {
 
   handleNextButtonClick() {
     const { player, playlist, dispatch } = this.props;
+    const nextItem = getNextItem(playlist);
 
-    if (!playlist.doesNextItemExist) {
+    if (!nextItem) {
       // TODO: Should give a feedback to user
       console.log('Nothing there');
       return;
     }
-    dispatch(updateActiveItemInPlaylist(playlist.items[playlist.activeItem.index + 1]));
+
+    dispatch(updateActiveItemInPlaylist(nextItem));
   }
 
   handlePPButtonClick() {
-    const { isPaused, youtubePlayer } = this.props.player;
-    const { dispatch } = this.props;
+    const { dispatch, player, playlist } = this.props;
+    const { isPaused, youtubePlayer } = player;
+
+    if (!playlist.activeItem) {
+      // TODO: Should give a feedback to user
+      console.log('Nothing there');
+      return;
+    }
 
     if (isPaused) {
       dispatch(playPlayer(youtubePlayer));
     } else {
       dispatch(pausePlayer(youtubePlayer));
-    }
-  }
-
-  componentWillUpdate(nextProps, nextState) {
-    if (this.props.playlist.activeItem !== nextProps.playlist.activeItem) {
-      const { id, index } = nextProps.playlist.activeItem;
     }
   }
 
@@ -83,7 +85,8 @@ class PlayerContainer extends React.Component {
     const style = {};
     if (activeItem) {
       // TODO: Thumbnail image can't be loaded
-      style.backgroundImage = `url(http://img.youtube.com/vi/${activeItem.id}/maxresdefault.jpg)`;
+      // style.backgroundImage = `url(http://img.youtube.com/vi/${activeItem.id}/maxresdefault.jpg)`;
+      style.backgroundImage = `url(https://i.ytimg.com/vi/${activeItem.id}/hqdefault.jpg)`;
     }
 
     return (
