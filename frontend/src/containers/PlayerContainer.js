@@ -69,7 +69,8 @@ class PlayerContainer extends React.Component {
     }
 
     if (isPaused) {
-      dispatch(playPlayer(youtubePlayer));
+      // TODO: Delegate playing song to action creator
+      youtubePlayer.playVideo();
     } else {
       dispatch(pausePlayer(youtubePlayer));
     }
