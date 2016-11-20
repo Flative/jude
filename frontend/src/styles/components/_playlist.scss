@@ -30,6 +30,7 @@
     overflow: hidden;
     padding-right: 40px;
     cursor: pointer;
+    user-select: none;
 
     &__btn-clear {
       position: absolute;
@@ -61,6 +62,7 @@
   &__body {
     position: relative;
     height: calc(100% - #{$panel-header-height});
+    overflow-y: auto;
   }
 
   &__blankslate {
