@@ -118,7 +118,7 @@ class PlayerContainer extends React.Component {
 
     const style = {};
     if (activeItem) {
-      style.backgroundImage = `url(https://i.ytimg.com/vi/${activeItem.id}/hqdefault.jpg)`;
+      style.backgroundImage = `url(https://i.ytimg.com/vi/${activeItem.id}/maxresdefault.jpg)`;
     }
 
     const shuffleButtonClass = classNames({
@@ -184,8 +184,8 @@ class PlayerContainer extends React.Component {
                 onClick={this.handleRepeatButtonClick}
               />
               : <RepeatIcon
-              className={repeatButtonClass}
-              onClick={this.handleRepeatButtonClick}
+                className={repeatButtonClass}
+                onClick={this.handleRepeatButtonClick}
               />
             }
           </div>

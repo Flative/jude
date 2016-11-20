@@ -4,7 +4,7 @@ html, body {
   font-family: 'Spoqa Han Sans';
   font-weight: lighter;
   overflow-y: hidden;
-  //background-color: #efefef;
+  user-select: none;
 }
 
 *, *:before, *:after {

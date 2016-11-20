@@ -18,7 +18,8 @@ class SearchContainer extends React.Component {
   }
 
   componentDidMount() {
-    this.search('3초를');
+    // For development
+    // this.search('3초를');
   }
 
   handleSearchInputKeyPress(e) {
