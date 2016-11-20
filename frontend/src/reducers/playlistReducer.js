@@ -5,6 +5,11 @@ export const actions = {
   PLAYLIST_ITEM_ADDED: 'PLAYLIST_ITEM_ADDED',
   PLAYLIST_ITEM_REMOVED: 'PLAYLIST_ITEM_REMOVED',
   PLAYLIST_ACTIVE_ITEM_UPDATED: 'PLAYLIST_ACTIVE_ITEM_UPDATED',
+  PLAYLIST_SHUFFLE_ENABLED: 'PLAYLIST_SHUFFLE_ENABLED',
+  PLAYLIST_SHUFFLE_DISABLED: 'PLAYLIST_SHUFFLE_DISABLED',
+  PLAYLIST_REPEAT_ONE_ENABLED: 'PLAYLIST_REPEAT_ONE_ENABLED',
+  PLAYLIST_REPEAT_ALL_ENABLED: 'PLAYLIST_REPEAT_ALL_ENABLED',
+  PLAYLIST_REPEAT_DISABLED: 'PLAYLIST_REPEAT_DISABLED',
 };
 
 export function getItemIndex(playlist, target) {
@@ -82,15 +87,38 @@ export function updateActiveItemInPlaylist(item) {
       youtubePlayer.stopVideo();
     } else if (activeItem && (item.id === activeItem.id)) {
       youtubePlayer.seekTo(0);
-      youtubePlayer.playVideo();
-      // dispatch(playPlayer());
     }
   };
+}
+
+export function enableShuffle() {
+  return (dispatch, getState) => {
+    dispatch({ type: actions.PLAYLIST_SHUFFLE_ENABLED })
+    dispatch(enableRepeatAll());
+  };
+}
+
+export function disableShuffle() {
+  return { type: actions.PLAYLIST_SHUFFLE_DISABLED };
+}
+
+export function enableRepeatOne() {
+  return { type: actions.PLAYLIST_REPEAT_ONE_ENABLED };
+}
+
+export function enableRepeatAll() {
+  return { type: actions.PLAYLIST_REPEAT_ALL_ENABLED };
+}
+
+export function disableRepeat() {
+  return { type: actions.PLAYLIST_REPEAT_DISABLED };
 }
 
 export const initialState = {
   items: [],
   doesNextItemExist: false,
+  shuffle: false,
+  repeat: false,
   activeItem: null,
 };
 
@@ -112,6 +140,31 @@ export default (state = initialState, action) => {
       return { ...state,
         activeItem: action.item,
         doesNextItemExist: action.doesNextItemExist,
+      };
+
+    case actions.PLAYLIST_SHUFFLE_ENABLED:
+      return { ...state,
+        shuffle: true,
+      };
+
+    case actions.PLAYLIST_SHUFFLE_DISABLED:
+      return { ...state,
+        shuffle: false,
+      };
+
+    case actions.PLAYLIST_REPEAT_ONE_ENABLED:
+      return { ...state,
+        repeat: 'one',
+      };
+
+    case actions.PLAYLIST_REPEAT_ALL_ENABLED:
+      return { ...state,
+        repeat: 'all',
+      };
+
+    case actions.PLAYLIST_REPEAT_DISABLED:
+      return { ...state,
+        repeat: false,
       };
 
     default:

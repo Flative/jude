@@ -1,4 +1,4 @@
-import { updateActiveItemInPlaylist, getNextItem, getActiveItemIndex } from './playlistReducer';
+import { updateActiveItemInPlaylist, getNextItem, enableRepeatAll } from './playlistReducer';
 import { youtubeTimeWatcher } from '../utils/youtube';
 import { sleep } from '../utils/util';
 
@@ -125,25 +125,38 @@ export function finishPlayer() {
   return (dispatch, getState) => {
     const { player, playlist } = getState();
     const { youtubePlayer, onPercentageChange } = player;
-    const { items, activeItem } = playlist;
+    const { items, activeItem, shuffle, repeat } = playlist;
 
     onPercentageChange(99.9);
     dispatch({ type: actions.PLAYER_FINISHED });
 
-    if (playlist.doesNextItemExist) {
-      sleep(200).then(() => {
+    sleep(200).then(() => {
+      if (shuffle) {
+        const restItems = items.filter(item => item.uuid !== activeItem.uuid);
+        const length = restItems.length;
+        if (!length) {
+          dispatch(updateActiveItemInPlaylist(activeItem));
+          return;
+        }
+
+        const randomItem = restItems[Math.floor(Math.random() * length)];
+        dispatch(updateActiveItemInPlaylist(randomItem));
+      } else if (repeat === 'one') {
+        youtubePlayer.seekTo(0);
+      } else if (repeat === 'all' && !playlist.doesNextItemExist) {
+        const firstItem = items[0];
+        dispatch(updateActiveItemInPlaylist(firstItem));
+      } else if (playlist.doesNextItemExist) {
         const nextItem = getNextItem(playlist);
         dispatch(updateActiveItemInPlaylist(nextItem));
 
         if (nextItem.id === activeItem.id) {
           youtubePlayer.seekTo(0);
-          youtubePlayer.playVideo();
-          dispatch(playPlayer());
         }
-      });
-    } else {
-      dispatch(updateActiveItemInPlaylist(null));
-    }
+      } else {
+        dispatch(updateActiveItemInPlaylist(null));
+      }
+    });
   };
 }
 

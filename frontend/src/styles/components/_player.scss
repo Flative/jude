@@ -37,35 +37,53 @@
     bottom: 0;
     width: 100%;
     height: 60px;
+    text-align: center;
     background-color: rgba(255, 255, 255, 0.5);
     color: #FFFFFF;
 
     &__left,
     &__right {
-      @include span(3);
+      display: inline-block;
       font-size: 30px;
       margin-top: 12px;
       text-align: center;
     }
+
+    &__center {
+      display: inline-block;
+      position: relative;
+      width: 60%;
+      margin: 0 24px;
+    }
   }
 
   &__btn-pp {
-    margin: 0 20px;
+    margin: 0 14px;
     font-size: 30px;
     cursor: pointer;
   }
 
+  &__btn-repeat {
+    margin-left: 14px;
+  }
+
   &__btn-prev,
-  &__btn-next {
+  &__btn-next,
+  &__btn-shuffle,
+  &__btn-repeat {
     font-size: 24px;
     cursor: pointer;
   }
 
+  &__btn--disable {
+    color: #cacaca;
+  }
+
   .react-progress-bar.player__progressbar {
-    @include span(6);
-    position: static;
+    position: absolute;
+    width: 100%;
+    top: -8px;
     display: inline-block;
-    margin-top: 30px;
     background: rgba(255, 255, 255, 0.7);
     //box-shadow: 0 0 10px #FFF, 0 0 5px #FFF;
 
