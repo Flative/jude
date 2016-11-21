@@ -1,9 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import YouTube from 'react-youtube';
 import classNames from 'classnames';
 
-import { ProgressBar } from '../components';
+import { ProgressBar, YouTube } from '../components';
 import { playPlayer, pausePlayer, registerPlayer, finishFetch, startFetch, finishPlayer, registerProgressBar } from '../reducers/playerReducer';
 import { updateActiveItemInPlaylist, getNextItem, getPrevItem, enableShuffle, enableRepeatAll, enableRepeatOne, disableShuffle, disableRepeat } from '../reducers/playlistReducer';
 
