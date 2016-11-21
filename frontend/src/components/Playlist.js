@@ -1,13 +1,15 @@
 import React from 'react';
+import className from 'classnames';
 import ClearIcon from 'react-icons/lib/md/clear';
 
 class Playlist extends React.Component {
-  // constructor(props) {
-  //   super(props);
-  // }
-
   render() {
-    const { data = [], onClearButtonClick } = this.props;
+    const {
+      items,
+      activeItem,
+      onItemClick,
+      onRemoveButtonClick,
+    } = this.props;
 
     return (
       <div className="playlist">
@@ -16,19 +18,32 @@ class Playlist extends React.Component {
         </div>
         <ul className="playlist__body">
           {
-            data.length
-            ? data.map(item =>
-              <li
-                className="playlist__item"
-                key={item.uuid}
-              >
-                {item.title}
-                <ClearIcon
-                  className="playlist__item__clear"
-                  onClick={() => onClearButtonClick(item.uuid)}
-                />
-              </li>
-            )
+            items.length
+            ? items.map(item => {
+              const itemClass = className({
+                'playlist__item': true,
+                'playlist__item--active': activeItem && (activeItem.uuid === item.uuid),
+              });
+              return (
+                <li
+                  className={itemClass}
+                  key={item.uuid}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onItemClick(item);
+                  }}
+                >
+                  {item.title}
+                  <ClearIcon
+                    className="playlist__item__btn-clear"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onRemoveButtonClick(item);
+                    }}
+                  />
+                </li>
+              );
+            })
             : <div className="playlist__blankslate">
               <h3 className="playlist__blankslate__title">
                 Playlist is empty
@@ -45,7 +60,7 @@ class Playlist extends React.Component {
 }
 
 Playlist.propTypes = {
-  data: React.PropTypes.arrayOf(React.PropTypes.shape({
+  items: React.PropTypes.arrayOf(React.PropTypes.shape({
     id: React.PropTypes.string,
     uuid: React.PropTypes.string,
     title: React.PropTypes.string,

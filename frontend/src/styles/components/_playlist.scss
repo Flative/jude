@@ -24,13 +24,15 @@
     height: 50px;
     line-height: 50px;
     font-size: 12px;
-    padding-left: 20px;
+    padding-left: 30px;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
     padding-right: 40px;
+    cursor: pointer;
+    user-select: none;
 
-    &__clear {
+    &__btn-clear {
       position: absolute;
       font-size: 18px;
       margin-top: -9px;
@@ -38,6 +40,10 @@
       right: 10px;
       color: #4e4e4e;
       cursor: pointer;
+    }
+
+    &--active {
+      font-weight: bold;
     }
 
     & + & {
@@ -52,9 +58,11 @@
       //}
     }
   }
+
   &__body {
     position: relative;
     height: calc(100% - #{$panel-header-height});
+    overflow-y: auto;
   }
 
   &__blankslate {

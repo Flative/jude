@@ -9,21 +9,26 @@ class SearchResult extends React.Component {
       <div className="search__result">
         {/*<h1>{query || 'No Result Found'}</h1>*/}
         <ul className="search__result__list">
-          {items.map(item => (
-            <li className="search__result__item" key={item.id.videoId}>
-              <div className="search__result__item__pad">
-                <img className="search__result__thumbnail" src={item.snippet.thumbnails.high.url} />
-                <div className="search__result__title">{item.snippet.title}</div>
-                <div
-                  className="search__result__item__cover"
-                  onClick={() => handleOnClick(item.id.videoId, item.snippet.title)}
-                >
-                  <PlusIcon />
-                  {/*&nbsp;Add to Playlist*/}
+          {items.map((item, idx) => {
+            return (
+              <li className="search__result__item" key={item.id.videoId + idx}>
+                <div className="search__result__item__pad">
+                  <img
+                    className="search__result__thumbnail"
+                    src={item.snippet.thumbnails.high.url}
+                    role="presentation"
+                  />
+                  <div className="search__result__title">{item.snippet.title}</div>
+                  <div
+                    className="search__result__item__cover"
+                    onClick={() => handleOnClick(item.id.videoId, item.snippet.title)}
+                  >
+                    <PlusIcon />
+                  </div>
                 </div>
-              </div>
-            </li>
-          ))}
+              </li>
+            );
+          })}
         </ul>
       </div>
     );

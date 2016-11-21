@@ -1,57 +1,114 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import YouTube from 'react-youtube';
+import classNames from 'classnames';
 
-import { playPlayer, pausePlayer, initializePlayer } from '../reducers/playerReducer';
-import { youtubeTimeWatcher, youtubeStateWatcher } from '../utils/youtube';
+import { ProgressBar } from '../components';
+import { playPlayer, pausePlayer, registerPlayer, finishFetch, startFetch, finishPlayer, registerProgressBar } from '../reducers/playerReducer';
+import { updateActiveItemInPlaylist, getNextItem, getPrevItem, enableShuffle, enableRepeatAll, enableRepeatOne, disableShuffle, disableRepeat } from '../reducers/playlistReducer';
 
-import ProgressBar from 'react-progress-bar-plus';
 import PrevIcon from 'react-icons/lib/md/skip-previous';
 import NextIcon from 'react-icons/lib/md/skip-next';
 import PlayIcon from 'react-icons/lib/md/play-circle-outline';
 import PauseIcon from 'react-icons/lib/md/pause-circle-outline';
+import ShuffleIcon from 'react-icons/lib/md/shuffle';
+import RepeatIcon from 'react-icons/lib/md/repeat';
+import RepeatOneIcon from 'react-icons/lib/md/repeat-one';
 
 class PlayerContainer extends React.Component {
   constructor(props) {
     super(props);
     this.onYouTubeReady = this.onYouTubeReady.bind(this);
     this.handlePPButtonClick = this.handlePPButtonClick.bind(this);
-    this.state = {
-      player: null,
-      percent: 0,
-    };
+    this.handlePrevButtonClick = this.handlePrevButtonClick.bind(this);
+    this.handleNextButtonClick = this.handleNextButtonClick.bind(this);
+    this.handleShuffleButtonClick = this.handleShuffleButtonClick.bind(this);
+    this.handleRepeatButtonClick = this.handleRepeatButtonClick.bind(this);
   }
 
   onYouTubeReady(e) {
     const { dispatch } = this.props;
-    const player = e.target;
-    const duration = player.getDuration();
+    const youtubePlayer = e.target;
+    dispatch(registerPlayer(youtubePlayer));
+  }
 
-    dispatch(initializePlayer(player));
-    player.mute(); // For development
+  handlePrevButtonClick() {
+    const { player, playlist, dispatch } = this.props;
+    const prevItem = getPrevItem(playlist);
 
-    youtubeStateWatcher(player, dispatch);
-    youtubeTimeWatcher(player, (sec) => {
-      this.setState({ percent: (sec / duration) * 100 });
-    });
+    if (!prevItem) {
+      // TODO: Should give a feedback to user
+      console.log('Nothing there');
+      return;
+    }
 
-    dispatch(playPlayer(player));
+    dispatch(updateActiveItemInPlaylist(prevItem));
+  }
+
+  handleNextButtonClick() {
+    const { player, playlist, dispatch } = this.props;
+    const nextItem = getNextItem(playlist);
+
+    if (!nextItem) {
+      // TODO: Should give a feedback to user
+      console.log('Nothing there');
+      return;
+    }
+
+    dispatch(updateActiveItemInPlaylist(nextItem));
   }
 
   handlePPButtonClick() {
-    const { isPaused, instance } = this.props.player;
-    const { dispatch } = this.props;
+    const { dispatch, player, playlist } = this.props;
+    const { isPaused, youtubePlayer } = player;
+
+    if (!playlist.activeItem) {
+      // TODO: Should give a feedback to user
+      console.log('Nothing there');
+      return;
+    }
 
     if (isPaused) {
-      dispatch(playPlayer(instance));
+      // TODO: Delegate playing song to action creator
+      youtubePlayer.playVideo();
     } else {
-      dispatch(pausePlayer(instance));
+      dispatch(pausePlayer(youtubePlayer));
+    }
+  }
+
+  handleShuffleButtonClick() {
+    const { playlist, dispatch } = this.props;
+    if (playlist.shuffle) {
+      dispatch(disableShuffle());
+    } else {
+      dispatch(enableShuffle());
+    }
+  }
+
+  handleRepeatButtonClick() {
+    const { playlist, dispatch } = this.props;
+    const { repeat, shuffle } = playlist;
+
+    if (shuffle) {
+      // TODO: Should give a feedback to user
+      console.log('Nothing there');
+      return;
+    }
+
+    if (!repeat) {
+      dispatch(enableRepeatAll());
+    } else if (repeat === 'all') {
+      dispatch(enableRepeatOne());
+    } else if (repeat === 'one') {
+      dispatch(disableRepeat());
     }
   }
 
   render() {
-    const { player } = this.props;
-    const { isPaused, isFetching, currentVideoId, instance } = player;
+    const { player, playlist, dispatch } = this.props;
+    const { isPaused, isFetching, currentVideoId, youtubePlayer, progressBarPercentage } = player;
+    const { activeItem, repeat } = playlist;
+
     const youtubeOptions = {
       height: '0',
       width: '0',
@@ -61,34 +118,42 @@ class PlayerContainer extends React.Component {
     };
 
     const style = {};
-    const isPlayerInitialized = !!player.instance;
-
-    if (isPlayerInitialized) {
-      const videoId = player.instance.getVideoData().video_id;
-
-      // TODO: Thumbnail image can't be loaded
-      style.backgroundImage = `url(http://img.youtube.com/vi/${videoId}/maxresdefault.jpg)`;
+    if (activeItem) {
+      style.backgroundImage = `url(https://i.ytimg.com/vi/${activeItem.id}/maxresdefault.jpg)`;
     }
+
+    const shuffleButtonClass = classNames({
+      'player__btn-shuffle': true,
+      'player__btn--disable': !playlist.shuffle,
+    });
+
+    const repeatButtonClass = classNames({
+      'player__btn-repeat': true,
+      'player__btn--disable': !playlist.repeat,
+    });
+
 
     return (
       <div
         className="player"
         style={style}
       >
-        {currentVideoId &&
-          <YouTube
-            className="player__youtube"
-            videoId={currentVideoId}
-            onReady={this.onYouTubeReady}
-            opts={youtubeOptions}
-          />
-        }
+        <YouTube
+          className="player__youtube"
+          onReady={this.onYouTubeReady}
+          opts={youtubeOptions}
+          videoId={activeItem ? activeItem.id : null}
+        />
         <h3 className="player__title">
-          {isPlayerInitialized && instance.getVideoData().title}
+          {activeItem && youtubePlayer ? youtubePlayer.getVideoData().title : ''}
         </h3>
+        <div className="player__cover"></div>
         <div className="player__controller">
           <div className="player__controller__left">
-            <PrevIcon className="player__btn-prev">prev</PrevIcon>
+            <PrevIcon
+              className="player__btn-prev"
+              onClick={this.handlePrevButtonClick}
+            />
             {isPaused
               ? <PlayIcon
                 className="player__btn-pp"
@@ -99,16 +164,31 @@ class PlayerContainer extends React.Component {
                 onClick={this.handlePPButtonClick}
               />
             }
-            <NextIcon className="player__btn-next">next</NextIcon>
+            <NextIcon
+              className="player__btn-next"
+              onClick={this.handleNextButtonClick}
+            />
           </div>
-          <ProgressBar
-            className="player__progressbar"
-            percent={this.state.percent}
-            spinner={false}
-            onTop={false}
-          />
+          <div className="player__controller__center">
+            <ProgressBar
+              registerProgressBar={onPercentageChange => dispatch(registerProgressBar(onPercentageChange))}
+            />
+          </div>
           <div className="player__controller__right">
-
+            <ShuffleIcon
+              className={shuffleButtonClass}
+              onClick={this.handleShuffleButtonClick}
+            />
+            {repeat === 'one'
+              ? <RepeatOneIcon
+                className={repeatButtonClass}
+                onClick={this.handleRepeatButtonClick}
+              />
+              : <RepeatIcon
+                className={repeatButtonClass}
+                onClick={this.handleRepeatButtonClick}
+              />
+            }
           </div>
 
         </div>
@@ -126,5 +206,6 @@ PlayerContainer.defaultProps = {};
 export default connect(
   (state) => ({
     player: state.player,
+    playlist: state.playlist,
   })
 )(PlayerContainer);
