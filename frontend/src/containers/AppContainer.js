@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { removeItemFromPlaylist, updateActiveItemInPlaylist } from '../reducers/playlistReducer';
-import { updatePlayerVideo } from '../reducers/playerReducer';
 import { Navbar, Playlist } from '../components';
 import { SearchContainer, PlayerContainer } from './';
 

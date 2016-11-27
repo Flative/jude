@@ -5,6 +5,10 @@ class NavBar extends React.Component {
     return (
       <div className="navbar">
         <h1 className="navbar__title">Jude</h1>
+        <div className="material-switch navbar__switch">
+          <input type="checkbox" />
+          <label htmlFor="navbarSwitch" />
+        </div>
       </div>
     );
   }
