@@ -10,7 +10,9 @@
     "no-use-before-define": ["error", { "functions": false }],
     "global-require": 0,
     "quote-props": [2, "consistent"],
-    "no-alert": 0
+    "no-alert": 0,
+    "semi": 0,
+    "no-console": 0
   },
   "env": {
     "browser": true,
