@@ -57,11 +57,11 @@
 
   > input[type="checkbox"]:checked + label::before {
     background: inherit;
-    opacity: 0.3;
+    opacity: 0.6;
   }
 
   > input[type="checkbox"]:checked + label::after {
-    background: inherit;
+    background: #fff;
     left: 20px;
   }
 }
