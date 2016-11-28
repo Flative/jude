@@ -93,7 +93,7 @@ export function updateActiveItemInPlaylist(item) {
 
 export function enableShuffle() {
   return (dispatch, getState) => {
-    dispatch({ type: actions.PLAYLIST_SHUFFLE_ENABLED })
+    dispatch({ type: actions.PLAYLIST_SHUFFLE_ENABLED });
     dispatch(enableRepeatAll());
   };
 }
