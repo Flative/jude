@@ -1,35 +1,35 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { searchVideos } from '../utils/youtube';
-import { SearchResult } from '../components';
-import { addItemToPlaylist, removeItemFromPlaylist } from '../reducers/playlistReducer';
-import SearchIcon from 'react-icons/lib/md/search';
+import React from 'react'
+import { connect } from 'react-redux'
+import { searchVideos } from '../utils/youtube'
+import { SearchResult } from '../components'
+import { addItemToPlaylist, removeItemFromPlaylist } from '../reducers/playlistReducer'
+import SearchIcon from 'react-icons/lib/md/search'
 
 class SearchContainer extends React.Component {
   constructor(props) {
-    super(props);
-    this.handleSearchInputKeyPress = this.handleSearchInputKeyPress.bind(this);
-    this.handleSearchIconClick = this.handleSearchIconClick.bind(this);
+    super(props)
+    this.handleSearchInputKeyPress = this.handleSearchInputKeyPress.bind(this)
+    this.handleSearchIconClick = this.handleSearchIconClick.bind(this)
 
     this.state = {
       query: null,
       searchResult: [],
-    };
+    }
   }
 
   componentDidMount() {
     // For development
-    // this.search('3초를');
+    // this.search('3초를')
   }
 
   handleSearchInputKeyPress(e) {
     if (e.key === 'Enter') {
-      this.search(e.target.value);
+      this.search(e.target.value)
     }
   }
 
   handleSearchIconClick() {
-    this.search(this.refs.searchInput.value);
+    this.search(this.refs.searchInput.value)
   }
 
   // TODO: Need to display some interaction stuff while fetching
@@ -39,13 +39,13 @@ class SearchContainer extends React.Component {
         this.setState({
           query,
           searchResult: data,
-        });
-      });
+        })
+      })
   }
 
   render() {
-    const { query, searchResult } = this.state;
-    const { dispatch, playlist } = this.props;
+    const { query, searchResult } = this.state
+    const { dispatch, playlist } = this.props
 
     return (
       <div className="search">
@@ -71,13 +71,13 @@ class SearchContainer extends React.Component {
           handleOnClick={(id, title) => dispatch(addItemToPlaylist(id, title))}
         />
       </div>
-    );
+    )
   }
 }
 
-SearchContainer.propTypes = {};
-SearchContainer.defaultProps = {};
+SearchContainer.propTypes = {}
+SearchContainer.defaultProps = {}
 
 export default connect(
   state => state
-)(SearchContainer);
+)(SearchContainer)

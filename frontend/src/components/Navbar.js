@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 
 class NavBar extends React.Component {
   render() {
@@ -10,11 +10,11 @@ class NavBar extends React.Component {
           <label htmlFor="navbarSwitch" />
         </div>
       </div>
-    );
+    )
   }
 }
 
-NavBar.propTypes = {};
-NavBar.defaultProps = {};
+NavBar.propTypes = {}
+NavBar.defaultProps = {}
 
-export default NavBar;
+export default NavBar

@@ -1,6 +1,6 @@
-import React from 'react';
-import className from 'classnames';
-import ClearIcon from 'react-icons/lib/md/clear';
+import React from 'react'
+import className from 'classnames'
+import ClearIcon from 'react-icons/lib/md/clear'
 
 class Playlist extends React.Component {
   render() {
@@ -9,7 +9,7 @@ class Playlist extends React.Component {
       activeItem,
       onItemClick,
       onRemoveButtonClick,
-    } = this.props;
+    } = this.props
 
     return (
       <div className="playlist">
@@ -23,26 +23,26 @@ class Playlist extends React.Component {
               const itemClass = className({
                 'playlist__item': true,
                 'playlist__item--active': activeItem && (activeItem.uuid === item.uuid),
-              });
+              })
               return (
                 <li
                   className={itemClass}
                   key={item.uuid}
                   onClick={(e) => {
-                    e.preventDefault();
-                    onItemClick(item);
+                    e.preventDefault()
+                    onItemClick(item)
                   }}
                 >
                   {item.title}
                   <ClearIcon
                     className="playlist__item__btn-clear"
                     onClick={(e) => {
-                      e.stopPropagation();
-                      onRemoveButtonClick(item);
+                      e.stopPropagation()
+                      onRemoveButtonClick(item)
                     }}
                   />
                 </li>
-              );
+              )
             })
             : <div className="playlist__blankslate">
               <h3 className="playlist__blankslate__title">
@@ -55,7 +55,7 @@ class Playlist extends React.Component {
           }
         </ul>
       </div>
-    );
+    )
   }
 }
 
@@ -66,7 +66,7 @@ Playlist.propTypes = {
     title: React.PropTypes.string,
   })),
   className: React.PropTypes.string,
-};
-Playlist.defaultProps = {};
+}
+Playlist.defaultProps = {}
 
-export default Playlist;
+export default Playlist

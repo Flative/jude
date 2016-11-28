@@ -1,6 +1,6 @@
-import axios from 'axios';
-import { API_KEY } from '../appInfo';
-import { startFetch, finishPlayer, finishFetch } from '../reducers/playerReducer';
+import axios from 'axios'
+import { API_KEY } from '../appInfo'
+import { startFetch, finishPlayer, finishFetch } from '../reducers/playerReducer'
 
 const fetch = axios.create({
   baseURL: 'https://www.googleapis.com/youtube/v3/',
@@ -8,7 +8,7 @@ const fetch = axios.create({
     'Accept': 'application/json',
     'Content-Type': 'application/json',
   },
-});
+})
 
 // API Documentation: https://developers.google.com/youtube/v3/docs/search/list
 export function searchVideos(query) {
@@ -20,5 +20,5 @@ export function searchVideos(query) {
       key: API_KEY,
       maxResults: 25,
     },
-  }).then(res => res.data.items);
+  }).then(res => res.data.items)
 }

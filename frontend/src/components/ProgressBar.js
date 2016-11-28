@@ -1,19 +1,19 @@
-import React, { Component, PropTypes } from 'react';
-import ProgressBarPlus from 'react-progress-bar-plus';
+import React, { Component, PropTypes } from 'react'
+import ProgressBarPlus from 'react-progress-bar-plus'
 
 class ProgressBar extends Component {
   constructor(props) {
-    super(props);
-    this.state = { percentage: 0 };
-    this.onPercentageChange = this.onPercentageChange.bind(this);
+    super(props)
+    this.state = { percentage: 0 }
+    this.onPercentageChange = this.onPercentageChange.bind(this)
   }
 
   componentDidMount() {
-    this.props.registerProgressBar(this.onPercentageChange);
+    this.props.registerProgressBar(this.onPercentageChange)
   }
 
   onPercentageChange(v) {
-    this.setState({ percentage: v });
+    this.setState({ percentage: v })
   }
 
   render() {
@@ -24,11 +24,11 @@ class ProgressBar extends Component {
         spinner={false}
         onTop={false}
       />
-    );
+    )
   }
 }
 
-ProgressBar.propTypes = {};
-ProgressBar.defaultProps = {};
+ProgressBar.propTypes = {}
+ProgressBar.defaultProps = {}
 
-export default ProgressBar;
+export default ProgressBar

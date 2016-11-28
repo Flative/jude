@@ -1,26 +1,26 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { removeItemFromPlaylist, updateActiveItemInPlaylist } from '../reducers/playlistReducer';
-import { Navbar, Playlist } from '../components';
-import { SearchContainer, PlayerContainer } from './';
+import React from 'react'
+import { connect } from 'react-redux'
+import { removeItemFromPlaylist, updateActiveItemInPlaylist } from '../reducers/playlistReducer'
+import { Navbar, Playlist } from '../components'
+import { SearchContainer, PlayerContainer } from './'
 
 class AppContainer extends React.Component {
   constructor(props) {
-    super(props);
-    this.handlePlaylistRemoveButtonClick = this.handlePlaylistRemoveButtonClick.bind(this);
-    this.handlePlaylistItemClick = this.handlePlaylistItemClick.bind(this);
+    super(props)
+    this.handlePlaylistRemoveButtonClick = this.handlePlaylistRemoveButtonClick.bind(this)
+    this.handlePlaylistItemClick = this.handlePlaylistItemClick.bind(this)
   }
 
   handlePlaylistRemoveButtonClick(item) {
-    this.props.removeItemFromPlaylist(item);
+    this.props.removeItemFromPlaylist(item)
   }
 
   handlePlaylistItemClick(item) {
-    this.props.updateActiveItemInPlaylist(item);
+    this.props.updateActiveItemInPlaylist(item)
   }
 
   render() {
-    const { router, dispatch, auth, playlist } = this.props;
+    const { router, dispatch, auth, playlist } = this.props
 
     return (
       <div className="main">
@@ -35,15 +35,15 @@ class AppContainer extends React.Component {
           onRemoveButtonClick={this.handlePlaylistRemoveButtonClick}
         />
       </div>
-    );
+    )
   }
 }
 
 AppContainer.propTypes = {
   children: React.PropTypes.node,
   dispatch: React.PropTypes.func,
-};
-AppContainer.defaultProps = {};
+}
+AppContainer.defaultProps = {}
 
 export default connect(state => ({
   auth: state.auth,
@@ -51,4 +51,4 @@ export default connect(state => ({
 }), {
   updateActiveItemInPlaylist,
   removeItemFromPlaylist,
-})(AppContainer);
+})(AppContainer)
