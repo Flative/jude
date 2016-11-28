@@ -20,7 +20,7 @@ class AppContainer extends React.Component {
   }
 
   render() {
-    const { router, dispatch, children, auth, playlist } = this.props;
+    const { router, dispatch, auth, playlist } = this.props;
 
     return (
       <div className="main">
@@ -34,7 +34,6 @@ class AppContainer extends React.Component {
           onItemClick={this.handlePlaylistItemClick}
           onRemoveButtonClick={this.handlePlaylistRemoveButtonClick}
         />
-        {children}
       </div>
     );
   }

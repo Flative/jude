@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import { ProgressBar, YouTube } from '../components';
 import { playPlayer, pausePlayer, registerPlayer, finishFetch, startFetch, finishPlayer, registerProgressBar } from '../reducers/playerReducer';
 import { updateActiveItemInPlaylist, getNextItem, getPrevItem, enableShuffle, enableRepeatAll, enableRepeatOne, disableShuffle, disableRepeat } from '../reducers/playlistReducer';
+import { appType } from '../reducers/appReducer';
 
 import PrevIcon from 'react-icons/lib/md/skip-previous';
 import NextIcon from 'react-icons/lib/md/skip-next';
@@ -103,18 +104,34 @@ class PlayerContainer extends React.Component {
     }
   }
 
-  render() {
-    const { player, playlist, dispatch } = this.props;
-    const { isPaused, isFetching, currentVideoId, youtubePlayer, progressBarPercentage } = player;
-    const { activeItem, repeat } = playlist;
-
-    const youtubeOptions = {
+  getYoutubeOptions() {
+    return {
       height: '0',
       width: '0',
       playerVars: { // https://developers.google.com/youtube/player_parameters
         autoplay: false,
       },
     };
+  }
+
+  getSongTitle() {
+    const { player, playlist, app, dispatch } = this.props;
+    const { activeItem, repeat } = playlist;
+    const { youtubePlayer } = player;
+    const { appType } = app;
+
+    if (appType === 'client') {
+      return '';
+    }
+
+    return activeItem && youtubePlayer ? youtubePlayer.getVideoData().title : '';
+  }
+
+  render() {
+    const { player, playlist, app, dispatch } = this.props;
+    const { isPaused, isFetching, currentVideoId, youtubePlayer, progressBarPercentage } = player;
+    const { activeItem, repeat } = playlist;
+    const { appType } = app;
 
     const style = {};
     if (activeItem) {
@@ -140,11 +157,11 @@ class PlayerContainer extends React.Component {
         <YouTube
           className="player__youtube"
           onReady={this.onYouTubeReady}
-          opts={youtubeOptions}
+          opts={this.getYoutubeOptions()}
           videoId={activeItem ? activeItem.id : null}
         />
         <h3 className="player__title">
-          {activeItem && youtubePlayer ? youtubePlayer.getVideoData().title : ''}
+          {this.getSongTitle()}
         </h3>
         <div className="player__cover"></div>
         <div className="player__controller">
@@ -206,5 +223,6 @@ export default connect(
   (state) => ({
     player: state.player,
     playlist: state.playlist,
+    app: state.app,
   })
 )(PlayerContainer);
