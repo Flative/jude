@@ -1,5 +1,4 @@
 import { updateActiveItemInPlaylist, getNextItem, enableRepeatAll } from './playlistReducer'
-import { youtubeTimeWatcher } from '../utils/youtube'
 import { sleep } from '../utils/util'
 
 export const actions = {
@@ -98,17 +97,10 @@ export function pausePlayer() {
   }
 }
 
-export function playPlayer(isNewVideo) {
-  return (dispatch, getState) => {
-    dispatch({ type: actions.PLAYER_PLAYED })
-  }
-}
-
-// Play new song
-export function updatePlayerVideo(id, index) {
-  return (dispatch, getState) => {
-    // dispatch(playPlayer(true))
-  }
+export function playPlayer() {
+  // FIXME: it should be actual action that plays player
+  // In this code, it just records PLYAER_PLAYED action was dispatched
+  return { type: actions.PLAYER_PLAYED };
 }
 
 // Fetching (buffering)
@@ -123,17 +115,23 @@ export function finishFetch() {
 // Play next song and update playlist when the song finished
 export function finishPlayer() {
   return (dispatch, getState) => {
-    const { player, playlist } = getState()
+    const { player, playlist, app } = getState()
     const { youtubePlayer, updatePercentage } = player
     const { items, activeItem, shuffle, repeat } = playlist
+    const { appType } = app
 
     updatePercentage(99.9)
     dispatch({ type: actions.PLAYER_FINISHED })
+
+    if (appType === 'client') {
+      return;
+    }
 
     sleep(200).then(() => {
       if (shuffle) {
         const restItems = items.filter(item => item.uuid !== activeItem.uuid)
         const length = restItems.length
+
         if (!length) {
           dispatch(updateActiveItemInPlaylist(activeItem))
           return
@@ -149,7 +147,6 @@ export function finishPlayer() {
       } else if (playlist.doesNextItemExist) {
         const nextItem = getNextItem(playlist)
         dispatch(updateActiveItemInPlaylist(nextItem))
-
         if (nextItem.id === activeItem.id) {
           youtubePlayer.seekTo(0)
         }

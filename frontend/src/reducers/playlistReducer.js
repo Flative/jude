@@ -1,5 +1,4 @@
 import UUID from 'node-uuid'
-import { updatePlayerVideo, playPlayer } from './playerReducer'
 
 export const actions = {
   PLAYLIST_ITEM_ADDED: 'PLAYLIST_ITEM_ADDED',
@@ -30,8 +29,14 @@ export function getPrevItem(playlist) {
 
 export function addItemToPlaylist(id, title) {
   return (dispatch, getState) => {
-    const { playlist } = getState()
+    const { playlist, app } = getState()
     const { activeItem, items } = playlist
+    const { appType } = app
+
+    if (appType === 'client') {
+      // TODO:
+      return
+    }
 
     const uuid = UUID.v4()
     const index = activeItem ? items[items.length - 1].index + 1 : 0
@@ -39,8 +44,8 @@ export function addItemToPlaylist(id, title) {
 
     dispatch({
       type: actions.PLAYLIST_ITEM_ADDED,
-      doesNextItemExist: activeItem ? true : false,
-      item
+      doesNextItemExist: !!activeItem,
+      item,
     })
 
     if (!activeItem) {

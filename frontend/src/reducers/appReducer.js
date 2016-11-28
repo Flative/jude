@@ -14,6 +14,7 @@ export function updateAppType(appType) {
 
 export const defaultState = {
   appType: 'standalone',
+  wsConnection: null,
 }
 
 export default (state = defaultState, action) => {

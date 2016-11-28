@@ -42,20 +42,13 @@
       cursor: pointer;
     }
 
-    &--active {
+    &--active,
+    :hover {
       font-weight: bold;
     }
 
     & + & {
       border-top: solid 1px #e1e1e1;
-
-      //&:before {
-      //  content: '';
-      //  display: block;
-      //  width: 100%;
-      //  height: 1px;
-      //  background-color: #e1e1e1;
-      //}
     }
   }
 
