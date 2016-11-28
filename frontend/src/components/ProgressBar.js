@@ -5,14 +5,14 @@ class ProgressBar extends Component {
   constructor(props) {
     super(props)
     this.state = { percentage: 0 }
-    this.onPercentageChange = this.onPercentageChange.bind(this)
+    this.updatePercentage = this.updatePercentage.bind(this)
   }
 
   componentDidMount() {
-    this.props.registerProgressBar(this.onPercentageChange)
+    this.props.onProgressBarReady(this.updatePercentage)
   }
 
-  onPercentageChange(v) {
+  updatePercentage(v) {
     this.setState({ percentage: v })
   }
 

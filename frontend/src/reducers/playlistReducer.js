@@ -72,10 +72,10 @@ export function removeItemFromPlaylist(item) {
 export function updateActiveItemInPlaylist(item) {
   return (dispatch, getState) => {
     const { playlist, player } = getState()
-    const { youtubePlayer, onPercentageChange } = player
+    const { youtubePlayer, updatePercentage } = player
     const { activeItem, items } = playlist
 
-    onPercentageChange(0)
+    updatePercentage(0)
 
     dispatch({
       type: actions.PLAYLIST_ACTIVE_ITEM_UPDATED,

@@ -20,7 +20,7 @@ export function registerPlayer(youtubePlayer) {
   return (dispatch, getState) => {
     const { ENDED, PLAYING, PAUSED, BUFFERING, CUED } = YT.PlayerState
     const { player } = getState()
-    const onPercentageChange = player.onPercentageChange
+    const updatePercentage = player.updatePercentage
 
     let isBufferingStarted = false
     let prevTime = -1
@@ -31,7 +31,7 @@ export function registerPlayer(youtubePlayer) {
       currentTime = Math.floor(youtubePlayer.getCurrentTime())
       if (Math.abs(prevTime - currentTime) > 0) {
         const duration = youtubePlayer.getDuration()
-        onPercentageChange((currentTime / duration) * 100)
+        updatePercentage((currentTime / duration) * 100)
         // dispatch(updateProgressBarPercentage((currentTime / duration) * 100))
       }
     }
@@ -43,7 +43,7 @@ export function registerPlayer(youtubePlayer) {
     }
 
     youtubePlayer.addEventListener('onStateChange', (e) => {
-      switch(e.data) {
+      switch (e.data) {
         case PLAYING:
           console.log('PLAYING')
           timer.stop()
@@ -87,8 +87,8 @@ export function registerPlayer(youtubePlayer) {
   }
 }
 
-export function registerProgressBar(onPercentageChange) {
-  return { type: actions.PLAYER_REGISTER_PROGRESSBAR, onPercentageChange }
+export function registerProgressBar(updatePercentage) {
+  return { type: actions.PLAYER_REGISTER_PROGRESSBAR, updatePercentage }
 }
 
 export function pausePlayer() {
@@ -124,10 +124,10 @@ export function finishFetch() {
 export function finishPlayer() {
   return (dispatch, getState) => {
     const { player, playlist } = getState()
-    const { youtubePlayer, onPercentageChange } = player
+    const { youtubePlayer, updatePercentage } = player
     const { items, activeItem, shuffle, repeat } = playlist
 
-    onPercentageChange(99.9)
+    updatePercentage(99.9)
     dispatch({ type: actions.PLAYER_FINISHED })
 
     sleep(200).then(() => {
@@ -162,7 +162,7 @@ export function finishPlayer() {
 
 export const initialState = {
   youtubePlayer: null,
-  onPercentageChange: null,
+  updatePercentage: null,
   isPaused: true,
   isFetching: true,
 }
@@ -200,7 +200,7 @@ export default (state = initialState, action) => {
       }
     case actions.PLAYER_REGISTER_PROGRESSBAR:
       return { ...state,
-        onPercentageChange: action.onPercentageChange,
+        updatePercentage: action.updatePercentage,
       }
     default:
       return state

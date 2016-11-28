@@ -148,18 +148,19 @@ class PlayerContainer extends React.Component {
       'player__btn--disable': !playlist.repeat,
     })
 
-
     return (
       <div
         className="player"
         style={style}
       >
-        <YouTube
-          className="player__youtube"
-          onReady={this.onYouTubeReady}
-          opts={this.getYoutubeOptions()}
-          videoId={activeItem ? activeItem.id : null}
-        />
+        {appType !== 'client' ?
+          <YouTube
+            className="player__youtube"
+            onReady={this.onYouTubeReady}
+            opts={this.getYoutubeOptions()}
+            videoId={activeItem ? activeItem.id : null}
+          /> : null
+        }
         <h3 className="player__title">
           {this.getSongTitle()}
         </h3>
@@ -187,7 +188,7 @@ class PlayerContainer extends React.Component {
           </div>
           <div className="player__controller__center">
             <ProgressBar
-              registerProgressBar={onPercentageChange => dispatch(registerProgressBar(onPercentageChange))}
+              onProgressBarReady={updatePercentage => dispatch(registerProgressBar(updatePercentage))}
             />
           </div>
           <div className="player__controller__right">
