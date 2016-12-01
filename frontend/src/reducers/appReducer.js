@@ -2,19 +2,20 @@ export const actions = {
   UPDATE_APP_TYPE: 'UPDATE_APP_TYPE',
 }
 
-export const appType = {
-  standalone: 'standalone',
-  host: 'host',
-  client: 'client',
+export const APP_MODES = {
+  STANDALONE: 'STANDALONE',
+  HOST_CLIENT: 'HOST_CLIENT',
+  CLIENT: 'CLIENT',
 }
 
-export function updateAppType(appType) {
-  return { type: actions.CHANGE_APP_TYPE, appType }
+export function updateAppType(mode) {
+  return { type: actions.CHANGE_APP_TYPE, mode }
 }
 
 export const defaultState = {
-  appType: 'standalone',
+  mode: APP_MODES.STANDALONE,
   wsConnection: null,
+  serverState: null,
 }
 
 export default (state = defaultState, action) => {
@@ -22,7 +23,7 @@ export default (state = defaultState, action) => {
     case actions.UPDATE_APP_TYPE:
       return {
         ...state,
-        appType: action.appType,
+        mode: action.mode,
       }
     default:
       return state

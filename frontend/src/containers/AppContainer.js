@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { removeItemFromPlaylist, updateActiveItemInPlaylist } from '../reducers/playlistReducer'
-import { Navbar, Playlist } from '../components'
+import { Navbar, Playlist, ModeSelector } from '../components'
 import { SearchContainer, PlayerContainer } from './'
 
 class AppContainer extends React.Component {
@@ -12,15 +12,19 @@ class AppContainer extends React.Component {
   }
 
   handlePlaylistRemoveButtonClick(item) {
-    this.props.removeItemFromPlaylist(item)
+    const { dispatch, app } = this.props
+    dispatch(removeItemFromPlaylist(item))
   }
 
   handlePlaylistItemClick(item) {
-    this.props.updateActiveItemInPlaylist(item)
+    const { dispatch, app } = this.props
+
+    if (app)
+    dispatch(updateActiveItemInPlaylist(item))
   }
 
   render() {
-    const { router, dispatch, auth, playlist } = this.props
+    const { dispatch, auth, playlist } = this.props
 
     return (
       <div className="main">
@@ -40,15 +44,18 @@ class AppContainer extends React.Component {
 }
 
 AppContainer.propTypes = {
-  children: React.PropTypes.node,
-  dispatch: React.PropTypes.func,
+  children: PropTypes.node,
+  dispatch: PropTypes.func,
+  auth: PropTypes.object,
+  playlist: PropTypes.object,
+  app: PropTypes.object,
+  removeItemFromPlaylist: PropTypes.func,
+  updateActiveItemInPlaylist: PropTypes.func,
 }
 AppContainer.defaultProps = {}
 
 export default connect(state => ({
   auth: state.auth,
   playlist: state.playlist,
-}), {
-  updateActiveItemInPlaylist,
-  removeItemFromPlaylist,
-})(AppContainer)
+  app: state.app,
+}))(AppContainer)

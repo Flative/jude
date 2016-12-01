@@ -1,4 +1,5 @@
 import UUID from 'node-uuid'
+import { APP_MODES } from './appReducer'
 
 export const actions = {
   PLAYLIST_ITEM_ADDED: 'PLAYLIST_ITEM_ADDED',
@@ -31,9 +32,9 @@ export function addItemToPlaylist(id, title) {
   return (dispatch, getState) => {
     const { playlist, app } = getState()
     const { activeItem, items } = playlist
-    const { appType } = app
+    const { mode } = app
 
-    if (appType === 'client') {
+    if (mode === APP_MODES.CLIENT) {
       // TODO:
       return
     }

@@ -1,5 +1,6 @@
 import { updateActiveItemInPlaylist, getNextItem, enableRepeatAll } from './playlistReducer'
 import { sleep } from '../utils/util'
+import { APP_MODES } from './appReducer'
 
 export const actions = {
   PLAYER_INITIALIZED: 'PLAYER_INITIALIZED',
@@ -118,12 +119,12 @@ export function finishPlayer() {
     const { player, playlist, app } = getState()
     const { youtubePlayer, updatePercentage } = player
     const { items, activeItem, shuffle, repeat } = playlist
-    const { appType } = app
+    const { mode } = app
 
     updatePercentage(99.9)
     dispatch({ type: actions.PLAYER_FINISHED })
 
-    if (appType === 'client') {
+    if (mode === APP_MODES.STANDALONE) {
       return;
     }
 

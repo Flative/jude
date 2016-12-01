@@ -5,7 +5,7 @@ import classNames from 'classnames'
 import { ProgressBar, YouTube } from '../components'
 import { playPlayer, pausePlayer, registerPlayer, finishFetch, startFetch, finishPlayer, registerProgressBar } from '../reducers/playerReducer'
 import { updateActiveItemInPlaylist, getNextItem, getPrevItem, enableShuffle, enableRepeatAll, enableRepeatOne, disableShuffle, disableRepeat } from '../reducers/playlistReducer'
-import { appType } from '../reducers/appReducer'
+import { APP_MODES } from '../reducers/appReducer'
 
 import PrevIcon from 'react-icons/lib/md/skip-previous'
 import NextIcon from 'react-icons/lib/md/skip-next'
@@ -118,9 +118,9 @@ class PlayerContainer extends React.Component {
     const { player, playlist, app, dispatch } = this.props
     const { activeItem, repeat } = playlist
     const { youtubePlayer } = player
-    const { appType } = app
+    const { mode } = app
 
-    if (appType === 'client') {
+    if (mode === APP_MODES.CLIENT) {
       return ''
     }
 
@@ -131,7 +131,7 @@ class PlayerContainer extends React.Component {
     const { player, playlist, app, dispatch } = this.props
     const { isPaused, isFetching, currentVideoId, youtubePlayer, progressBarPercentage } = player
     const { activeItem, repeat } = playlist
-    const { appType } = app
+    const { mode } = app
 
     const style = {}
     if (activeItem) {
@@ -153,7 +153,7 @@ class PlayerContainer extends React.Component {
         className="player"
         style={style}
       >
-        {appType !== 'client' ?
+        {mode !== APP_MODES.CLIENT ?
           <YouTube
             className="player__youtube"
             onReady={this.onYouTubeReady}

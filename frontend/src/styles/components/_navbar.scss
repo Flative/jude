@@ -2,6 +2,7 @@
   height: $navbar-height;
   background-color: #efefef;
   padding: 0 $common-padding;
+  position: relative;
 
   &__title {
     font-size: 22px;
@@ -63,5 +64,68 @@
   > input[type="checkbox"]:checked + label::after {
     background: #fff;
     left: 20px;
+  }
+}
+
+.navbar__mode-selector {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 10px;
+  margin-right: 10px;
+  padding: 10px;
+  width: 300px;
+  height: 200px;
+  background-color: #fff;
+  z-index: 999999;
+
+  .title {
+    font-size: 14px;
+  }
+
+  hr {
+    color: $border-light-gray;
+    width: 100%;
+    height: 1px;
+    margin: 10px 0;
+  }
+
+  .radio-label {
+    span {
+      display: block;
+      float: left;
+      width: 50%;
+      padding: 10px 0;
+      background-color: #d6d6d6;
+      text-align: center;
+      font-size: 13px;
+      border-radius: 2px;
+    }
+
+    input {
+      display: none;
+    }
+
+    input:checked + span {
+      background-color: red;
+    }
+  }
+
+  .form-group {
+    &__title {
+      font-size: 12px;
+      font-weight: 400;
+      margin-bottom: 4px;
+    }
+
+    &__body {
+      font-size: 11px;
+      label {
+        display: block;
+      }
+    }
+  }
+  .form-group + .form-group {
+    margin-top: 20px;
   }
 }
