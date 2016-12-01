@@ -14,7 +14,6 @@ var (
 )
 
 func main() {
-	http.HandleFunc("/", serveHome)
 	http.HandleFunc("/ws", serveWs)
 	log.Fatal(http.ListenAndServe(*addr, nil))
 }
