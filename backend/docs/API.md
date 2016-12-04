@@ -2,6 +2,8 @@
 
 ## Server -> Client
 
+#### Fetching playlist
+
 Sorted by index
 
 response :

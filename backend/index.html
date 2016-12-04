@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Example</title>
+    <script type="text/javascript">
+    var host = "{{$}}";
+    </script>
+    <script type="text/javascript" src="/static/index.js"></script>
+    <style>
+        #left {
+            position: absolute;
+            border: 10px #777 solid;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 30%;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        #right {
+            border: 10px #000 solid;
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 70%;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        button[type=button] {
+            padding: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="left">
+        <div style="text-align: center; margin: 50px 0;">
+            <button type="button" id="add">Add Sond Action</button>
+        </div>
+        <div style="text-align: center; margin: 50px 0;">
+            <button type="button" id="remove">Remove Song Action</button>
+        </div>
+        <div style="text-align: center; margin: 50px 0;">
+            <button type="button" id="play">Play Action</button>
+        </div>
+        <div style="text-align: center; margin: 50px 0;">
+            <button type="button" id="pause">Pause Action</button>
+        </div>
+        <div style="text-align: center; margin: 50px 0;">
+            <button type="button" id="update">Update Action</button>
+        </div>
+    </div>
+    <div id="right"></div>
+</body>
+
+</html>

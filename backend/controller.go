@@ -26,7 +26,7 @@ func serveWs(manager *Manager, w http.ResponseWriter, r *http.Request) {
 
 	client := &Client{manager: manager, conn: conn}
 	manager.register(client)
-
+	log.Print("Manager : ", manager)
 	for {
 		messageType, p, err := conn.ReadMessage()
 		if err != nil {
@@ -35,6 +35,18 @@ func serveWs(manager *Manager, w http.ResponseWriter, r *http.Request) {
 
 		event := new(Event)
 		json.Unmarshal(p, &event)
+		switch event.Action {
+		case "add":
+			log.Print("Add Event : ", event)
+		case "remove":
+			log.Print("Remove Event : ", event)
+		case "play":
+			log.Print("Play Event : ", event)
+		case "pause":
+			log.Print("Pause Event : ", event)
+		case "update":
+			log.Print("Update Event : ", event)
+		}
 		err = conn.WriteMessage(messageType, p)
 		if err != nil {
 			log.Println(err)
