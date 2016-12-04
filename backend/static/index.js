@@ -1,7 +1,13 @@
 window.onload = () => {
     const conn = new WebSocket('ws://' + host + '/ws')
     conn.onmessage = (res) => {
-        console.log(res)
+        const div = document.createElement('div')
+        const br = document.createElement('br')
+        div.textContent = `Response : ${res.data}`
+        document.getElementById('right').append(div)
+        document.getElementById('right').append(br)
+        document.getElementById('right').append(br)
+        document.getElementById('right').append(br)
     }
 
     document.getElementById('add').addEventListener("click", () => {

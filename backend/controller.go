@@ -28,7 +28,7 @@ func serveWs(manager *Manager, w http.ResponseWriter, r *http.Request) {
 	manager.register(client)
 	log.Print("Manager : ", manager)
 	for {
-		_, p, err := conn.ReadMessage()
+		messageType, p, err := conn.ReadMessage()
 		if err != nil {
 			return
 		}
@@ -46,6 +46,17 @@ func serveWs(manager *Manager, w http.ResponseWriter, r *http.Request) {
 			log.Print("Pause Event : ", event)
 		case "update":
 			log.Print("Update Event : ", event)
+		}
+
+		res, err := json.Marshal(event)
+		if err != nil {
+			log.Println(err)
+		}
+
+		err = conn.WriteMessage(messageType, res)
+		if err != nil {
+			log.Println(err)
+			return
 		}
 	}
 }
