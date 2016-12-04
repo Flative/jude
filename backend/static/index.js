@@ -1,5 +1,8 @@
 window.onload = () => {
     const conn = new WebSocket('ws://' + host + '/ws')
+    conn.onmessage = (res) => {
+        console.log(res)
+    }
 
     document.getElementById('add').addEventListener("click", () => {
         const data = {
