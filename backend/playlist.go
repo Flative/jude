@@ -12,7 +12,7 @@ type Playlist struct {
 
 func newPlaylist() *Playlist {
 	return &Playlist{
-		SongList:      make([]*Song, 1024),
+		SongList:      make([]*Song, 0),
 		ActiveSong:    nil,
 		IsPaused:      false,
 		CurrentTime:   0,
