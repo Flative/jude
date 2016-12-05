@@ -18,7 +18,7 @@ brew install go glide
 So create `new` directory for `Go` project.
 
 ```bash
-# example export GOPATH="~/Go"
+# example export GOPATH="$HOME/Go"
 export GOPATH="PATH for new project"
 mkdir -p $GOPATH
 mkdir -p $GOPATH/src
