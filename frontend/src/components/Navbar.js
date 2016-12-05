@@ -8,11 +8,17 @@ class NavBar extends React.Component {
       isSelectorOpened: false,
     }
     this.updateSwitch = this.updateSwitch.bind(this)
+    this.handleModeSelectorApplyButton = this.handleModeSelectorApplyButton.bind(this)
   }
 
   // TODO: Animation on mode selector
   updateSwitch(isSelectorOpened) {
     this.setState({ isSelectorOpened })
+  }
+
+  // TODO: Should be implemented
+  handleModeSelectorApplyButton() {
+    alert('nop')
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -87,7 +93,13 @@ class NavBar extends React.Component {
             >
               Cancel
             </button>
-            <button className="button button--apply" tabIndex="4">Apply</button>
+            <button
+              className="button button--apply"
+              tabIndex="4"
+              onClick={this.handleModeSelectorApplyButton}
+            >
+              Apply
+            </button>
           </div>
         </div>
       </div>
