@@ -23,7 +23,7 @@ window.onload = () => {
         conn.send(JSON.stringify(data))
     })
 
-    document.getElementById('remove-a').addEventListener("click", () => {
+    document.getElementById('delete-a').addEventListener("click", () => {
         const data = {
             "action": "delete",
             "body": {
@@ -63,8 +63,10 @@ window.onload = () => {
         const data = {
             "action": "update",
             "body": {
-                "uuid": "705999e4-4c5c-4258-bee0-501eb0a27b3a",
-                "currentTime": 12
+                "currentTime": 1122,
+                "duration": 21212,
+                "repeatingMode": "all",
+                "isShuffleOn": false
             }
         }
         conn.send(JSON.stringify(data))
@@ -94,7 +96,7 @@ window.onload = () => {
         conn2.send(JSON.stringify(data))
     })
 
-    document.getElementById('remove-b').addEventListener("click", () => {
+    document.getElementById('delete-b').addEventListener("click", () => {
         const data = {
             "action": "delete",
             "body": {
@@ -134,8 +136,10 @@ window.onload = () => {
         const data = {
             "action": "update",
             "body": {
-                "uuid": "705999e4-4c5c-4258-bee0-501eb0a27b3a",
-                "currentTime": 12
+                "currentTime": 4545,
+                "duration": 2145452,
+                "repeatingMode": "one",
+                "isShuffleOn": true
             }
         }
         conn.send(JSON.stringify(data))
