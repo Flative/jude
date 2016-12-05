@@ -18,7 +18,7 @@ class NavBar extends React.Component {
               Server Address
             </div>
             <div className="form-group__body">
-              <input type="text" />
+              <input type="text" tabIndex="1" />
             </div>
           </div>
 
@@ -28,11 +28,11 @@ class NavBar extends React.Component {
             </div>
             <div className="form-group__body">
               <label className="radio-label" htmlFor="hostRadio">
-                <input type="radio" name="toggle" value="host" id="hostRadio" />
+                <input type="radio" name="toggle" value="host" id="hostRadio" tabIndex="2" />
                 <span>Host</span>
               </label>
               <label className="radio-label" htmlFor="clientRadio">
-                <input type="radio" name="toggle" value="client" id="clientRadio" />
+                <input type="radio" name="toggle" value="client" id="clientRadio" tabIndex="3" />
                 <span>Client</span>
               </label>
               <div className="clearfix"></div>
@@ -40,8 +40,8 @@ class NavBar extends React.Component {
           </div>
 
           <div className="buttons">
-            <button className="button">Cancel</button>
-            <button className="button button--apply">Apply</button>
+            <button className="button" tabIndex="5">Cancel</button>
+            <button className="button button--apply" tabIndex="4">Apply</button>
           </div>
         </div>
       </div>

@@ -107,11 +107,20 @@
     }
 
     input {
-      display: none;
+      position: absolute;
+      left: -100px;
+      top: -100px;
+      height: 0;
+    }
+    
+    input:focus + span,
+    input:hover + span {
+      border: 1px solid #F8E1E4;
+      background-color: #ffeff1;
     }
 
     input:checked + span {
-      background-color: #fafafa;
+      border: 1px solid #d54b5f;
     }
   }
 
@@ -145,7 +154,7 @@
   }
 
   .buttons {
-    margin-top: 20px;
+    margin-top: 40px;
     float: right;
 
     .button {
@@ -154,6 +163,7 @@
       background-color: #fff;
       color: gray;
       border: 0;
+      font-size: 12px;
       
       &:hover {
         background-color: #fafafa;
