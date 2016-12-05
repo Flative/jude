@@ -48,12 +48,12 @@ func serveWs(manager *Manager, w http.ResponseWriter, r *http.Request) {
 			log.Print("Update Event : ", event)
 		}
 
-		res, err := json.Marshal(event)
+		_, err = json.Marshal(event)
 		if err != nil {
 			log.Println(err)
 		}
 
-		if err := manager.broadcast(messageType, res); err != nil {
+		if err := manager.broadcast(messageType); err != nil {
 			log.Println(err)
 		}
 	}

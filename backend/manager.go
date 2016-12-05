@@ -1,5 +1,7 @@
 package main
 
+import "encoding/json"
+
 type Manager struct {
 	Clients  []*Client
 	Playlist *Playlist
@@ -7,7 +9,8 @@ type Manager struct {
 
 func newManager() *Manager {
 	return &Manager{
-		Clients: make([]*Client, 0),
+		Clients:  make([]*Client, 0),
+		Playlist: newPlaylist(),
 	}
 }
 
@@ -15,9 +18,14 @@ func (m *Manager) register(c *Client) {
 	m.Clients = append(m.Clients, c)
 }
 
-func (m *Manager) broadcast(messageType int, data []byte) error {
+func (m *Manager) broadcast(messageType int) error {
 	for _, client := range m.Clients {
-		err := client.conn.WriteMessage(messageType, data)
+		body, err := json.Marshal(m.Playlist)
+		if err != nil {
+			return err
+		}
+
+		err = client.conn.WriteMessage(messageType, body)
 		if err != nil {
 			return err
 		}
