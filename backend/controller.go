@@ -53,10 +53,8 @@ func serveWs(manager *Manager, w http.ResponseWriter, r *http.Request) {
 			log.Println(err)
 		}
 
-		err = conn.WriteMessage(messageType, res)
-		if err != nil {
+		if err := manager.broadcast(messageType, res); err != nil {
 			log.Println(err)
-			return
 		}
 	}
 }
