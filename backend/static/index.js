@@ -33,9 +33,9 @@ window.onload = () => {
         conn.send(JSON.stringify(data))
     })
 
-    document.getElementById('play-a').addEventListener("click", () => {
+    document.getElementById('activate-a').addEventListener("click", () => {
         const data = {
-            "action": "play",
+            "action": "activate",
             "body": {
                 "uuid": "705999e4-4c5c-4258-bee0-501eb0a27b3a"
             }
@@ -43,13 +43,18 @@ window.onload = () => {
         conn.send(JSON.stringify(data))
     })
 
+    document.getElementById('play-a').addEventListener("click", () => {
+        const data = {
+            "action": "play",
+            "body": null
+        }
+        conn.send(JSON.stringify(data))
+    })
+
     document.getElementById('pause-a').addEventListener("click", () => {
         const data = {
             "action": "pause",
-            "body": {
-                "uuid": "705999e4-4c5c-4258-bee0-501eb0a27b3a",
-                "currentTime": 12
-            }
+            "body": null
         }
         conn.send(JSON.stringify(data))
     })
@@ -99,12 +104,20 @@ window.onload = () => {
         conn2.send(JSON.stringify(data))
     })
 
-    document.getElementById('play-b').addEventListener("click", () => {
+    document.getElementById('activate-b').addEventListener("click", () => {
         const data = {
-            "action": "play",
+            "action": "activate",
             "body": {
                 "uuid": "705999e4-4c5c-4258-bee0-501eb0a27b3a"
             }
+        }
+        conn.send(JSON.stringify(data))
+    })
+
+    document.getElementById('play-b').addEventListener("click", () => {
+        const data = {
+            "action": "play",
+            "body": null
         }
         conn2.send(JSON.stringify(data))
     })
@@ -112,10 +125,7 @@ window.onload = () => {
     document.getElementById('pause-b').addEventListener("click", () => {
         const data = {
             "action": "pause",
-            "body": {
-                "uuid": "705999e4-4c5c-4258-bee0-501eb0a27b3a",
-                "currentTime": 12
-            }
+            "body": null
         }
         conn2.send(JSON.stringify(data))
     })

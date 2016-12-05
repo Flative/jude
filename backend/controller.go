@@ -40,6 +40,8 @@ func serveWs(manager *Manager, w http.ResponseWriter, r *http.Request) {
 			log.Print("Add Event : ", event)
 		case "remove":
 			log.Print("Remove Event : ", event)
+		case "activate":
+			log.Print("Activate Event : ", event)
 		case "play":
 			log.Print("Play Event : ", event)
 		case "pause":
