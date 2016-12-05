@@ -1,4 +1,4 @@
-# API Specs
+# API Spec
 
 ## Server -> Client
 
