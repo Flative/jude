@@ -12,9 +12,14 @@ brew install go glide
 ```
 
 #### 2. Set up your go environment
+
+`Go` needs own `global` project directory.
+
+So create `new` directory for global `Go` project.
+
 ```bash
-# like export GOPATH="~/Go"
-export GOPATH="PATH for your whole your go project"
+# example export GOPATH="~/Go"
+export GOPATH="PATH for new global project"
 ```
 
 #### 3. Clone repository:
