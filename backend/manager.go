@@ -1,7 +1,8 @@
 package main
 
 type Manager struct {
-	Clients []*Client
+	Clients  []*Client
+	Playlist *Playlist
 }
 
 func newManager() *Manager {
