@@ -74,6 +74,7 @@ export function registerPlayer(youtubePlayer) {
         case CUED:
           console.log('CUED')
           if (getState().playlist.activeItem) {
+            // TODO: Send duration info to server if app mode is host
             youtubePlayer.playVideo()
           }
           break
