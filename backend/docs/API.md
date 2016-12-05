@@ -61,7 +61,7 @@ request :
 }
 ```
 
-#### Remove song from playlist
+#### Delete song from playlist
 
 request :
 
@@ -121,8 +121,10 @@ request :
 {
     "action": "update",
     "body": {
-        "uuid": "705999e4-4c5c-4258-bee0-501eb0a27b3a",
-        "currentTime": 12
+        "currentTime": 12,
+        "duration": 212,
+        "repeatingMode": ENUM("all", "one", "none"),
+        "isShuffleOn": true
     }
 }
 ```
