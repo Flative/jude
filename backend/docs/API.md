@@ -7,6 +7,7 @@
 Sorted by index
 
 response :
+
 ```json
 {
     "items": [
@@ -47,6 +48,7 @@ response :
 #### Add song to playlist
 
 request :
+
 ```json
 {
     "action": "add",
@@ -62,6 +64,7 @@ request :
 #### Remove song from playlist
 
 request :
+
 ```json
 {
     "action": "delete",
@@ -71,33 +74,49 @@ request :
 }
 ```
 
-#### Play current paused song
+#### Activate song
 
 request :
+
 ```json
 {
-    "action": "play",
+    "action": "activate",
     "body": {
         "uuid": "705999e4-4c5c-4258-bee0-501eb0a27b3a"
     }
+}
+```
+
+#### Play current paused song
+
+request :
+
+```json
+{
+    "action": "play",
+    "body": null
 }
 ```
 
 #### Pause current playing song
 
 request :
+
 ```json
 {
     "action": "pause",
-    "body": {
-        "uuid": "705999e4-4c5c-4258-bee0-501eb0a27b3a"
-    }
+    "body": null
 }
 ```
 
 #### Update current playing song's currentTime
 
+Host client send `update packet` using own youtube player callback.
+
+Then server will send state data to each client
+
 request :
+
 ```json
 {
     "action": "update",
