@@ -11,6 +11,12 @@ class NavBar extends React.Component {
     this.handleModeSelectorApplyButton = this.handleModeSelectorApplyButton.bind(this)
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (!prevState.isSelectorOpened && this.state.isSelectorOpened) {
+      this.refs.serverAddressInput.focus();
+    }
+  }
+
   // TODO: Animation on mode selector
   updateSwitch(isSelectorOpened) {
     this.setState({ isSelectorOpened })
@@ -21,17 +27,11 @@ class NavBar extends React.Component {
     alert('nop')
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (!prevState.isSelectorOpened && this.state.isSelectorOpened) {
-      this.refs.serverAddressInput.focus();
-    }
-  }
-
   render() {
     const { isSelectorOpened } = this.state
     const modeSelectorClass = classNames([
       'navbar__mode-selector',
-      { 'navbar__mode-selector--active': isSelectorOpened }
+      { 'navbar__mode-selector--active': isSelectorOpened },
     ])
     const appCoverClass = classNames(['app-cover', { 'app-cover--active': isSelectorOpened }])
 
@@ -52,7 +52,7 @@ class NavBar extends React.Component {
           className={modeSelectorClass}
           tabIndex="1"
           onKeyDown={(e) => {
-            if (e.keyCode == 27) {
+            if (e.keyCode === 27) {
               this.updateSwitch(!isSelectorOpened)
             }
           }}

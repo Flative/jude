@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { searchVideos } from '../utils/youtube'
 import { SearchResult } from '../components'
 import { addItemToPlaylist, removeItemFromPlaylist } from '../reducers/playlistReducer'
+import { APP_MODES } from '../reducers/appReducer'
 import SearchIcon from 'react-icons/lib/md/search'
 
 class SearchContainer extends React.Component {
@@ -10,6 +11,7 @@ class SearchContainer extends React.Component {
     super(props)
     this.handleSearchInputKeyPress = this.handleSearchInputKeyPress.bind(this)
     this.handleSearchIconClick = this.handleSearchIconClick.bind(this)
+    this.handleSearchResultItemClick = this.handleSearchResultItemClick.bind(this)
 
     this.state = {
       query: null,
@@ -32,6 +34,17 @@ class SearchContainer extends React.Component {
     this.search(this.refs.searchInput.value)
   }
 
+  handleSearchResultItemClick(id, title) {
+    const { app } = this.props;
+
+    if (app.mode === APP_MODES.STANDALONE) {
+      dispatch(addItemToPlaylist(id, title))
+      return
+    }
+
+    // TODO
+  }
+
   // TODO: Need to display some interaction stuff while fetching
   search(query) {
     searchVideos(query)
@@ -45,7 +58,7 @@ class SearchContainer extends React.Component {
 
   render() {
     const { query, searchResult } = this.state
-    const { dispatch, playlist } = this.props
+    const { dispatch, playlist, app } = this.props
 
     return (
       <div className="search">
@@ -68,7 +81,7 @@ class SearchContainer extends React.Component {
         <SearchResult
           query={query}
           items={searchResult}
-          handleOnClick={(id, title) => dispatch(addItemToPlaylist(id, title))}
+          handleItemClick={this.handleSearchResultItemClick}
         />
       </div>
     )

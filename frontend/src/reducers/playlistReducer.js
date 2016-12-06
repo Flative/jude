@@ -34,11 +34,6 @@ export function addItemToPlaylist(id, title) {
     const { activeItem, items } = playlist
     const { mode } = app
 
-    if (mode === APP_MODES.CLIENT) {
-      // TODO:
-      return
-    }
-
     const uuid = UUID.v4()
     const index = activeItem ? items[items.length - 1].index + 1 : 0
     const item = { id, title, uuid, index }
@@ -50,7 +45,12 @@ export function addItemToPlaylist(id, title) {
     })
 
     if (!activeItem) {
-      dispatch(updateActiveItemInPlaylist(item))
+      if (mode === APP_MODES.STANDALONE) {
+        dispatch(updateActiveItemInPlaylist(item))
+        return
+      }
+
+      // TODO:
     }
   }
 }
