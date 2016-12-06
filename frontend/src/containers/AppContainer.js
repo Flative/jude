@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { removeItemFromPlaylist, updateActiveItemInPlaylist } from '../reducers/playlistReducer'
 import { Navbar, Playlist, ModeSelector } from '../components'
 import { SearchContainer, PlayerContainer } from './'
+import { APP_MODES } from '../reducers/appReducer'
 
 class AppContainer extends React.Component {
   constructor(props) {
@@ -19,8 +20,12 @@ class AppContainer extends React.Component {
   handlePlaylistItemClick(item) {
     const { dispatch, app } = this.props
 
-    if (app)
-    dispatch(updateActiveItemInPlaylist(item))
+    if (app.mode === APP_MODES.STANDALONE) {
+      dispatch(updateActiveItemInPlaylist(item))
+      return
+    }
+
+
   }
 
   render() {

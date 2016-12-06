@@ -10,6 +10,10 @@ export const APP_MODES = {
   CLIENT: 'CLIENT',
 }
 
+// export function sendUpdateActiveItem() {
+//
+// }
+
 function establishWSConnection(dispatch, mode, address) {
   const wsConnection = new WebSocket(address)
   wsConnection.onerror = (e) => {
