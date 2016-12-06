@@ -35,7 +35,7 @@ class Search extends React.Component {
   }
 
   handleSearchResultItemClick(id, title) {
-    const { app } = this.props;
+    const { app, dispatch } = this.props;
 
     if (app.mode === APP_MODES.STANDALONE) {
       dispatch(addItemToPlaylist(id, title))

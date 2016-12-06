@@ -14,7 +14,13 @@ class Main extends React.Component {
 
   handlePlaylistRemoveButtonClick(item) {
     const { dispatch, app } = this.props
-    dispatch(removeItemFromPlaylist(item))
+
+    if (app.mode === APP_MODES.STANDALONE) {
+      dispatch(removeItemFromPlaylist(item))
+      return
+    }
+
+    // TODO
   }
 
   handlePlaylistItemClick(item) {
@@ -25,7 +31,7 @@ class Main extends React.Component {
       return
     }
 
-    // TODO:
+    // TODO
   }
 
   render() {

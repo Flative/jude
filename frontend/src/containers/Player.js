@@ -33,7 +33,7 @@ class Player extends React.Component {
   }
 
   handlePrevButtonClick() {
-    const { player, playlist, dispatch } = this.props
+    const { player, playlist, app, dispatch } = this.props
     const prevItem = getPrevItem(playlist)
 
     if (!prevItem) {
@@ -42,11 +42,16 @@ class Player extends React.Component {
       return
     }
 
-    dispatch(updateActiveItemInPlaylist(prevItem))
+    if (app.mode === APP_MODES.STANDALONE) {
+      dispatch(updateActiveItemInPlaylist(prevItem))
+      return
+    }
+
+    // TODO
   }
 
   handleNextButtonClick() {
-    const { player, playlist, dispatch } = this.props
+    const { player, playlist, app, dispatch } = this.props
     const nextItem = getNextItem(playlist)
 
     if (!nextItem) {
@@ -55,11 +60,16 @@ class Player extends React.Component {
       return
     }
 
-    dispatch(updateActiveItemInPlaylist(nextItem))
+    if (app.mode === APP_MODES.STANDALONE) {
+      dispatch(updateActiveItemInPlaylist(nextItem))
+      return
+    }
+
+    // TODO
   }
 
   handlePPButtonClick() {
-    const { dispatch, player, playlist } = this.props
+    const { dispatch, player, app, playlist } = this.props
     const { isPaused, youtubePlayer } = player
 
     if (!playlist.activeItem) {
@@ -69,39 +79,63 @@ class Player extends React.Component {
     }
 
     if (isPaused) {
-      // TODO: Delegate playing song to action creator
-      youtubePlayer.playVideo()
-    } else {
+      if (app.mode === APP_MODES.STANDALONE) {
+        dispatch(playPlayer(youtubePlayer))
+      } else {
+        // TODO
+      }
+      return
+    }
+
+    if (app.mode === APP_MODES.STANDALONE) {
       dispatch(pausePlayer(youtubePlayer))
+    } else {
+      // TODO
     }
   }
 
   handleShuffleButtonClick() {
-    const { playlist, dispatch } = this.props
+    const { playlist, app, dispatch } = this.props
+
+    if (app.mode === APP_MODES.STANDALONE) {
+      if (playlist.shuffle) {
+        dispatch(disableShuffle())
+      } else {
+        dispatch(enableShuffle())
+      }
+      return
+    }
+
     if (playlist.shuffle) {
-      dispatch(disableShuffle())
+      // TODO
     } else {
-      dispatch(enableShuffle())
+      // TODO
     }
   }
 
   handleRepeatButtonClick() {
-    const { playlist, dispatch } = this.props
+    const { playlist, app, dispatch } = this.props
     const { repeat, shuffle } = playlist
 
+    // If shuffle is active, repeat is automatically turned on
     if (shuffle) {
       // TODO: Should give a feedback to user
       console.log('Nothing there')
       return
     }
 
-    if (!repeat) {
-      dispatch(enableRepeatAll())
-    } else if (repeat === 'all') {
-      dispatch(enableRepeatOne())
-    } else if (repeat === 'one') {
-      dispatch(disableRepeat())
+    if (app.mode === APP_MODES.STANDALONE) {
+      if (!repeat) {
+        dispatch(enableRepeatAll())
+      } else if (repeat === 'all') {
+        dispatch(enableRepeatOne())
+      } else if (repeat === 'one') {
+        dispatch(disableRepeat())
+      }
+      return
     }
+
+    // TODO
   }
 
   getYoutubeOptions() {
@@ -121,6 +155,7 @@ class Player extends React.Component {
     const { mode } = app
 
     if (mode === APP_MODES.CLIENT) {
+      // TODO
       return ''
     }
 

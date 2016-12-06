@@ -48,7 +48,10 @@ export function registerPlayer(youtubePlayer) {
           console.log('PLAYING')
           timer.stop()
           timer.start()
-          dispatch(playPlayer())
+          if (isBufferingStarted) {
+            dispatch(finishFetch())
+            isBufferingStarted = false
+          }
           break
 
         case BUFFERING:
@@ -60,10 +63,6 @@ export function registerPlayer(youtubePlayer) {
           timer.stop()
           updateTime()
           console.log('PAUSED:', youtubePlayer.getCurrentTime(), currentTime)
-          if (isBufferingStarted) {
-            dispatch(finishFetch())
-            isBufferingStarted = false
-          }
           break
 
         case ENDED:
@@ -75,7 +74,7 @@ export function registerPlayer(youtubePlayer) {
           console.log('CUED')
           if (getState().playlist.activeItem) {
             // TODO: Send duration info to server if app mode is host
-            youtubePlayer.playVideo()
+            dispatch(playPlayer())
           }
           break
 
@@ -100,9 +99,12 @@ export function pausePlayer() {
 }
 
 export function playPlayer() {
+  return (dispatch, getState) => {
+    getState().player.youtubePlayer.playVideo();
+    dispatch({ type: actions.PLAYER_PLAYED })
+  }
   // FIXME: it should be actual action that plays player
   // In this code, it just records PLYAER_PLAYED action was dispatched
-  return { type: actions.PLAYER_PLAYED };
 }
 
 // Fetching (buffering)
