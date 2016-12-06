@@ -2,10 +2,10 @@ import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { removeItemFromPlaylist, updateActiveItemInPlaylist } from '../reducers/playlistReducer'
 import { Navbar, Playlist, ModeSelector } from '../components'
-import { SearchContainer, PlayerContainer } from './'
+import { Search, Player } from './'
 import { APP_MODES } from '../reducers/appReducer'
 
-class AppContainer extends React.Component {
+class Main extends React.Component {
   constructor(props) {
     super(props)
     this.handlePlaylistRemoveButtonClick = this.handlePlaylistRemoveButtonClick.bind(this)
@@ -25,7 +25,7 @@ class AppContainer extends React.Component {
       return
     }
 
-
+    // TODO:
   }
 
   render() {
@@ -34,8 +34,8 @@ class AppContainer extends React.Component {
     return (
       <div className="main">
         <Navbar />
-        <PlayerContainer />
-        <SearchContainer />
+        <Player />
+        <Search />
         <Playlist
           className={"playlist"}
           items={playlist.items}
@@ -48,7 +48,7 @@ class AppContainer extends React.Component {
   }
 }
 
-AppContainer.propTypes = {
+Main.propTypes = {
   children: PropTypes.node,
   dispatch: PropTypes.func,
   auth: PropTypes.object,
@@ -57,10 +57,10 @@ AppContainer.propTypes = {
   removeItemFromPlaylist: PropTypes.func,
   updateActiveItemInPlaylist: PropTypes.func,
 }
-AppContainer.defaultProps = {}
+Main.defaultProps = {}
 
 export default connect(state => ({
   auth: state.auth,
   playlist: state.playlist,
   app: state.app,
-}))(AppContainer)
+}))(Main)

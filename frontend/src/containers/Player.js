@@ -15,7 +15,7 @@ import ShuffleIcon from 'react-icons/lib/md/shuffle'
 import RepeatIcon from 'react-icons/lib/md/repeat'
 import RepeatOneIcon from 'react-icons/lib/md/repeat-one'
 
-class PlayerContainer extends React.Component {
+class Player extends React.Component {
   constructor(props) {
     super(props)
     this.onYouTubeReady = this.onYouTubeReady.bind(this)
@@ -214,11 +214,11 @@ class PlayerContainer extends React.Component {
   }
 }
 
-PlayerContainer.propTypes = {
+Player.propTypes = {
   isPaused: React.PropTypes.bool,
   isFetching: React.PropTypes.bool,
 }
-PlayerContainer.defaultProps = {}
+Player.defaultProps = {}
 
 export default connect(
   (state) => ({
@@ -226,4 +226,4 @@ export default connect(
     playlist: state.playlist,
     app: state.app,
   })
-)(PlayerContainer)
+)(Player)

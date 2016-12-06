@@ -6,7 +6,7 @@ import { addItemToPlaylist, removeItemFromPlaylist } from '../reducers/playlistR
 import { APP_MODES } from '../reducers/appReducer'
 import SearchIcon from 'react-icons/lib/md/search'
 
-class SearchContainer extends React.Component {
+class Search extends React.Component {
   constructor(props) {
     super(props)
     this.handleSearchInputKeyPress = this.handleSearchInputKeyPress.bind(this)
@@ -88,9 +88,9 @@ class SearchContainer extends React.Component {
   }
 }
 
-SearchContainer.propTypes = {}
-SearchContainer.defaultProps = {}
+Search.propTypes = {}
+Search.defaultProps = {}
 
 export default connect(
   state => state
-)(SearchContainer)
+)(Search)
