@@ -1,17 +1,6 @@
-# jude-backend
-Modern jukebox backend
+# Jude Backend
 
-## Requirements
-* Python3.5
+Read below articles
 
-## Dev
-```bash
-# Install dependencies
-$ pip install -r requirements/dev.txt
-
-# Migrate database
-$ alembic upgrade head
-
-# Run server
-$ python manage.py run
-```
+ - [How to run server](./docs/run.md)
+ - [API spec](./docs/API.md)
