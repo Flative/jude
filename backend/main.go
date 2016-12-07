@@ -15,6 +15,7 @@ var (
 
 func main() {
 	manager := newManager()
+	log.Printf("\n\n* Running on %s (Press CTRL+C to quit)\n* Restarting with stat\n`", *addr)
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		homeTemplate.Execute(w, r.Host)
