@@ -30,43 +30,52 @@ func serveWs(manager *Manager, w http.ResponseWriter, r *http.Request) {
 	for {
 		messageType, p, err := conn.ReadMessage()
 		if err != nil {
+			log.Println(err)
 			return
 		}
 
 		event := new(Event)
 		if err = json.Unmarshal(p, &event); err != nil {
-			log.Fatal(err)
+			log.Println(err)
+			return
 		}
 
 		switch event.Action {
 		case "add":
 			if err = manager.Playlist.add(event.Body); err != nil {
-				log.Fatal(err)
+				log.Println(err)
+				return
 			}
 		case "delete":
 			if err = manager.Playlist.delete(event.Body); err != nil {
-				log.Fatal(err)
+				log.Println(err)
+				return
 			}
 		case "activate":
 			if err = manager.Playlist.activate(event.Body); err != nil {
-				log.Fatal(err)
+				log.Println(err)
+				return
 			}
 		case "play":
 			if err = manager.Playlist.play(); err != nil {
-				log.Fatal(err)
+				log.Println(err)
+				return
 			}
 		case "pause":
 			if err = manager.Playlist.pause(); err != nil {
-				log.Fatal(err)
+				log.Println(err)
+				return
 			}
 		case "update":
 			if err = manager.Playlist.update(event.Body); err != nil {
-				log.Fatal(err)
+				log.Println(err)
+				return
 			}
 		}
 
 		if err := manager.broadcast(messageType); err != nil {
 			log.Println(err)
+			return
 		}
 	}
 }
