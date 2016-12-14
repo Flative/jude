@@ -1,5 +1,6 @@
 import React from 'react'
 import classNames from 'classnames';
+import { Spinner } from './';
 
 class NavBar extends React.Component {
   constructor(props) {
@@ -57,7 +58,11 @@ class NavBar extends React.Component {
             }
           }}
         >
-          <p className="title">Change Mode</p>
+          <p className="navbar__mode-selector-title">Change Mode</p>
+
+          <div className="navbar__mode-selector-spinner">
+            <Spinner />
+          </div>
 
           <div className="form-group form-group--text">
             <div className="form-group__title">
@@ -70,7 +75,7 @@ class NavBar extends React.Component {
 
           <div className="form-group form-group--type">
             <div className="form-group__title">
-              Type
+              Typ
             </div>
             <div className="form-group__body">
               <label className="radio-label" htmlFor="hostRadio">

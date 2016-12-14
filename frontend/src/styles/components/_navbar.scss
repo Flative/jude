@@ -100,9 +100,14 @@
     display: block;
   }
 
-  .title {
+  &-title {
     font-size: 15px;
     margin-bottom: 14px;
+  }
+
+  &-spinner {
+    float: right;
+    margin-top: -27px;
   }
 
   hr {
@@ -133,11 +138,10 @@
       top: -100px;
       height: 0;
     }
-    
+
     input:focus + span,
     input:hover + span {
       border: 1px solid #F8E1E4;
-      background-color: #ffeff1;
     }
 
     input:checked + span {
