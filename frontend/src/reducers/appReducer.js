@@ -10,14 +10,28 @@ export const APP_MODES = {
   CLIENT: 'CLIENT',
 }
 
-function establishWSConnection(dispatch, mode, address) {
-  const wsConnection = new WebSocket(address)
-  wsConnection.onerror = (e) => {
-    dispatch({ action: actions.CHANGE_APP_MODE_FAILED })
-  }
-  wsConnection.onopen = (e) => {
-    dispatch({ action: actions.CHANGE_APP_MODE_SUCCEEDED, mode, wsConnection })
-  }
+export function establishWSConnection(mode, address) {
+  return (dispatch, getState) => {
+    const { app } = getState()
+
+    if (app.isModeChanging) {
+      return;
+    }
+
+    dispatch({ type: actions.CHANGE_APP_MODE_ATTEMPTED })
+
+    try {
+      const wsConnection = new WebSocket(address)
+      wsConnection.onerror = (e) => {
+        dispatch({ type: actions.CHANGE_APP_MODE_FAILED })
+      }
+      wsConnection.onopen = (e) => {
+        dispatch({ type: actions.CHANGE_APP_MODE_SUCCEEDED, mode, wsConnection })
+      }
+    } catch(e) {
+      dispatch({ type: actions.CHANGE_APP_MODE_FAILED })
+    }
+  };
 }
 
 export function changeAppMode(mode, address) {
@@ -57,6 +71,7 @@ export default (state = defaultState, action) => {
         isModeChanging: true,
       }
     case actions.CHANGE_APP_MODE_FAILED:
+      alert('Oops, something went wrong!') // FIXME
       return {
         ...state,
         isModeChanging: false,

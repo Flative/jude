@@ -7,14 +7,18 @@ class NavBar extends React.Component {
     super(props)
     this.state = {
       isSelectorOpened: false,
+      address: '',
+      modeType: null,
     }
     this.updateSwitch = this.updateSwitch.bind(this)
     this.handleModeSelectorApplyButton = this.handleModeSelectorApplyButton.bind(this)
+    this.handleAddressInputChange = this.handleAddressInputChange.bind(this)
+    this.handleModeTypeChange = this.handleModeTypeChange.bind(this)
   }
 
   componentDidUpdate(prevProps, prevState) {
     if (!prevState.isSelectorOpened && this.state.isSelectorOpened) {
-      this.refs.serverAddressInput.focus();
+      this.refs.serverAddressInput.focus()
     }
   }
 
@@ -25,7 +29,21 @@ class NavBar extends React.Component {
 
   // TODO: Should be implemented
   handleModeSelectorApplyButton() {
-    alert('nop')
+    const { address, modeType } = this.state
+
+    if (!address.length || !modeType.length) {
+      alert('nop')
+    }
+
+    this.props.establishConnection(modeType, address)
+  }
+
+  handleAddressInputChange(e) {
+    this.setState({ address: e.target.value })
+  }
+
+  handleModeTypeChange(e) {
+    this.setState({ modeType: e.target.value })
   }
 
   render() {
@@ -61,7 +79,7 @@ class NavBar extends React.Component {
           <p className="navbar__mode-selector-title">Change Mode</p>
 
           <div className="navbar__mode-selector-spinner">
-            <Spinner />
+            <Spinner active={this.props.loading} />
           </div>
 
           <div className="form-group form-group--text">
@@ -69,15 +87,15 @@ class NavBar extends React.Component {
               Server Address
             </div>
             <div className="form-group__body">
-              <input type="text" tabIndex="1" ref="serverAddressInput" />
+              <input type="text" tabIndex="1" ref="serverAddressInput" onChange={this.handleAddressInputChange} />
             </div>
           </div>
 
           <div className="form-group form-group--type">
             <div className="form-group__title">
-              Typ
+              Type
             </div>
-            <div className="form-group__body">
+            <div className="form-group__body" onChange={this.handleModeTypeChange}>
               <label className="radio-label" htmlFor="hostRadio">
                 <input type="radio" name="toggle" value="host" id="hostRadio" tabIndex="2" />
                 <span>Host</span>
