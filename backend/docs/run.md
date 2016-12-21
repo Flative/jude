@@ -20,7 +20,6 @@ So create `new` directory for `Go` project.
 ```bash
 # example export GOPATH="$HOME/Go"
 export GOPATH="PATH for new project"
-mkdir -p $GOPATH
 mkdir -p $GOPATH/src
 ```
 
