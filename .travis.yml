@@ -2,6 +2,7 @@ language: go
 
 go:
   - 1.7.x
+  - tip
 
 go_import_path: github.com/flative/jude
 
@@ -18,13 +19,17 @@ before_install:
   - yarn
   - cd $CURRENT_DIR/backend
   - go get github.com/Masterminds/glide
+  - go get golang.org/x/tools/cmd/cover
+  - go get github.com/mattn/goveralls
   - glide install
 
 install:
+ - echo "Start"
 
 script:
   - cd $CURRENT_DIR/backend
-  - go test -v *.go
+  - go test -v -covermode=count -coverprofile=coverage.out
+  - goveralls -coverprofile=coverage.out -service=jude
   - cd $CURRENT_DIR/frontend
   - nvm use 5
   - npm test
