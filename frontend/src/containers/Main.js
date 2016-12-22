@@ -3,14 +3,13 @@ import { connect } from 'react-redux'
 import { removeItemFromPlaylist, updateActiveItemInPlaylist } from '../reducers/playlistReducer'
 import { Navbar, Playlist, ModeSelector } from '../components'
 import { Search, Player } from './'
-import { APP_MODES, establishWSConnection } from '../reducers/appReducer'
+import { APP_MODES, establishWSConnection, disconnectWSConnection } from '../reducers/appReducer'
 
 class Main extends React.Component {
   constructor(props) {
     super(props)
     this.handlePlaylistRemoveButtonClick = this.handlePlaylistRemoveButtonClick.bind(this)
     this.handlePlaylistItemClick = this.handlePlaylistItemClick.bind(this)
-    this.handleEstablishConnection = this.handleEstablishConnection.bind(this)
   }
 
   handlePlaylistRemoveButtonClick(item) {
@@ -35,9 +34,6 @@ class Main extends React.Component {
     // TODO
   }
 
-  handleEstablishConnection(mode, address) {
-    this.props.dispatch(establishWSConnection(mode, address))
-  }
 
   render() {
     const { dispatch, auth, playlist, app } = this.props
@@ -45,8 +41,10 @@ class Main extends React.Component {
     return (
       <div className="main">
         <Navbar
-          establishConnection={this.handleEstablishConnection}
-          loading={app.isModeChanging}
+          establishConnection={(mode, address) => dispatch(establishWSConnection(mode, address))}
+          disconnectConnection={() => dispatch(disconnectWSConnection())}
+          isModeChanging={app.isModeChanging}
+          mode={app.mode}
         />
         <Player />
         <Search />

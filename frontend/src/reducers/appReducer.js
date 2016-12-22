@@ -21,7 +21,7 @@ export function establishWSConnection(mode, address) {
     dispatch({ type: actions.CHANGE_APP_MODE_ATTEMPTED })
 
     try {
-      const wsConnection = new WebSocket(address)
+      const wsConnection = new WebSocket(`ws://${address}/ws`)
       wsConnection.onerror = (e) => {
         dispatch({ type: actions.CHANGE_APP_MODE_FAILED })
       }
@@ -34,26 +34,23 @@ export function establishWSConnection(mode, address) {
   };
 }
 
-export function changeAppMode(mode, address) {
+export function disconnectWSConnection() {
   return (dispatch, getState) => {
-    const { wsConnection, isModeChanging } = getState().app
+    const { isModeChanging, wsConnection } = getState().app
 
     if (isModeChanging) {
-      console.warn('Mode changing is already attempting')
-    }
-
-    if (mode === APP_MODES.CLIENT) {
-      dispatch({ action: actions.CHANGE_APP_MODE_SUCCEEDED, mode })
       return;
     }
 
-    if (!wsConnection || wsConnection.url !== address) {
-      establishWSConnection(dispatch, mode, address)
-      return;
-    }
+    dispatch({ type: actions.CHANGE_APP_MODE_ATTEMPTED })
 
-    dispatch({ action: actions.CHANGE_APP_MODE_SUCCEEDED, mode, wsConnection })
-  }
+    try {
+      wsConnection.close()
+      dispatch({ type: actions.CHANGE_APP_MODE_SUCCEEDED, mode: APP_MODES.STANDALONE, wsConnection: null })
+    } catch(e) {
+      dispatch({ type: actions.CHANGE_APP_MODE_FAILED })
+    }
+  };
 }
 
 export const defaultState = {
@@ -80,7 +77,7 @@ export default (state = defaultState, action) => {
       return {
         ...state,
         isModeChanging: false,
-        mode: action.mode,
+        mode: action.mode || state.mode,
         wsConnection: action.wsConnection,
       }
     default:
