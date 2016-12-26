@@ -1,3 +1,5 @@
+import { noop } from '../utils/util'
+
 export const actions = {
   CHANGE_APP_MODE_ATTEMPTED: 'CHANGE_APP_MODE_ATTEMPTED',
   CHANGE_APP_MODE_FAILED: 'CHANGE_APP_MODE_FAILED',
@@ -34,7 +36,7 @@ export function establishWSConnection(mode, address) {
   };
 }
 
-export function disconnectWSConnection() {
+export function disconnectWSConnection(cb) {
   return (dispatch, getState) => {
     const { isModeChanging, wsConnection } = getState().app
 
@@ -47,8 +49,14 @@ export function disconnectWSConnection() {
     try {
       wsConnection.close()
       dispatch({ type: actions.CHANGE_APP_MODE_SUCCEEDED, mode: APP_MODES.STANDALONE, wsConnection: null })
+      if (cb) {
+        cb()
+      }
     } catch(e) {
       dispatch({ type: actions.CHANGE_APP_MODE_FAILED })
+      if (cb) {
+        cb()
+      }
     }
   };
 }

@@ -16,6 +16,7 @@ class NavBar extends React.Component {
     this.handleModeSelectorApplyButton = this.handleModeSelectorApplyButton.bind(this)
     this.handleAddressInputChange = this.handleAddressInputChange.bind(this)
     this.handleModeTypeChange = this.handleModeTypeChange.bind(this)
+    this.handleSwitchClick = this.handleSwitchClick.bind(this)
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -28,19 +29,30 @@ class NavBar extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ isCheckboxChecked: nextProps.mode !== APP_MODES.STANDALONE });
+    this.setState({ isCheckboxChecked: nextProps.mode !== APP_MODES.STANDALONE })
   }
 
   // TODO: Animation on mode selector
-  toggleModeSelector(e) {
-    e.preventDefault();
+  toggleModeSelector(v) {
+    this.switch.checked = v !== undefined ? v : !this.switch.checked
+    this.setState({ isSelectorOpened: this.switch.checked })
+  }
 
+  handleSwitchClick(e) {
+    e.preventDefault()
 
     if (this.props.mode !== APP_MODES.STANDALONE) {
-      this.props.disconnectConnection()
+      this.props.disconnectConnection(() => {
+        setTimeout(() => {
+          this.toggleModeSelector(!this.switch.checked)
+        }, 100)
+      })
       return false
     }
-    this.setState({ isSelectorOpened: !this.state.isSelectorOpened })
+
+    setTimeout(() => {
+      this.toggleModeSelector(!this.switch.checked)
+    }, 100)
   }
 
   // TODO: Should be implemented
@@ -66,7 +78,7 @@ class NavBar extends React.Component {
   render() {
     const { isSelectorOpened, isCheckboxChecked } = this.state
     const { isModeChanging, mode } = this.props
-console.log(mode)
+
     const modeSelectorClass = classNames({
       'mode-selector': true,
       'mode-selector--active': isSelectorOpened,
@@ -81,30 +93,21 @@ console.log(mode)
       <div className="navbar">
         <h1 className="navbar__title">Jude</h1>
         <div className="material-switch navbar__switch">
-          {isCheckboxChecked
-            ? <input
-              id="navbarSwitch"
-              ref="navbarSwitch"
-              type="checkbox"
-              onClick={this.toggleModeSelector}
-              checked
-            />
-            : <input
-              id="navbarSwitch"
-              ref="navbarSwitch"
-              type="checkbox"
-              onClick={this.toggleModeSelector}
-            />
-          }
+          <input
+            id="navbarSwitch"
+            ref={(input) => { this.switch = input }}
+            type="checkbox"
+            onChange={e => e.preventDefault()}
+            onClick={this.handleSwitchClick}
+          />
           <label htmlFor="navbarSwitch" />
         </div>
-        <div className={appCoverClass} onClick={this.toggleModeSelector}/>
+        <div className={appCoverClass} onClick={() => this.toggleModeSelector(false)} />
         <div
           className={modeSelectorClass}
-          tabIndex="1"
           onKeyDown={(e) => {
             if (e.keyCode === 27) {
-              this.toggleModeSelector()
+              this.toggleModeSelector(false)
             }
           }}
         >
@@ -149,7 +152,7 @@ console.log(mode)
           <div className="mode-selector__buttons">
             <button
               className="mode-selector__button mode-selector__button--gray"
-              onClick={this.toggleModeSelector}
+              onClick={() => this.toggleModeSelector(false)}
             >
               Cancel
             </button>

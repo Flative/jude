@@ -42,7 +42,7 @@ class Main extends React.Component {
       <div className="main">
         <Navbar
           establishConnection={(mode, address) => dispatch(establishWSConnection(mode, address))}
-          disconnectConnection={() => dispatch(disconnectWSConnection())}
+          disconnectConnection={(cb) => dispatch(disconnectWSConnection(cb))}
           isModeChanging={app.isModeChanging}
           mode={app.mode}
         />
