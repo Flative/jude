@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { PropTypes } from 'react'
 import classNames from 'classnames'
 import { Spinner } from './'
 import { APP_MODES } from '../reducers/appReducer'
@@ -45,14 +45,14 @@ class NavBar extends React.Component {
       this.props.disconnectConnection(() => {
         setTimeout(() => {
           this.toggleModeSelector(!this.switch.checked)
-        }, 100)
+        }, 50)
       })
-      return false
+      return;
     }
 
     setTimeout(() => {
       this.toggleModeSelector(!this.switch.checked)
-    }, 100)
+    }, 50)
   }
 
   // TODO: Should be implemented
@@ -170,6 +170,8 @@ class NavBar extends React.Component {
 }
 
 NavBar.propTypes = {}
-NavBar.defaultProps = {}
+NavBar.defaultProps = {
+  disconnectConnection: PropTypes.func,
+}
 
 export default NavBar
