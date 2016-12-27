@@ -1,5 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import UUID from 'node-uuid'
 import { searchVideos } from '../utils/youtube'
 import { SearchResult } from '../components'
 import { addItemToPlaylist, removeItemFromPlaylist } from '../reducers/playlistReducer'
@@ -21,7 +22,7 @@ class Search extends React.Component {
 
   componentDidMount() {
     // For development
-    // this.search('3초를')
+    this.search('빈지노')
   }
 
   handleSearchInputKeyPress(e) {
@@ -35,13 +36,21 @@ class Search extends React.Component {
   }
 
   handleSearchResultItemClick(id, title) {
-    const { app, dispatch } = this.props;
+    const { app, playlist, dispatch } = this.props;
+    const { activeItem, items } = playlist
+
+    const uuid = UUID.v4()
+    const index = activeItem ? items[items.length - 1].index + 1 : 0
 
     if (app.mode === APP_MODES.STANDALONE) {
-      dispatch(addItemToPlaylist(id, title))
+      dispatch(addItemToPlaylist(id, title, uuid, index))
       return
     }
 
+    app.wsConnection.send(JSON.stringify({
+      action: 'add',
+      body: { id, title, uuid, index },
+    }))
     // TODO
   }
 

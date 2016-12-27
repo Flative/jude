@@ -4,6 +4,7 @@ import { APP_MODES } from './appReducer'
 export const actions = {
   PLAYLIST_ITEM_ADDED: 'PLAYLIST_ITEM_ADDED',
   PLAYLIST_ITEM_REMOVED: 'PLAYLIST_ITEM_REMOVED',
+  PLAYLIST_DATA_REPLACED: 'PLAYLIST_DATA_REPLACED',
   PLAYLIST_ACTIVE_ITEM_UPDATED: 'PLAYLIST_ACTIVE_ITEM_UPDATED',
   PLAYLIST_SHUFFLE_ENABLED: 'PLAYLIST_SHUFFLE_ENABLED',
   PLAYLIST_SHUFFLE_DISABLED: 'PLAYLIST_SHUFFLE_DISABLED',
@@ -28,14 +29,12 @@ export function getPrevItem(playlist) {
   return playlist.activeItem ? playlist.items[getActiveItemIndex(playlist) - 1] : null
 }
 
-export function addItemToPlaylist(id, title) {
+export function addItemToPlaylist(id, title, uuid, index) {
   return (dispatch, getState) => {
     const { playlist, app } = getState()
     const { activeItem, items } = playlist
     const { mode } = app
 
-    const uuid = UUID.v4()
-    const index = activeItem ? items[items.length - 1].index + 1 : 0
     const item = { id, title, uuid, index }
 
     dispatch({
@@ -97,6 +96,13 @@ export function updateActiveItemInPlaylist(item) {
   }
 }
 
+export function replacePlaylistData(payload) {
+  return {
+    type: actions.PLAYLIST_DATA_REPLACED,
+    ...payload,
+  }
+}
+
 export function enableShuffle() {
   return (dispatch, getState) => {
     dispatch({ type: actions.PLAYLIST_SHUFFLE_ENABLED })
@@ -140,6 +146,17 @@ export default (state = initialState, action) => {
       return { ...state,
         items: action.items,
         doesNextItemExist: action.doesNextItemExist,
+      }
+
+    case actions.PLAYLIST_DATA_REPLACED:
+      const activeItemIndex = action.activeItem ? action.items.findIndex(v => v.uuid === action.activeItem.uuid) : -1
+
+      return {
+        items: action.items,
+        activeItem: action.activeItem,
+        doesNextItemExist: activeItemIndex !== -1 ? !!action.items[activeItemIndex + 1] : false,
+        shuffle: action.isShuffleOn,
+        repeat: action.repeatingMode === 'none' ? false : action.repeatingMode,
       }
 
     case actions.PLAYLIST_ACTIVE_ITEM_UPDATED:
