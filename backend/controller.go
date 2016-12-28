@@ -24,6 +24,19 @@ func serveWs(manager *Manager, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// 첫 세션 연결시 기존에 Manager 가 가지고 있는 상태를 주도록 함
+	body, err := json.Marshal(manager.Playlist)
+	if err != nil {
+		log.Println(err)
+	}
+
+	err = conn.WriteMessage(1, body)
+	if err != nil {
+		conn.Close()
+		return
+	}
+
+	// Connection 에 대한 처리를 고루틴으로 처리하도록 함
 	go func() {
 		client := newClient(manager, conn)
 		manager.register(client)
