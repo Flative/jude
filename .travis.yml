@@ -8,15 +8,6 @@ go_import_path: github.com/flative/jude
 
 before_install:
   - CURRENT_DIR=`pwd`
-  - cd $CURRENT_DIR/frontend
-  - wget https://raw.githubusercontent.com/creationix/nvm/v0.32.1/nvm.sh -O ~/.nvm/nvm.sh
-  - source ~/.nvm/nvm.sh
-  - nvm install 5
-  - nvm install 6
-  - nvm install 7
-  - curl -o- -L https://yarnpkg.com/install.sh | bash
-  - export PATH=$HOME/.yarn/bin:$PATH
-  - yarn
   - cd $CURRENT_DIR/backend
   - go get github.com/Masterminds/glide
   - go get golang.org/x/tools/cmd/cover
@@ -30,10 +21,3 @@ script:
   - cd $CURRENT_DIR/backend
   - go test -v -covermode=count -coverprofile=coverage.out
   - goveralls -coverprofile=coverage.out -service=jude -repotoken $COVERALLS_REPO_TOKEN
-  - cd $CURRENT_DIR/frontend
-  - nvm use 5
-  - npm test
-  - nvm use 6
-  - npm test
-  - nvm use 7
-  - npm test

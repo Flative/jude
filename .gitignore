@@ -54,7 +54,7 @@ fabric.properties
 
 # *.iml
 # modules.xml
-# .idea/misc.xml 
+# .idea/misc.xml
 # *.ipr
 
 
@@ -87,7 +87,7 @@ fabric.properties
 
 # *.iml
 # modules.xml
-# .idea/misc.xml 
+# .idea/misc.xml
 # *.ipr
 
 
@@ -165,3 +165,9 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# For Backend project
+backend/vendor/*/
+
+### binary
+backend/backend
