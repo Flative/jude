@@ -24,7 +24,7 @@ func serveWs(manager *Manager, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	client := &Client{manager: manager, conn: conn}
+	client := newClient(manager, conn)
 	manager.register(client)
 
 	for {

@@ -1,6 +1,8 @@
-hash: 81a6d1e231b06a561c38110e41fe44a8553a278c0610ca9cec736dd23a97e31a
-updated: 2016-11-30T00:59:29.197670852+09:00
+hash: d187472e2f0d944f555ff46c3c945e0fb37a1a45f3bfffe556ed505d4030f349
+updated: 2016-12-28T22:52:21.520860296+09:00
 imports:
 - name: github.com/gorilla/websocket
-  version: 1f512fc3f05332ba7117626cdfb4e07474e58e60
+  version: 3ab3a8b8831546bd18fd182c20687ca853b2bb13
+- name: github.com/satori/go.uuid
+  version: 879c5887cd475cd7864858769793b2ceb0d44feb
 testImports: []
