@@ -60,12 +60,11 @@ class NavBar extends React.Component {
     const { isModeChanging } = this.props
     const { modeSelectorAddressVal, modeSelectorTypeVal } = this.state
 
-    // if (isModeChanging || !modeSelectorAddressVal.length || !modeSelectorTypeVal.length) {
-    //   alert('nop')
-    // }
+    if (isModeChanging || !modeSelectorAddressVal.length || !modeSelectorTypeVal.length) {
+      alert('nop')
+    }
 
-    // this.props.establishConnection(modeSelectorTypeVal, modeSelectorAddressVal)
-    this.props.establishConnection(APP_MODES.HOST_CLIENT, '127.0.0.1:5050')
+    this.props.establishConnection(modeSelectorTypeVal, modeSelectorAddressVal)
   }
 
   handleAddressInputChange(e) {

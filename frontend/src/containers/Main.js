@@ -12,22 +12,6 @@ class Main extends React.Component {
     this.handlePlaylistItemClick = this.handlePlaylistItemClick.bind(this)
   }
 
-  componentWillReceiveProps(props) {
-    if (props.app.mode === APP_MODES.STANDALONE) {
-      return;
-    }
-    if (this.props.playlist.items.length === 0 && props.playlist.items.length === 1) {
-
-      this.props.app.wsConnection.send(JSON.stringify({
-        action: 'activate',
-        body: {
-          uuid: props.playlist.items[0].uuid,
-        },
-      }))
-      // this.props.dispatch(updateActiveItemInPlaylist(props.playlist.items[0]))
-    }
-  }
-
   handlePlaylistRemoveButtonClick(item) {
     const { dispatch, app } = this.props
 
@@ -36,12 +20,7 @@ class Main extends React.Component {
       return
     }
 
-    app.wsConnection.send(JSON.stringify({
-      action: 'delete',
-      body: {
-        uuid: item.uuid,
-      },
-    }))
+    // TODO
   }
 
   handlePlaylistItemClick(item) {
@@ -52,12 +31,7 @@ class Main extends React.Component {
       return
     }
 
-    app.wsConnection.send(JSON.stringify({
-      action: 'activate',
-      body: {
-        uuid: item.uuid,
-      },
-    }))
+    // TODO
   }
 
 

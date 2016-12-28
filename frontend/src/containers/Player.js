@@ -162,38 +162,6 @@ class Player extends React.Component {
     return activeItem && youtubePlayer ? youtubePlayer.getVideoData().title : ''
   }
 
-  componentWillReceiveProps(props) {
-    if (!props.player.youtubePlayer) {
-      return;
-    }
-
-    const hasActiveItemDeleted = !props.playlist.items.some(v => v.uuid === props.playlist.activeItem.uuid)
-    const nextItem = getNextItem(props.playlist)
-
-    if (this.props.playlist.activeItem && hasActiveItemDeleted && !nextItem) {
-      props.player.youtubePlayer.stopVideo()
-      this.props.dispatch(updateActiveItemInPlaylist(null))
-    } else if (this.props.playlist.activeItem && hasActiveItemDeleted) {
-      if (props.app.mode === APP_MODES.STANDALONE) {
-        this.props.dispatch(updateActiveItemInPlaylist(getNextItem(props.playlist)))
-      } else {
-        this.props.app.wsConnection.send(JSON.stringify({
-          action: 'activate',
-          body: {
-            uuid: nextItem.uuid,
-          },
-        }))
-      }
-    }
-
-    if (this.props.playlist.activeItem && (this.props.playlist.activeItem.uuid !== props.playlist.activeItem.uuid)) {
-      props.player.updatePercentage(0)
-      if (this.props.playlist.activeItem.id === props.playlist.activeItem.id) {
-        props.player.youtubePlayer.seekTo(0)
-      }
-    }
-  }
-
   render() {
     const { player, playlist, app, dispatch } = this.props
     const { isPaused, isFetching, currentVideoId, youtubePlayer, progressBarPercentage } = player
