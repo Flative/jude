@@ -1,6 +1,6 @@
 import { noop } from '../utils/util'
-import { replacePlaylistData } from './playlistReducer'
-import {  } from './playerReducer'
+import { replacePlaylistData, addItemToPlaylist } from './playlistReducer'
+// import {  } from './playerReducer'
 
 export const actions = {
   CHANGE_APP_MODE_ATTEMPTED: 'CHANGE_APP_MODE_ATTEMPTED',
@@ -35,7 +35,7 @@ export function establishWSConnection(mode, address) {
       }
       wsConnection.onmessage = (msg) => {
         const res = JSON.parse(msg.data)
-        console.log(res)
+
         dispatch(replacePlaylistData(res))
       }
     } catch(e) {

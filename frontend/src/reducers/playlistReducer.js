@@ -67,10 +67,6 @@ export function removeItemFromPlaylist(item) {
       items: playlist.items.filter(v => v.uuid !== item.uuid),
       doesNextItemExist: !!nextItem,
     })
-
-    if (activeItem.uuid === item.uuid) {
-      dispatch(updateActiveItemInPlaylist(nextItem))
-    }
   }
 }
 
@@ -87,12 +83,6 @@ export function updateActiveItemInPlaylist(item) {
       doesNextItemExist: !!playlist.items[getItemIndex(playlist, item) + 1],
       item,
     })
-
-    if (!item) {
-      youtubePlayer.stopVideo()
-    } else if (activeItem && (item.id === activeItem.id)) {
-      youtubePlayer.seekTo(0)
-    }
   }
 }
 

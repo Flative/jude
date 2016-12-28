@@ -127,7 +127,7 @@ export function finishPlayer() {
     updatePercentage(99.9)
     dispatch({ type: actions.PLAYER_FINISHED })
 
-    if (mode === APP_MODES.STANDALONE) {
+    if (mode !== APP_MODES.STANDALONE) {
       return;
     }
 
