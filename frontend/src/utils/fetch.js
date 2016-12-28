@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from 'axios'
 
 const axiosInstance = axios.create({
   baseURL: 'http://52.78.47.28/api/v1/',
@@ -6,7 +6,7 @@ const axiosInstance = axios.create({
     'Accept': 'application/json',
     'Content-Type': 'application/json',
   },
-});
+})
 
 export default {
   get: (url) => axiosInstance(url, {
@@ -16,4 +16,4 @@ export default {
     method: 'POST',
     body: JSON.stringify(data),
   }),
-};
+}

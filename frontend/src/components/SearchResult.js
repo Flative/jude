@@ -1,9 +1,9 @@
-import React from 'react';
-import PlusIcon from 'react-icons/lib/fa/plus';
+import React from 'react'
+import PlusIcon from 'react-icons/lib/fa/plus'
 
 class SearchResult extends React.Component {
   render() {
-    const { query, items = [], handleOnClick } = this.props;
+    const { query, items = [], handleItemClick } = this.props
 
     return (
       <div className="search__result">
@@ -21,17 +21,17 @@ class SearchResult extends React.Component {
                   <div className="search__result__title">{item.snippet.title}</div>
                   <div
                     className="search__result__item__cover"
-                    onClick={() => handleOnClick(item.id.videoId, item.snippet.title)}
+                    onClick={() => handleItemClick(item.id.videoId, item.snippet.title)}
                   >
                     <PlusIcon />
                   </div>
                 </div>
               </li>
-            );
+            )
           })}
         </ul>
       </div>
-    );
+    )
   }
 }
 
@@ -54,7 +54,7 @@ SearchResult.propTypes = {
       }),
     }),
   })),
-};
-SearchResult.defaultProps = {};
+}
+SearchResult.defaultProps = {}
 
-export default SearchResult;
+export default SearchResult

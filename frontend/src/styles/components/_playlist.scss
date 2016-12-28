@@ -1,13 +1,13 @@
 .playlist {
   @include span(4 of 12 last);
   height: calc(100% - #{$navbar-height} - #{$player-height});
-  border-left: solid 1px #e1e1e1;
+  border-left: solid 1px $border-light-gray;
   //background-color: #efefef;
 
   &__header {
     background-color: #fafafa;
     padding: 0 $common-padding;
-    border-bottom: solid 1px #e1e1e1;
+    border-bottom: solid 1px $border-light-gray;
     height: $panel-header-height;
     line-height: $panel-header-height;
   }
@@ -42,20 +42,13 @@
       cursor: pointer;
     }
 
-    &--active {
+    &--active,
+    :hover {
       font-weight: bold;
     }
 
     & + & {
-      border-top: solid 1px #e1e1e1;
-
-      //&:before {
-      //  content: '';
-      //  display: block;
-      //  width: 100%;
-      //  height: 1px;
-      //  background-color: #e1e1e1;
-      //}
+      border-top: solid 1px $border-light-gray;
     }
   }
 
