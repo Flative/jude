@@ -1,4 +1,4 @@
-import { updateActiveItemInPlaylist, getNextItem, enableRepeatAll } from './playlistReducer'
+import { updateActiveSong, getNextItem, enableRepeatAll } from './playlistReducer'
 import { sleep } from '../utils/util'
 import { APP_MODES } from './appReducer'
 
@@ -32,7 +32,6 @@ export function registerPlayer(youtubePlayer) {
       if (Math.abs(prevTime - currentTime) > 0) {
         const duration = youtubePlayer.getDuration()
         updatePercentage((currentTime / duration) * 100)
-        // dispatch(updateProgressBarPercentage((currentTime / duration) * 100))
       }
     }
 
@@ -121,43 +120,45 @@ export function finishPlayer() {
   return (dispatch, getState) => {
     const { player, playlist, app } = getState()
     const { youtubePlayer, updatePercentage } = player
-    const { songs, activeSong, shuffle, repeat } = playlist
+    const { nextSong, songs, activeSong, shuffle, repeat } = playlist
     const { mode } = app
 
     updatePercentage(99.9)
     dispatch({ type: actions.PLAYER_FINISHED })
 
-    if (mode === APP_MODES.STANDALONE) {
-      return;
-    }
+    dispatch(updateActiveSong(nextSong))
 
-    sleep(200).then(() => {
-      if (shuffle) {
-        const restItems = songs.filter(item => item.uuid !== activeSong.uuid)
-        const length = restItems.length
-
-        if (!length) {
-          dispatch(updateActiveItemInPlaylist(activeSong))
-          return
-        }
-
-        const randomItem = restItems[Math.floor(Math.random() * length)]
-        dispatch(updateActiveItemInPlaylist(randomItem))
-      } else if (repeat === 'one') {
-        youtubePlayer.seekTo(0)
-      } else if (repeat === 'all' && !playlist.doesNextItemExist) {
-        const firstItem = songs[0]
-        dispatch(updateActiveItemInPlaylist(firstItem))
-      } else if (playlist.doesNextItemExist) {
-        const nextItem = getNextItem(playlist)
-        dispatch(updateActiveItemInPlaylist(nextItem))
-        if (nextItem.id === activeSong.id) {
-          youtubePlayer.seekTo(0)
-        }
-      } else {
-        dispatch(updateActiveItemInPlaylist(null))
-      }
-    })
+    // if (mode === APP_MODES.STANDALONE) {
+    //   return;
+    // }
+    //
+    // sleep(200).then(() => {
+    //   if (shuffle) {
+    //     const restItems = songs.filter(item => item.uuid !== activeSong.uuid)
+    //     const length = restItems.length
+    //
+    //     if (!length) {
+    //       dispatch(updateActiveSong(activeSong))
+    //       return
+    //     }
+    //
+    //     const randomItem = restItems[Math.floor(Math.random() * length)]
+    //     dispatch(updateActiveSong(randomItem))
+    //   } else if (repeat === 'one') {
+    //     youtubePlayer.seekTo(0)
+    //   } else if (repeat === 'all' && !playlist.doesNextItemExist) {
+    //     const firstItem = songs[0]
+    //     dispatch(updateActiveSong(firstItem))
+    //   } else if (playlist.doesNextItemExist) {
+    //     const nextItem = getNextItem(playlist)
+    //     dispatch(updateActiveSong(nextItem))
+    //     if (nextItem.id === activeSong.id) {
+    //       youtubePlayer.seekTo(0)
+    //     }
+    //   } else {
+    //     dispatch(updateActiveSong(null))
+    //   }
+    // })
   }
 }
 

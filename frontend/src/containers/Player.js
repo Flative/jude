@@ -4,7 +4,7 @@ import classNames from 'classnames'
 
 import { ProgressBar, YouTube } from '../components'
 import { playPlayer, pausePlayer, registerPlayer, finishFetch, startFetch, finishPlayer, registerProgressBar } from '../reducers/playerReducer'
-import { updateActiveItemInPlaylist, getNextItem, getPrevItem, enableShuffle, enableRepeatAll, enableRepeatOne, disableShuffle, disableRepeat } from '../reducers/playlistReducer'
+import { updateActiveSong, getNextItem, getPrevItem, enableShuffle, enableRepeatAll, enableRepeatOne, disableShuffle, disableRepeat } from '../reducers/playlistReducer'
 import { APP_MODES } from '../reducers/appReducer'
 
 import PrevIcon from 'react-icons/lib/md/skip-previous'
@@ -43,7 +43,7 @@ class Player extends React.Component {
     }
 
     if (app.mode === APP_MODES.STANDALONE) {
-      dispatch(updateActiveItemInPlaylist(prevItem))
+      dispatch(updateActiveSong(prevItem))
       return
     }
 
@@ -61,7 +61,7 @@ class Player extends React.Component {
     }
 
     if (app.mode === APP_MODES.STANDALONE) {
-      dispatch(updateActiveItemInPlaylist(nextItem))
+      dispatch(updateActiveSong(nextItem))
       return
     }
 
@@ -163,7 +163,30 @@ class Player extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    const _playlist = this.props.playlist
+    const _player = this.props.player
+    const { playlist, player, dispatch } = nextProps
+    const { youtubePlayer, updatePercentage } = player
 
+
+    if (_playlist.songs.length === 0 && playlist.songs.length === 1) {
+      dispatch(updateActiveSong(playlist.songs[0]))
+    }
+
+    // Playlist has reached end of songs
+    if (!playlist.activeSong) {
+      updatePercentage(99.9)
+
+    // Song has changed
+    } else if ((!_playlist.activeSong && playlist.activeSong) ||
+      (_playlist.activeSong && playlist.activeSong && _playlist.activeSong.uuid !== playlist.activeSong.uuid)) {
+      updatePercentage(0)
+
+      // Same song ID (which means user has added same song)
+      if (_playlist.activeSong && playlist.activeSong && _playlist.activeSong.id === playlist.activeSong.id) {
+        youtubePlayer.seekTo(0)
+      }
+    }
   }
 
   render() {

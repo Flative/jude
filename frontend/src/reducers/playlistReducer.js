@@ -2,10 +2,10 @@ import UUID from 'node-uuid'
 import { APP_MODES } from './appReducer'
 
 export const actions = {
-  PLAYLIST_ITEM_ADDED: 'PLAYLIST_ITEM_ADDED',
-  PLAYLIST_ITEM_REMOVED: 'PLAYLIST_ITEM_REMOVED',
+  PLAYLIST_SONG_ADDED: 'PLAYLIST_SONG_ADDED',
+  PLAYLIST_SONG_REMOVED: 'PLAYLIST_SONG_REMOVED',
   PLAYLIST_DATA_REPLACED: 'PLAYLIST_DATA_REPLACED',
-  PLAYLIST_ACTIVE_ITEM_UPDATED: 'PLAYLIST_ACTIVE_ITEM_UPDATED',
+  PLAYLIST_ACTIVE_SONG_UPDATED: 'PLAYLIST_ACTIVE_SONG_UPDATED',
   PLAYLIST_SHUFFLE_ENABLED: 'PLAYLIST_SHUFFLE_ENABLED',
   PLAYLIST_SHUFFLE_DISABLED: 'PLAYLIST_SHUFFLE_DISABLED',
   PLAYLIST_REPEAT_ONE_ENABLED: 'PLAYLIST_REPEAT_ONE_ENABLED',
@@ -29,31 +29,19 @@ export function getPrevItem(playlist) {
   return playlist.activeSong ? playlist.songs[getActiveItemIndex(playlist) - 1] : null
 }
 
-export function addItemToPlaylist(id, title) {
+export function addSong(id, title) {
   return (dispatch, getState) => {
-    const { playlist, app } = getState()
+    const { playlist } = getState()
     const { activeSong, songs } = playlist
-    const { mode } = app
-
     const uuid = UUID.v4()
     const index = activeSong ? songs[songs.length - 1].index + 1 : 0
 
-    const item = { id, title, uuid, index }
+    const song = { id, title, uuid, index }
 
     dispatch({
-      type: actions.PLAYLIST_ITEM_ADDED,
-      doesNextItemExist: !!activeSong,
-      item,
+      type: actions.PLAYLIST_SONG_ADDED,
+      song,
     })
-
-    if (!activeSong) {
-      if (mode === APP_MODES.STANDALONE) {
-        dispatch(updateActiveItemInPlaylist(item))
-        return
-      }
-
-      // TODO:
-    }
   }
 }
 
@@ -66,36 +54,36 @@ export function removeItemFromPlaylist(item) {
     const nextItem = playlist.songs[itemIndex + 1]
 
     dispatch({
-      type: actions.PLAYLIST_ITEM_REMOVED,
+      type: actions.PLAYLIST_SONG_REMOVED,
       songs: playlist.songs.filter(v => v.uuid !== item.uuid),
       doesNextItemExist: !!nextItem,
     })
 
     if (activeSong.uuid === item.uuid) {
-      dispatch(updateActiveItemInPlaylist(nextItem))
+      dispatch(updateActiveSong(nextItem))
     }
   }
 }
 
-export function updateActiveItemInPlaylist(item) {
+export function updateActiveSong(activeSong) {
   return (dispatch, getState) => {
     const { playlist, player } = getState()
     const { youtubePlayer, updatePercentage } = player
-    const { activeSong, songs } = playlist
-
-    updatePercentage(0)
+    const { songs } = playlist
 
     dispatch({
-      type: actions.PLAYLIST_ACTIVE_ITEM_UPDATED,
-      doesNextItemExist: !!playlist.songs[getItemIndex(playlist, item) + 1],
-      item,
+      type: actions.PLAYLIST_ACTIVE_SONG_UPDATED,
+      activeSong,
+      nextSong: activeSong
+        ? songs[songs.findIndex(song => song.uuid === activeSong.uuid) + 1] || null
+        : null,
     })
 
-    if (!item) {
-      youtubePlayer.stopVideo()
-    } else if (activeSong && (item.id === activeSong.id)) {
-      youtubePlayer.seekTo(0)
-    }
+    // if (!song) {
+    //   youtubePlayer.stopVideo()
+    // } else if (activeSong && (song.id === activeSong.id)) {
+    //   youtubePlayer.seekTo(0)
+    // }
   }
 }
 
@@ -139,13 +127,12 @@ export const initialState = {
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case actions.PLAYLIST_ITEM_ADDED:
+    case actions.PLAYLIST_SONG_ADDED:
       return { ...state,
-        songs: [...state.songs, action.item],
-        doesNextItemExist: action.doesNextItemExist,
+        songs: [...state.songs, action.song],
       }
 
-    case actions.PLAYLIST_ITEM_REMOVED:
+    case actions.PLAYLIST_SONG_REMOVED:
       return { ...state,
         songs: action.songs,
         doesNextItemExist: action.doesNextItemExist,
@@ -162,10 +149,10 @@ export default (state = initialState, action) => {
         repeat: action.repeatingMode === 'none' ? false : action.repeatingMode,
       }
 
-    case actions.PLAYLIST_ACTIVE_ITEM_UPDATED:
+    case actions.PLAYLIST_ACTIVE_SONG_UPDATED:
       return { ...state,
-        activeSong: action.item,
-        doesNextItemExist: action.doesNextItemExist,
+        activeSong: action.activeSong,
+        nextSong: action.nextSong,
       }
 
     case actions.PLAYLIST_SHUFFLE_ENABLED:

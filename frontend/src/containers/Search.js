@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import UUID from 'node-uuid'
 import { searchVideos } from '../utils/youtube'
 import { SearchResult } from '../components'
-import { addItemToPlaylist, removeItemFromPlaylist } from '../reducers/playlistReducer'
+import { addSong, removeItemFromPlaylist } from '../reducers/playlistReducer'
 import { APP_MODES } from '../reducers/appReducer'
 import SearchIcon from 'react-icons/lib/md/search'
 
@@ -43,7 +43,7 @@ class Search extends React.Component {
     const index = activeSong ? songs[songs.length - 1].index + 1 : 0
 
     if (app.mode === APP_MODES.STANDALONE) {
-      dispatch(addItemToPlaylist(id, title, uuid, index))
+      dispatch(addSong(id, title, uuid, index))
       return
     }
 
@@ -57,11 +57,8 @@ class Search extends React.Component {
   // TODO: Need to display some interaction stuff while fetching
   search(query) {
     searchVideos(query)
-      .then(data => {
-        this.setState({
-          query,
-          searchResult: data,
-        })
+      .then(searchResult => {
+        this.setState({ query, searchResult })
       })
   }
 
