@@ -5,8 +5,8 @@ import ClearIcon from 'react-icons/lib/md/clear'
 class Playlist extends React.Component {
   render() {
     const {
-      items,
-      activeItem,
+      songs,
+      activeSong,
       onItemClick,
       onRemoveButtonClick,
     } = this.props
@@ -18,11 +18,11 @@ class Playlist extends React.Component {
         </div>
         <ul className="playlist__body">
           {
-            items.length
-            ? items.map(item => {
+            songs.length
+            ? songs.map(item => {
               const itemClass = className({
                 'playlist__item': true,
-                'playlist__item--active': activeItem && (activeItem.uuid === item.uuid),
+                'playlist__item--active': activeSong && (activeSong.uuid === item.uuid),
               })
               return (
                 <li
@@ -60,7 +60,7 @@ class Playlist extends React.Component {
 }
 
 Playlist.propTypes = {
-  items: React.PropTypes.arrayOf(React.PropTypes.shape({
+  songs: React.PropTypes.arrayOf(React.PropTypes.shape({
     id: React.PropTypes.string,
     uuid: React.PropTypes.string,
     title: React.PropTypes.string,

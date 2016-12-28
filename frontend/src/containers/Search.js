@@ -22,7 +22,7 @@ class Search extends React.Component {
 
   componentDidMount() {
     // For development
-    this.search('빈지노')
+    // this.search('빈지노')
   }
 
   handleSearchInputKeyPress(e) {
@@ -37,10 +37,10 @@ class Search extends React.Component {
 
   handleSearchResultItemClick(id, title) {
     const { app, playlist, dispatch } = this.props;
-    const { activeItem, items } = playlist
+    const { activeSong, songs } = playlist
 
     const uuid = UUID.v4()
-    const index = activeItem ? items[items.length - 1].index + 1 : 0
+    const index = activeSong ? songs[songs.length - 1].index + 1 : 0
 
     if (app.mode === APP_MODES.STANDALONE) {
       dispatch(addItemToPlaylist(id, title, uuid, index))
@@ -89,7 +89,7 @@ class Search extends React.Component {
         </div>
         <SearchResult
           query={query}
-          items={searchResult}
+          songs={searchResult}
           handleItemClick={this.handleSearchResultItemClick}
         />
       </div>

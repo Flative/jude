@@ -50,8 +50,8 @@ class Main extends React.Component {
         <Search />
         <Playlist
           className={"playlist"}
-          items={playlist.items}
-          activeItem={playlist.activeItem}
+          songs={playlist.songs}
+          activeSong={playlist.activeSong}
           onItemClick={this.handlePlaylistItemClick}
           onRemoveButtonClick={this.handlePlaylistRemoveButtonClick}
         />

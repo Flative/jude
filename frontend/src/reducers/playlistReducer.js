@@ -14,36 +14,39 @@ export const actions = {
 }
 
 export function getItemIndex(playlist, target) {
-  return target ? playlist.items.findIndex(item => item.uuid === target.uuid) : null
+  return target ? playlist.songs.findIndex(item => item.uuid === target.uuid) : null
 }
 
 export function getActiveItemIndex(playlist) {
-  return playlist.items.findIndex(item => item.uuid === playlist.activeItem.uuid)
+  return playlist.songs.findIndex(item => item.uuid === playlist.activeSong.uuid)
 }
 
 export function getNextItem(playlist) {
-  return playlist.activeItem ? playlist.items[getActiveItemIndex(playlist) + 1] : null
+  return playlist.activeSong ? playlist.songs[getActiveItemIndex(playlist) + 1] : null
 }
 
 export function getPrevItem(playlist) {
-  return playlist.activeItem ? playlist.items[getActiveItemIndex(playlist) - 1] : null
+  return playlist.activeSong ? playlist.songs[getActiveItemIndex(playlist) - 1] : null
 }
 
-export function addItemToPlaylist(id, title, uuid, index) {
+export function addItemToPlaylist(id, title) {
   return (dispatch, getState) => {
     const { playlist, app } = getState()
-    const { activeItem, items } = playlist
+    const { activeSong, songs } = playlist
     const { mode } = app
+
+    const uuid = UUID.v4()
+    const index = activeSong ? songs[songs.length - 1].index + 1 : 0
 
     const item = { id, title, uuid, index }
 
     dispatch({
       type: actions.PLAYLIST_ITEM_ADDED,
-      doesNextItemExist: !!activeItem,
+      doesNextItemExist: !!activeSong,
       item,
     })
 
-    if (!activeItem) {
+    if (!activeSong) {
       if (mode === APP_MODES.STANDALONE) {
         dispatch(updateActiveItemInPlaylist(item))
         return
@@ -57,18 +60,18 @@ export function addItemToPlaylist(id, title, uuid, index) {
 export function removeItemFromPlaylist(item) {
   return (dispatch, getState) => {
     const { playlist, player } = getState()
-    const { activeItem } = playlist
+    const { activeSong } = playlist
 
     const itemIndex = getItemIndex(playlist, item)
-    const nextItem = playlist.items[itemIndex + 1]
+    const nextItem = playlist.songs[itemIndex + 1]
 
     dispatch({
       type: actions.PLAYLIST_ITEM_REMOVED,
-      items: playlist.items.filter(v => v.uuid !== item.uuid),
+      songs: playlist.songs.filter(v => v.uuid !== item.uuid),
       doesNextItemExist: !!nextItem,
     })
 
-    if (activeItem.uuid === item.uuid) {
+    if (activeSong.uuid === item.uuid) {
       dispatch(updateActiveItemInPlaylist(nextItem))
     }
   }
@@ -78,19 +81,19 @@ export function updateActiveItemInPlaylist(item) {
   return (dispatch, getState) => {
     const { playlist, player } = getState()
     const { youtubePlayer, updatePercentage } = player
-    const { activeItem, items } = playlist
+    const { activeSong, songs } = playlist
 
     updatePercentage(0)
 
     dispatch({
       type: actions.PLAYLIST_ACTIVE_ITEM_UPDATED,
-      doesNextItemExist: !!playlist.items[getItemIndex(playlist, item) + 1],
+      doesNextItemExist: !!playlist.songs[getItemIndex(playlist, item) + 1],
       item,
     })
 
     if (!item) {
       youtubePlayer.stopVideo()
-    } else if (activeItem && (item.id === activeItem.id)) {
+    } else if (activeSong && (item.id === activeSong.id)) {
       youtubePlayer.seekTo(0)
     }
   }
@@ -127,41 +130,41 @@ export function disableRepeat() {
 }
 
 export const initialState = {
-  items: [],
-  doesNextItemExist: false,
+  songs: [],
   shuffle: false,
   repeat: false,
-  activeItem: null,
+  activeSong: null,
+  nextItem: null,
 }
 
 export default (state = initialState, action) => {
   switch (action.type) {
     case actions.PLAYLIST_ITEM_ADDED:
       return { ...state,
-        items: [...state.items, action.item],
+        songs: [...state.songs, action.item],
         doesNextItemExist: action.doesNextItemExist,
       }
 
     case actions.PLAYLIST_ITEM_REMOVED:
       return { ...state,
-        items: action.items,
+        songs: action.songs,
         doesNextItemExist: action.doesNextItemExist,
       }
 
     case actions.PLAYLIST_DATA_REPLACED:
-      const activeItemIndex = action.activeItem ? action.items.findIndex(v => v.uuid === action.activeItem.uuid) : -1
+      const activeSongIndex = action.activeSong ? action.songs.findIndex(v => v.uuid === action.activeSong.uuid) : -1
 
       return {
-        items: action.items,
-        activeItem: action.activeItem,
-        doesNextItemExist: activeItemIndex !== -1 ? !!action.items[activeItemIndex + 1] : false,
+        songs: action.songs,
+        activeSong: action.activeSong,
+        doesNextItemExist: activeSongIndex !== -1 ? !!action.songs[activeSongIndex + 1] : false,
         shuffle: action.isShuffleOn,
         repeat: action.repeatingMode === 'none' ? false : action.repeatingMode,
       }
 
     case actions.PLAYLIST_ACTIVE_ITEM_UPDATED:
       return { ...state,
-        activeItem: action.item,
+        activeSong: action.item,
         doesNextItemExist: action.doesNextItemExist,
       }
 

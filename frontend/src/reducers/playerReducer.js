@@ -72,7 +72,7 @@ export function registerPlayer(youtubePlayer) {
 
         case CUED:
           console.log('CUED')
-          if (getState().playlist.activeItem) {
+          if (getState().playlist.activeSong) {
             // TODO: Send duration info to server if app mode is host
             dispatch(playPlayer())
           }
@@ -121,7 +121,7 @@ export function finishPlayer() {
   return (dispatch, getState) => {
     const { player, playlist, app } = getState()
     const { youtubePlayer, updatePercentage } = player
-    const { items, activeItem, shuffle, repeat } = playlist
+    const { songs, activeSong, shuffle, repeat } = playlist
     const { mode } = app
 
     updatePercentage(99.9)
@@ -133,11 +133,11 @@ export function finishPlayer() {
 
     sleep(200).then(() => {
       if (shuffle) {
-        const restItems = items.filter(item => item.uuid !== activeItem.uuid)
+        const restItems = songs.filter(item => item.uuid !== activeSong.uuid)
         const length = restItems.length
 
         if (!length) {
-          dispatch(updateActiveItemInPlaylist(activeItem))
+          dispatch(updateActiveItemInPlaylist(activeSong))
           return
         }
 
@@ -146,12 +146,12 @@ export function finishPlayer() {
       } else if (repeat === 'one') {
         youtubePlayer.seekTo(0)
       } else if (repeat === 'all' && !playlist.doesNextItemExist) {
-        const firstItem = items[0]
+        const firstItem = songs[0]
         dispatch(updateActiveItemInPlaylist(firstItem))
       } else if (playlist.doesNextItemExist) {
         const nextItem = getNextItem(playlist)
         dispatch(updateActiveItemInPlaylist(nextItem))
-        if (nextItem.id === activeItem.id) {
+        if (nextItem.id === activeSong.id) {
           youtubePlayer.seekTo(0)
         }
       } else {

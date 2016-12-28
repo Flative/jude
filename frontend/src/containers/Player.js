@@ -72,7 +72,7 @@ class Player extends React.Component {
     const { dispatch, player, app, playlist } = this.props
     const { isPaused, youtubePlayer } = player
 
-    if (!playlist.activeItem) {
+    if (!playlist.activeSong) {
       // TODO: Should give a feedback to user
       console.log('Nothing there')
       return
@@ -150,7 +150,7 @@ class Player extends React.Component {
 
   getSongTitle() {
     const { player, playlist, app, dispatch } = this.props
-    const { activeItem, repeat } = playlist
+    const { activeSong, repeat } = playlist
     const { youtubePlayer } = player
     const { mode } = app
 
@@ -159,18 +159,22 @@ class Player extends React.Component {
       return ''
     }
 
-    return activeItem && youtubePlayer ? youtubePlayer.getVideoData().title : ''
+    return activeSong && youtubePlayer ? youtubePlayer.getVideoData().title : ''
+  }
+
+  componentWillReceiveProps(nextProps) {
+
   }
 
   render() {
     const { player, playlist, app, dispatch } = this.props
     const { isPaused, isFetching, currentVideoId, youtubePlayer, progressBarPercentage } = player
-    const { activeItem, repeat } = playlist
+    const { activeSong, repeat } = playlist
     const { mode } = app
 
     const style = {}
-    if (activeItem) {
-      style.backgroundImage = `url(https://i.ytimg.com/vi/${activeItem.id}/maxresdefault.jpg)`
+    if (activeSong) {
+      style.backgroundImage = `url(https://i.ytimg.com/vi/${activeSong.id}/maxresdefault.jpg)`
     }
 
     const shuffleButtonClass = classNames({
@@ -193,7 +197,7 @@ class Player extends React.Component {
             className="player__youtube"
             onReady={this.onYouTubeReady}
             opts={this.getYoutubeOptions()}
-            videoId={activeItem ? activeItem.id : null}
+            videoId={activeSong ? activeSong.id : null}
           /> : null
         }
         <h3 className="player__title">

@@ -3,13 +3,12 @@ import PlusIcon from 'react-icons/lib/fa/plus'
 
 class SearchResult extends React.Component {
   render() {
-    const { query, items = [], handleItemClick } = this.props
+    const { query, songs = [], handleItemClick } = this.props
 
     return (
       <div className="search__result">
-        {/*<h1>{query || 'No Result Found'}</h1>*/}
         <ul className="search__result__list">
-          {items.map((item, idx) => {
+          {songs.map((item, idx) => {
             return (
               <li className="search__result__item" key={item.id.videoId + idx}>
                 <div className="search__result__item__pad">
@@ -37,7 +36,7 @@ class SearchResult extends React.Component {
 
 SearchResult.propTypes = {
   query: React.PropTypes.string,
-  items: React.PropTypes.arrayOf(React.PropTypes.shape({
+  songs: React.PropTypes.arrayOf(React.PropTypes.shape({
     id: React.PropTypes.shape({
       kind: React.PropTypes.string,
       videoId: React.PropTypes.string,
