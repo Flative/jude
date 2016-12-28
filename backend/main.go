@@ -10,7 +10,7 @@ import (
 
 var (
 	addr         = flag.String("addr", "127.0.0.1:5050", "http service address")
-	homeTemplate = template.Must(template.ParseFiles("index.html"))
+	homeTemplate = template.Must(template.ParseFiles("static/index.html"))
 )
 
 func main() {
