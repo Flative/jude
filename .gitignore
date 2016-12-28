@@ -168,3 +168,6 @@ Temporary Items
 
 # For Backend project
 backend/vendor/*/
+
+### binary
+backend/backend
