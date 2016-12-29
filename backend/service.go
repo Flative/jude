@@ -9,9 +9,10 @@ import (
 )
 
 type Service struct {
-	host string
-	port int
-	addr string
+	host    string
+	port    int
+	addr    string
+	manager *Manager
 }
 
 func NewService(options map[string]interface{}) Service {
@@ -30,7 +31,7 @@ func NewService(options map[string]interface{}) Service {
 	}
 
 	service.addr = service.host + ":" + strconv.Itoa(service.port)
-
+	service.manager = newManager()
 	return service
 }
 
@@ -40,7 +41,6 @@ func (s *Service) Run() {
 		homeTemplate = template.Must(template.ParseFiles("static/index.html"))
 	)
 
-	manager := newManager()
 	log.Printf("\n\n* Running on\n* ws://%s/ws\n* http://%s/\n\n(Press CTRL+C to quit)\n", *addr, *addr)
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -48,7 +48,7 @@ func (s *Service) Run() {
 	})
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		serveWs(manager, w, r)
+		serveWs(s.manager, w, r)
 	})
 	log.Fatal(http.ListenAndServe(*addr, nil))
 }
