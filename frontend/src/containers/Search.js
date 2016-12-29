@@ -22,7 +22,7 @@ class Search extends React.Component {
 
   componentDidMount() {
     // For development
-    // this.search('빈지노')
+    this.search('3초를')
   }
 
   handleSearchInputKeyPress(e) {
@@ -36,8 +36,13 @@ class Search extends React.Component {
   }
 
   handleSearchResultItemClick(id, title) {
-    const { app, playlist, dispatch } = this.props;
+    const { app, playlist, player, dispatch } = this.props;
     const { activeSong, songs } = playlist
+
+    // TODO
+    if (!player.youtubePlayer) {
+      return
+    }
 
     const uuid = UUID.v4()
     const index = activeSong ? songs[songs.length - 1].index + 1 : 0

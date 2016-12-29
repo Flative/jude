@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import classNames from 'classnames'
 
 import { ProgressBar, YouTube } from '../components'
-import { playPlayer, pausePlayer, registerPlayer, finishFetch, startFetch, finishPlayer, registerProgressBar } from '../reducers/playerReducer'
+import { YOUTUBE_STATE, playSong, pauseSong, registerPlayer, registerProgressBar } from '../reducers/playerReducer'
 import { updateActiveSong, getNextItem, getPrevItem, enableShuffle, enableRepeatAll, enableRepeatOne, disableShuffle, disableRepeat } from '../reducers/playlistReducer'
 import { APP_MODES } from '../reducers/appReducer'
 
@@ -80,7 +80,7 @@ class Player extends React.Component {
 
     if (isPaused) {
       if (app.mode === APP_MODES.STANDALONE) {
-        dispatch(playPlayer(youtubePlayer))
+        dispatch(playSong(youtubePlayer))
       } else {
         // TODO
       }
@@ -88,7 +88,7 @@ class Player extends React.Component {
     }
 
     if (app.mode === APP_MODES.STANDALONE) {
-      dispatch(pausePlayer(youtubePlayer))
+      dispatch(pauseSong(youtubePlayer))
     } else {
       // TODO
     }
@@ -143,7 +143,7 @@ class Player extends React.Component {
       height: '0',
       width: '0',
       playerVars: { // https://developers.google.com/youtube/player_parameters
-        autoplay: false,
+        autoplay: true,
       },
     }
   }
@@ -163,30 +163,45 @@ class Player extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const _playlist = this.props.playlist
-    const _player = this.props.player
-    const { playlist, player, dispatch } = nextProps
-    const { youtubePlayer, updatePercentage } = player
+  }
 
+  componentDidUpdate(prevProps) {
+    const _playlist = prevProps.playlist
+    const _player = prevProps.player
+    const { playlist, player, dispatch } = this.props
+    const { youtubePlayer, updatePercentage, youtubePlayerState } = player
 
+    // Percentage Bar has mounted
+    if (!updatePercentage && _player.updatePercentage) {
+      _player.updatePercentage(0)
+    }
+
+    // A first song has been added to playlist
     if (_playlist.songs.length === 0 && playlist.songs.length === 1) {
       dispatch(updateActiveSong(playlist.songs[0]))
     }
 
-    // Playlist has reached end of songs
-    if (!playlist.activeSong) {
-      updatePercentage(99.9)
+    // New song has been activated in playlist that has had no active song
+    if ((!_playlist.activeSong && playlist.activeSong) ||
+      (playlist.activeSong && _player.youtubePlayerState !== YOUTUBE_STATE.CUED && youtubePlayerState === YOUTUBE_STATE.CUED)) {
+      youtubePlayer.playVideo()
 
-    // Song has changed
-    } else if ((!_playlist.activeSong && playlist.activeSong) ||
-      (_playlist.activeSong && playlist.activeSong && _playlist.activeSong.uuid !== playlist.activeSong.uuid)) {
+      // Playlist has reached end of songs
+    } else if (_playlist.activeSong && !playlist.activeSong) {
+      updatePercentage(0)
+
+      // Song has changed
+    } else if (_playlist.activeSong && playlist.activeSong && _playlist.activeSong.uuid !== playlist.activeSong.uuid) {
       updatePercentage(0)
 
       // Same song ID (which means user has added same song)
       if (_playlist.activeSong && playlist.activeSong && _playlist.activeSong.id === playlist.activeSong.id) {
         youtubePlayer.seekTo(0)
+      } else {
+        youtubePlayer.playVideo()
       }
     }
+
   }
 
   render() {

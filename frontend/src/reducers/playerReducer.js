@@ -12,13 +12,23 @@ export const actions = {
   PLAYER_FETCHING_STARTED: 'PLAYER_FETCHING_STARTED',
   PLAYER_FETCHING_FINISHED: 'PLAYER_FETCHING_FINISHED',
   PLAYER_UPDATE_PROGRESSBAR_PERCENTAGE: 'PLAYER_UPDATE_PROGRESSBAR_PERCENTAGE',
+  PLAYER_YOUTUBE_STATE_UPDATED: 'PLAYER_YOUTUBE_STATE_UPDATED',
+}
+
+export const YOUTUBE_STATE = {
+  UNSTARTED: -1,
+  ENDED: 0,
+  PLAYING: 1,
+  PAUSED: 2,
+  BUFFERING: 3,
+  CUED: 5,
 }
 
 // Store player instance to redux state tree when initializing
 export function registerPlayer(youtubePlayer) {
   window.player = youtubePlayer
   return (dispatch, getState) => {
-    const { ENDED, PLAYING, PAUSED, BUFFERING, CUED } = YT.PlayerState
+    const { ENDED, PLAYING, PAUSED, BUFFERING, CUED } = YOUTUBE_STATE
     const { player } = getState()
     const updatePercentage = player.updatePercentage
 
@@ -42,6 +52,7 @@ export function registerPlayer(youtubePlayer) {
     }
 
     youtubePlayer.addEventListener('onStateChange', (e) => {
+      dispatch(updateYoutubePlayerState(e.data))
       switch (e.data) {
         case PLAYING:
           console.log('PLAYING')
@@ -73,7 +84,7 @@ export function registerPlayer(youtubePlayer) {
           console.log('CUED')
           if (getState().playlist.activeSong) {
             // TODO: Send duration info to server if app mode is host
-            dispatch(playPlayer())
+            dispatch(playSong())
           }
           break
 
@@ -90,16 +101,15 @@ export function registerProgressBar(updatePercentage) {
   return { type: actions.PLAYER_REGISTER_PROGRESSBAR, updatePercentage }
 }
 
-export function pausePlayer() {
+export function pauseSong() {
   return (dispatch, getState) => {
     getState().player.youtubePlayer.pauseVideo()
     dispatch({ type: actions.PLAYER_PAUSED })
   }
 }
 
-export function playPlayer() {
+export function playSong() {
   return (dispatch, getState) => {
-    getState().player.youtubePlayer.playVideo();
     dispatch({ type: actions.PLAYER_PLAYED })
   }
   // FIXME: it should be actual action that plays player
@@ -113,6 +123,10 @@ export function startFetch() {
 
 export function finishFetch() {
   return { type: actions.PLAYER_FETCHING_FINISHED }
+}
+
+export function updateYoutubePlayerState(youtubePlayerState) {
+  return { type: actions.PLAYER_YOUTUBE_STATE_UPDATED, youtubePlayerState }
 }
 
 // Play next song and update playlist when the song finished
@@ -165,6 +179,7 @@ export function finishPlayer() {
 export const initialState = {
   youtubePlayer: null,
   updatePercentage: null,
+  youtubePlayerState: null,
   isPaused: true,
   isFetching: true,
 }
@@ -203,6 +218,10 @@ export default (state = initialState, action) => {
     case actions.PLAYER_REGISTER_PROGRESSBAR:
       return { ...state,
         updatePercentage: action.updatePercentage,
+      }
+    case actions.PLAYER_YOUTUBE_STATE_UPDATED:
+      return { ...state,
+        youtubePlayerState: action.youtubePlayerState,
       }
     default:
       return state
