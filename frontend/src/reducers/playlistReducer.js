@@ -45,22 +45,18 @@ export function addSong(id, title) {
   }
 }
 
-export function removeItemFromPlaylist(item) {
+export function removeSong(item) {
   return (dispatch, getState) => {
     const { playlist, player } = getState()
-    const { activeSong } = playlist
-
-    const itemIndex = getItemIndex(playlist, item)
-    const nextItem = playlist.songs[itemIndex + 1]
+    const { activeSong, nextSong } = playlist
 
     dispatch({
       type: actions.PLAYLIST_SONG_REMOVED,
       songs: playlist.songs.filter(v => v.uuid !== item.uuid),
-      doesNextItemExist: !!nextItem,
     })
 
-    if (activeSong.uuid === item.uuid) {
-      dispatch(updateActiveSong(nextItem))
+    if (nextSong) {
+      dispatch(updateActiveSong(nextSong))
     }
   }
 }
@@ -135,7 +131,6 @@ export default (state = initialState, action) => {
     case actions.PLAYLIST_SONG_REMOVED:
       return { ...state,
         songs: action.songs,
-        doesNextItemExist: action.doesNextItemExist,
       }
 
     case actions.PLAYLIST_DATA_REPLACED:

@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { removeItemFromPlaylist, updateActiveSong } from '../reducers/playlistReducer'
+import { removeSong, updateActiveSong } from '../reducers/playlistReducer'
 import { Navbar, Playlist, ModeSelector } from '../components'
 import { Search, Player } from './'
 import { APP_MODES, establishWSConnection, disconnectWSConnection } from '../reducers/appReducer'
@@ -15,7 +15,7 @@ class Main extends React.Component {
   handlePlaylistRemoveButtonClick(item) {
     const { dispatch, app } = this.props
 
-    dispatch(removeItemFromPlaylist(item))
+    dispatch(removeSong(item))
   }
 
   handlePlaylistItemClick(item) {

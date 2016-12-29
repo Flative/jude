@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import UUID from 'node-uuid'
 import { searchVideos } from '../utils/youtube'
 import { SearchResult } from '../components'
-import { addSong, removeItemFromPlaylist } from '../reducers/playlistReducer'
+import { addSong, removeSong } from '../reducers/playlistReducer'
 import { APP_MODES } from '../reducers/appReducer'
 import SearchIcon from 'react-icons/lib/md/search'
 

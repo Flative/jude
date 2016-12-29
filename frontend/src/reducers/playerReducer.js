@@ -38,7 +38,7 @@ export function registerPlayer(youtubePlayer) {
 
     const updateTime = () => {
       prevTime = currentTime
-      currentTime = Math.floor(youtubePlayer.getCurrentTime())
+      currentTime = youtubePlayer.getCurrentTime()
       if (Math.abs(prevTime - currentTime) > 0) {
         const duration = youtubePlayer.getDuration()
         updatePercentage((currentTime / duration) * 100)
@@ -47,7 +47,7 @@ export function registerPlayer(youtubePlayer) {
 
     const timer = {
       handler: null,
-      start: () => timer.handler = setInterval(() => updateTime(), 100),
+      start: () => timer.handler = setInterval(() => updateTime(), 200), // FIXME
       stop: () => clearTimeout(timer.handler),
     }
 
@@ -59,14 +59,12 @@ export function registerPlayer(youtubePlayer) {
           timer.stop()
           timer.start()
           if (isBufferingStarted) {
-            dispatch(finishFetch())
             isBufferingStarted = false
           }
           break
 
         case BUFFERING:
           isBufferingStarted = true
-          dispatch(startFetch())
           break
 
         case PAUSED:
@@ -77,7 +75,7 @@ export function registerPlayer(youtubePlayer) {
 
         case ENDED:
           console.log('ENDED')
-          dispatch(finishPlayer())
+          dispatch(finishSong())
           break
 
         case CUED:
@@ -103,7 +101,6 @@ export function registerProgressBar(updatePercentage) {
 
 export function pauseSong() {
   return (dispatch, getState) => {
-    getState().player.youtubePlayer.pauseVideo()
     dispatch({ type: actions.PLAYER_PAUSED })
   }
 }
@@ -112,8 +109,6 @@ export function playSong() {
   return (dispatch, getState) => {
     dispatch({ type: actions.PLAYER_PLAYED })
   }
-  // FIXME: it should be actual action that plays player
-  // In this code, it just records PLYAER_PLAYED action was dispatched
 }
 
 // Fetching (buffering)
@@ -130,7 +125,7 @@ export function updateYoutubePlayerState(youtubePlayerState) {
 }
 
 // Play next song and update playlist when the song finished
-export function finishPlayer() {
+export function finishSong() {
   return (dispatch, getState) => {
     const { player, playlist, app } = getState()
     const { youtubePlayer, updatePercentage } = player
@@ -181,7 +176,7 @@ export const initialState = {
   updatePercentage: null,
   youtubePlayerState: null,
   isPaused: true,
-  isFetching: true,
+  isFinished: true,
 }
 
 export default (state = initialState, action) => {
@@ -190,30 +185,19 @@ export default (state = initialState, action) => {
       return { ...state,
         youtubePlayer: action.youtubePlayer,
       }
-    // case actions.PLAYER_VIDEO_UPDATED:
-    //   return { ...state,
-    //     currentVideoId: action.id,
-    //   }
     case actions.PLAYER_FINISHED:
       return { ...state,
         currentVideoId: null,
-        isPaused: true,
+        isFinished: true,
       }
     case actions.PLAYER_PLAYED:
       return { ...state,
         isPaused: false,
+        isFinished: false,
       }
     case actions.PLAYER_PAUSED:
       return { ...state,
         isPaused: true,
-      }
-    case actions.PLAYER_FETCHING_STARTED:
-      return { ...state,
-        isFetching: true,
-      }
-    case actions.PLAYER_FETCHING_FINISHED:
-      return { ...state,
-        isFetching: false,
       }
     case actions.PLAYER_REGISTER_PROGRESSBAR:
       return { ...state,

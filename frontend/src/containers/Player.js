@@ -70,9 +70,9 @@ class Player extends React.Component {
 
   handlePPButtonClick() {
     const { dispatch, player, app, playlist } = this.props
-    const { isPaused, youtubePlayer } = player
+    const { isPaused, youtubePlayer, youtubePlayerState } = player
 
-    if (!playlist.activeSong) {
+    if (!playlist.activeSong || youtubePlayerState === YOUTUBE_STATE.BUFFERING) {
       // TODO: Should give a feedback to user
       console.log('Nothing there')
       return
@@ -80,7 +80,7 @@ class Player extends React.Component {
 
     if (isPaused) {
       if (app.mode === APP_MODES.STANDALONE) {
-        dispatch(playSong(youtubePlayer))
+        dispatch(playSong())
       } else {
         // TODO
       }
@@ -88,7 +88,7 @@ class Player extends React.Component {
     }
 
     if (app.mode === APP_MODES.STANDALONE) {
-      dispatch(pauseSong(youtubePlayer))
+      dispatch(pauseSong())
     } else {
       // TODO
     }
@@ -169,16 +169,17 @@ class Player extends React.Component {
     const _playlist = prevProps.playlist
     const _player = prevProps.player
     const { playlist, player, dispatch } = this.props
-    const { youtubePlayer, updatePercentage, youtubePlayerState } = player
-
-    // Percentage Bar has mounted
-    if (!updatePercentage && _player.updatePercentage) {
-      _player.updatePercentage(0)
-    }
+    const { youtubePlayer, updatePercentage, youtubePlayerState, isPaused, isFinished } = player
 
     // A first song has been added to playlist
     if (_playlist.songs.length === 0 && playlist.songs.length === 1) {
       dispatch(updateActiveSong(playlist.songs[0]))
+    }
+
+    if (!isFinished && !_player.isPaused && isPaused) {
+      youtubePlayer.pauseVideo()
+    } else if (_player.isPaused && !isPaused && playlist.activeSong) {
+      youtubePlayer.playVideo()
     }
 
     // New song has been activated in playlist that has had no active song
