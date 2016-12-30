@@ -4,10 +4,18 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/websocket"
+
 	"encoding/json"
 )
 
-var upgrader = NewUpgrader()
+var upgrader = &websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
+}
 
 func serveWs(manager *Manager, w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
