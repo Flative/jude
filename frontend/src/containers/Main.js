@@ -57,7 +57,6 @@ Main.propTypes = {
   playlist: PropTypes.object,
   app: PropTypes.object,
   removeItemFromPlaylist: PropTypes.func,
-  updateActiveItemInPlaylist: PropTypes.func,
 }
 Main.defaultProps = {}
 

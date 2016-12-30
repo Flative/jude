@@ -4,7 +4,7 @@ import classNames from 'classnames'
 
 import { ProgressBar, YouTube } from '../components'
 import { YOUTUBE_STATE, playSong, pauseSong, registerPlayer, registerProgressBar } from '../reducers/playerReducer'
-import { updateActiveSong, getNextItem, getPrevItem, enableShuffle, enableRepeatAll, enableRepeatOne, disableShuffle, disableRepeat } from '../reducers/playlistReducer'
+import { updateActiveSong, getNextSong, getPrevItem, enableShuffle, enableRepeatAll, enableRepeatOne, disableShuffle, disableRepeat } from '../reducers/playlistReducer'
 import { APP_MODES } from '../reducers/appReducer'
 
 import PrevIcon from 'react-icons/lib/md/skip-previous'
@@ -52,19 +52,19 @@ class Player extends React.Component {
 
   handleNextButtonClick() {
     const { player, playlist, app, dispatch } = this.props
-    const nextItem = getNextItem(playlist)
-
-    if (!nextItem) {
-      // TODO: Should give a feedback to user
-      console.log('Nothing there')
-      return
-    }
-
-    if (app.mode === APP_MODES.STANDALONE) {
-      dispatch(updateActiveSong(nextItem))
-      return
-    }
-
+    // const nextItem = getNextSong(playlist)
+    //
+    // if (!nextItem) {
+    //   TODO: Should give a feedback to user
+      // console.log('Nothing there')
+      // return
+    // }
+    //
+    // if (app.mode === APP_MODES.STANDALONE) {
+    //   dispatch(updateActiveSong(nextItem))
+    //   return
+    // }
+    //
     // TODO
   }
 
@@ -73,7 +73,7 @@ class Player extends React.Component {
     const { isPaused, youtubePlayer, youtubePlayerState } = player
     const { songs, activeSong } = playlist
 
-    if ((activeSong && !songs.length) || youtubePlayerState === YOUTUBE_STATE.BUFFERING) {
+    if (!songs.length || youtubePlayerState === YOUTUBE_STATE.BUFFERING) {
       console.log('Nothing there')
       return
     }
@@ -181,7 +181,7 @@ class Player extends React.Component {
       youtubePlayer.playVideo()
 
       // Playlist has reached end of songs
-    } else if (_playlist.activeSong && !playlist.activeSong) {
+    } else if (!playlist.activeSong) {
       updatePercentage(0)
 
       // Song has changed
@@ -242,7 +242,7 @@ class Player extends React.Component {
               className="player__btn-prev"
               onClick={this.handlePrevButtonClick}
             />
-            {(!activeSong && songs.length) || (isPaused && youtubePlayerState === YOUTUBE_STATE.PLAYING)
+            {!activeSong || (isPaused && youtubePlayerState === YOUTUBE_STATE.PLAYING)
               ? <PlayIcon
                 className="player__btn-pp"
                 onClick={this.handlePPButtonClick}

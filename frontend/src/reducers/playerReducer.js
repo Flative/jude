@@ -1,4 +1,4 @@
-import { updateActiveSong, getNextItem, enableRepeatAll } from './playlistReducer'
+import { updateActiveSong, getNextSong, enableRepeatAll } from './playlistReducer'
 import { sleep } from '../utils/util'
 import { APP_MODES } from './appReducer'
 
@@ -159,7 +159,7 @@ export function finishSong() {
     //     const firstItem = songs[0]
     //     dispatch(updateActiveSong(firstItem))
     //   } else if (playlist.doesNextItemExist) {
-    //     const nextItem = getNextItem(playlist)
+    //     const nextItem = getNextSong(playlist)
     //     dispatch(updateActiveSong(nextItem))
     //     if (nextItem.id === activeSong.id) {
     //       youtubePlayer.seekTo(0)

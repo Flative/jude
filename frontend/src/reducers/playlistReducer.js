@@ -21,8 +21,18 @@ export function getActiveItemIndex(playlist) {
   return playlist.songs.findIndex(item => item.uuid === playlist.activeSong.uuid)
 }
 
-export function getNextItem(playlist) {
-  return playlist.activeSong ? playlist.songs[getActiveItemIndex(playlist) + 1] : null
+export function getNextSongIndex(playlist) {
+  const { activeSong, songs, nextSong } = playlist
+  const uuid = UUID.v4()
+  return index = activeSong ? songs[songs.length - 1].index + 1 : 0
+}
+
+export function getNextSong(playlist, activeSong) {
+  const { songs } = playlist
+  return activeSong
+    ? songs[songs.findIndex(v => v.uuid === activeSong.uuid) + 1] || null
+    : null;
+  // return playlist.activeSong ? playlist.songs[getActiveItemIndex(playlist) + 1] || null : null
 }
 
 export function getPrevItem(playlist) {
@@ -73,9 +83,11 @@ export function updateActiveSong(activeSong) {
     dispatch({
       type: actions.PLAYLIST_ACTIVE_SONG_UPDATED,
       activeSong,
-      nextSong: activeSong
-        ? songs[songs.findIndex(v => v.uuid === activeSong.uuid) + 1] || null
-        : null,
+      nextSong:
+        getNextSong(playlist, activeSong),
+        // activeSong
+        // ? songs[songs.findIndex(v => v.uuid === activeSong.uuid) + 1] || null
+        // : null,
     })
 
     // if (!song) {
