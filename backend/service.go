@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"log"
 	"net/http"
 	"strconv"
@@ -35,11 +34,9 @@ func NewService(options map[string]interface{}) Service {
 }
 
 func (s *Service) Run() {
-	addr := flag.String("addr", s.addr, "http service address")
-
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		serveWs(s.manager, w, r)
 	})
-	log.Printf("\n\n* Running on\n* ws://%s/ws\n* http://%s/\n\n(Press CTRL+C to quit)\n", *addr, *addr)
-	log.Fatal(http.ListenAndServe(*addr, nil))
+	log.Printf("\n\n* Running on\n* ws://%s/ws\n* http://%s/\n\n(Press CTRL+C to quit)\n", s.addr, s.addr)
+	log.Fatal(http.ListenAndServe(s.addr, nil))
 }
