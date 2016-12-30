@@ -30,7 +30,7 @@ func newPlaylist() *Playlist {
 
 func (p *Playlist) add(body []byte) error {
 	song := newSong()
-	if err := json.Unmarshal(body, song); err != nil {
+	if err := json.Unmarshal(body, &song); err != nil {
 		return err
 	}
 
@@ -44,7 +44,7 @@ func (p *Playlist) add(body []byte) error {
 
 func (p *Playlist) delete(body []byte) error {
 	song := newSong()
-	if err := json.Unmarshal(body, song); err != nil {
+	if err := json.Unmarshal(body, &song); err != nil {
 		return err
 	}
 
@@ -52,24 +52,30 @@ func (p *Playlist) delete(body []byte) error {
 		return errors.New("invalid data")
 	}
 
-	songList := make([]*Song, 0)
-	for _, innerSong := range p.SongList {
+	targetIndex := -1
+
+	for i, innerSong := range p.SongList {
 		if strings.Compare(innerSong.UUID, song.UUID) != 0 {
-			songList = append(songList, innerSong)
+			targetIndex = i
+			break
 		}
 	}
-	p.SongList = songList
 
-	if strings.Compare(song.UUID, p.ActiveSong.UUID) == 0 {
+	if targetIndex == -1 {
+		return nil
+	}
+
+	if p.ActiveSong != nil && strings.Compare(p.SongList[targetIndex].UUID, p.ActiveSong.UUID) == 0 {
 		p.ActiveSong = nil
 	}
 
+	p.SongList = append(p.SongList[:targetIndex], p.SongList[targetIndex+1:]...)
 	return nil
 }
 
 func (p *Playlist) activate(body []byte) error {
 	song := newSong()
-	if err := json.Unmarshal(body, song); err != nil {
+	if err := json.Unmarshal(body, &song); err != nil {
 		return err
 	}
 
