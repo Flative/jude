@@ -71,26 +71,19 @@ class Player extends React.Component {
   handlePPButtonClick() {
     const { dispatch, player, app, playlist } = this.props
     const { isPaused, youtubePlayer, youtubePlayerState } = player
+    const { songs, activeSong } = playlist
 
-    if (!playlist.activeSong || youtubePlayerState === YOUTUBE_STATE.BUFFERING) {
-      // TODO: Should give a feedback to user
+    if ((activeSong && !songs.length) || youtubePlayerState === YOUTUBE_STATE.BUFFERING) {
       console.log('Nothing there')
       return
     }
 
-    if (isPaused) {
-      if (app.mode === APP_MODES.STANDALONE) {
-        dispatch(playSong())
-      } else {
-        // TODO
-      }
-      return
-    }
-
-    if (app.mode === APP_MODES.STANDALONE) {
-      dispatch(pauseSong())
+    if (!activeSong && songs.length) {
+      dispatch(updateActiveSong(songs[0]))
+    } else if (isPaused) {
+      dispatch(playSong())
     } else {
-      // TODO
+      dispatch(pauseSong())
     }
   }
 
@@ -208,7 +201,7 @@ class Player extends React.Component {
   render() {
     const { player, playlist, app, dispatch } = this.props
     const { isPaused, isFinished, youtubePlayerState } = player
-    const { activeSong, repeat } = playlist
+    const { songs, activeSong, repeat } = playlist
     const { mode } = app
 
     const style = {}
@@ -249,7 +242,7 @@ class Player extends React.Component {
               className="player__btn-prev"
               onClick={this.handlePrevButtonClick}
             />
-            {isFinished || (isPaused && youtubePlayerState === YOUTUBE_STATE.PLAYING)
+            {(!activeSong && songs.length) || (isPaused && youtubePlayerState === YOUTUBE_STATE.PLAYING)
               ? <PlayIcon
                 className="player__btn-pp"
                 onClick={this.handlePPButtonClick}
