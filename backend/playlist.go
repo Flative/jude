@@ -95,7 +95,7 @@ func (p *Playlist) activate(body []byte) error {
 
 func (p *Playlist) play() error {
 	if p.ActiveSong == nil {
-		return errors.New("invalid data")
+		return errors.New("There should be no active song")
 	}
 
 	p.IsPaused = false
@@ -104,7 +104,7 @@ func (p *Playlist) play() error {
 
 func (p *Playlist) pause() error {
 	if p.ActiveSong == nil {
-		return errors.New("invalid data")
+		return errors.New("There should be no active song")
 	}
 
 	p.IsPaused = true
@@ -126,7 +126,18 @@ func (p *Playlist) update(rawBody []byte) error {
 	}
 
 	if repeatingMode, ok := body["repeatingMode"].(string); ok {
-		p.RepeatingMode = repeatingMode
+		modes := []string{"all", "one", "none"}
+		isValid := false
+		for _, mode := range modes {
+			if strings.Compare(mode, repeatingMode) == 0 {
+				isValid = true
+				break
+			}
+		}
+
+		if isValid {
+			p.RepeatingMode = repeatingMode
+		}
 	}
 
 	if isShuffleOn, ok := body["isShuffleOn"].(bool); ok {
