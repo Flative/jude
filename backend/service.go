@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"html/template"
 	"log"
 	"net/http"
 	"strconv"
@@ -36,19 +35,11 @@ func NewService(options map[string]interface{}) Service {
 }
 
 func (s *Service) Run() {
-	var (
-		addr         = flag.String("addr", s.addr, "http service address")
-		homeTemplate = template.Must(template.ParseFiles("static/index.html"))
-	)
+	addr := flag.String("addr", s.addr, "http service address")
 
-	log.Printf("\n\n* Running on\n* ws://%s/ws\n* http://%s/\n\n(Press CTRL+C to quit)\n", *addr, *addr)
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		homeTemplate.Execute(w, r.Host)
-	})
-	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		serveWs(s.manager, w, r)
 	})
+	log.Printf("\n\n* Running on\n* ws://%s/ws\n* http://%s/\n\n(Press CTRL+C to quit)\n", *addr, *addr)
 	log.Fatal(http.ListenAndServe(*addr, nil))
 }

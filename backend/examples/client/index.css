@@ -1,0 +1,55 @@
+#left {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 30%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+#left #top {
+    border: 10px solid #777;
+    position: relative;
+    left: 0;
+    right: 10;
+    top: 0;
+    height: 50%;
+    overflow: scroll;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+#left #bottom {
+    border: 10px solid #777;
+    position: relative;
+    left: 0;
+    right: 10;
+    bottom: 0;
+    height: 50%;
+    overflow: scroll;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+#right {
+    border: 10px #000 solid;
+    position: absolute;
+    padding: 20px;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 70%;
+    overflow: scroll;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+button[type=button] {
+    padding: 10px;
+    cursor: pointer;
+}
