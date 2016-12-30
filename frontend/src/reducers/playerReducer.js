@@ -206,6 +206,7 @@ export default (state = initialState, action) => {
     case actions.PLAYER_YOUTUBE_STATE_UPDATED:
       return { ...state,
         youtubePlayerState: action.youtubePlayerState,
+        isFinished: action.youtubePlayerState === YOUTUBE_STATE.ENDED,
       }
     default:
       return state

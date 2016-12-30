@@ -32,7 +32,7 @@ export function getPrevItem(playlist) {
 export function addSong(id, title) {
   return (dispatch, getState) => {
     const { playlist } = getState()
-    const { activeSong, songs } = playlist
+    const { activeSong, songs, nextSong } = playlist
     const uuid = UUID.v4()
     const index = activeSong ? songs[songs.length - 1].index + 1 : 0
 
@@ -41,6 +41,9 @@ export function addSong(id, title) {
     dispatch({
       type: actions.PLAYLIST_SONG_ADDED,
       song,
+      nextSong: !nextSong && activeSong
+        ? song
+        : nextSong,
     })
   }
 }
@@ -71,7 +74,7 @@ export function updateActiveSong(activeSong) {
       type: actions.PLAYLIST_ACTIVE_SONG_UPDATED,
       activeSong,
       nextSong: activeSong
-        ? songs[songs.findIndex(song => song.uuid === activeSong.uuid) + 1] || null
+        ? songs[songs.findIndex(v => v.uuid === activeSong.uuid) + 1] || null
         : null,
     })
 
@@ -126,6 +129,7 @@ export default (state = initialState, action) => {
     case actions.PLAYLIST_SONG_ADDED:
       return { ...state,
         songs: [...state.songs, action.song],
+        nextSong: action.nextSong,
       }
 
     case actions.PLAYLIST_SONG_REMOVED:
@@ -139,7 +143,6 @@ export default (state = initialState, action) => {
       return {
         songs: action.songs,
         activeSong: action.activeSong,
-        doesNextItemExist: activeSongIndex !== -1 ? !!action.songs[activeSongIndex + 1] : false,
         shuffle: action.isShuffleOn,
         repeat: action.repeatingMode === 'none' ? false : action.repeatingMode,
       }

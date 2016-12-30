@@ -207,7 +207,7 @@ class Player extends React.Component {
 
   render() {
     const { player, playlist, app, dispatch } = this.props
-    const { isPaused, isFetching, currentVideoId, youtubePlayer, progressBarPercentage } = player
+    const { isPaused, isFinished, youtubePlayerState } = player
     const { activeSong, repeat } = playlist
     const { mode } = app
 
@@ -249,7 +249,7 @@ class Player extends React.Component {
               className="player__btn-prev"
               onClick={this.handlePrevButtonClick}
             />
-            {isPaused
+            {isFinished || (isPaused && youtubePlayerState === YOUTUBE_STATE.PLAYING)
               ? <PlayIcon
                 className="player__btn-pp"
                 onClick={this.handlePPButtonClick}
