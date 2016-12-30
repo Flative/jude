@@ -8,6 +8,8 @@ export const actions = {
   PLAYLIST_ACTIVE_SONG_UPDATED: 'PLAYLIST_ACTIVE_SONG_UPDATED',
   PLAYLIST_SHUFFLE_ENABLED: 'PLAYLIST_SHUFFLE_ENABLED',
   PLAYLIST_SHUFFLE_DISABLED: 'PLAYLIST_SHUFFLE_DISABLED',
+  PLAYLIST_SHUFFLE_STATE_UPDATED: 'PLAYLIST_SHUFFLE_STATE_UPDATED',
+  PLAYLIST_REPEAT_STATE_UPDATED: 'PLAYLIST_REPEAT_STATE_UPDATED',
   PLAYLIST_REPEAT_ONE_ENABLED: 'PLAYLIST_REPEAT_ONE_ENABLED',
   PLAYLIST_REPEAT_ALL_ENABLED: 'PLAYLIST_REPEAT_ALL_ENABLED',
   PLAYLIST_REPEAT_DISABLED: 'PLAYLIST_REPEAT_DISABLED',
@@ -27,12 +29,13 @@ export function getNextSongIndex(playlist) {
   return index = activeSong ? songs[songs.length - 1].index + 1 : 0
 }
 
-export function getNextSong(playlist, activeSong) {
-  const { songs } = playlist
-  return activeSong
-    ? songs[songs.findIndex(v => v.uuid === activeSong.uuid) + 1] || null
-    : null;
-  // return playlist.activeSong ? playlist.songs[getActiveItemIndex(playlist) + 1] || null : null
+export function getNextSong(playlist, criteriaSong) {
+  const { songs, shuffle, repeat, activeSong } = playlist
+  criteriaSong = criteriaSong || activeSong
+
+  return criteriaSong
+    ? songs[songs.findIndex(v => v.uuid === criteriaSong.uuid) + 1] || null
+    : null
 }
 
 export function getPrevItem(playlist) {
@@ -42,7 +45,7 @@ export function getPrevItem(playlist) {
 export function addSong(id, title) {
   return (dispatch, getState) => {
     const { playlist } = getState()
-    const { activeSong, songs, nextSong } = playlist
+    const { activeSong, songs } = playlist
     const uuid = UUID.v4()
     const index = activeSong ? songs[songs.length - 1].index + 1 : 0
 
@@ -51,26 +54,20 @@ export function addSong(id, title) {
     dispatch({
       type: actions.PLAYLIST_SONG_ADDED,
       song,
-      nextSong: !nextSong && activeSong
-        ? song
-        : nextSong,
     })
   }
 }
 
 export function removeSong(item) {
   return (dispatch, getState) => {
-    const { playlist, player } = getState()
-    const { activeSong, nextSong } = playlist
+    const { playlist } = getState()
+    const { activeSong } = playlist
 
     dispatch({
       type: actions.PLAYLIST_SONG_REMOVED,
       songs: playlist.songs.filter(v => v.uuid !== item.uuid),
+      activeSong: item.uuid === activeSong.uuid ? null : activeSong,
     })
-
-    if (nextSong) {
-      dispatch(updateActiveSong(nextSong))
-    }
   }
 }
 
@@ -83,11 +80,6 @@ export function updateActiveSong(activeSong) {
     dispatch({
       type: actions.PLAYLIST_ACTIVE_SONG_UPDATED,
       activeSong,
-      nextSong:
-        getNextSong(playlist, activeSong),
-        // activeSong
-        // ? songs[songs.findIndex(v => v.uuid === activeSong.uuid) + 1] || null
-        // : null,
     })
 
     // if (!song) {
@@ -105,9 +97,12 @@ export function replacePlaylistData(payload) {
   }
 }
 
-export function enableShuffle() {
+export function updateShuffleState(shuffle) {
   return (dispatch, getState) => {
-    dispatch({ type: actions.PLAYLIST_SHUFFLE_ENABLED })
+    // dispatch({
+    //   type: actions.PLAYLIST_SHUFFLE_ENABLED,
+    //   nextSong: shuffle ? getNextSong(getState().playlist),
+    // })
     dispatch(enableRepeatAll())
   }
 }
@@ -141,12 +136,12 @@ export default (state = initialState, action) => {
     case actions.PLAYLIST_SONG_ADDED:
       return { ...state,
         songs: [...state.songs, action.song],
-        nextSong: action.nextSong,
       }
 
     case actions.PLAYLIST_SONG_REMOVED:
       return { ...state,
         songs: action.songs,
+        activeSong: action.activeSong,
       }
 
     case actions.PLAYLIST_DATA_REPLACED:
@@ -162,7 +157,6 @@ export default (state = initialState, action) => {
     case actions.PLAYLIST_ACTIVE_SONG_UPDATED:
       return { ...state,
         activeSong: action.activeSong,
-        nextSong: action.nextSong,
       }
 
     case actions.PLAYLIST_SHUFFLE_ENABLED:

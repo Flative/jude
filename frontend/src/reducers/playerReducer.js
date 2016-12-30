@@ -1,4 +1,4 @@
-import { updateActiveSong, getNextSong, enableRepeatAll } from './playlistReducer'
+import { updateActiveSong, getNextSong } from './playlistReducer'
 import { sleep } from '../utils/util'
 import { APP_MODES } from './appReducer'
 
@@ -135,7 +135,7 @@ export function finishSong() {
     updatePercentage(99.9)
     dispatch({ type: actions.PLAYER_FINISHED })
 
-    dispatch(updateActiveSong(nextSong))
+    dispatch(updateActiveSong(getNextSong(playlist)))
 
     // if (mode === APP_MODES.STANDALONE) {
     //   return;

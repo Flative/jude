@@ -4,7 +4,7 @@ import classNames from 'classnames'
 
 import { ProgressBar, YouTube } from '../components'
 import { YOUTUBE_STATE, playSong, pauseSong, registerPlayer, registerProgressBar } from '../reducers/playerReducer'
-import { updateActiveSong, getNextSong, getPrevItem, enableShuffle, enableRepeatAll, enableRepeatOne, disableShuffle, disableRepeat } from '../reducers/playlistReducer'
+import { updateActiveSong, getNextSong, getPrevItem, updateShuffleState, enableRepeatAll, enableRepeatOne, disableShuffle, disableRepeat } from '../reducers/playlistReducer'
 import { APP_MODES } from '../reducers/appReducer'
 
 import PrevIcon from 'react-icons/lib/md/skip-previous'
@@ -94,15 +94,9 @@ class Player extends React.Component {
       if (playlist.shuffle) {
         dispatch(disableShuffle())
       } else {
-        dispatch(enableShuffle())
+        dispatch(updateShuffleState())
       }
       return
-    }
-
-    if (playlist.shuffle) {
-      // TODO
-    } else {
-      // TODO
     }
   }
 
