@@ -13,6 +13,7 @@ export const actions = {
   PLAYLIST_REPEAT_ONE_ENABLED: 'PLAYLIST_REPEAT_ONE_ENABLED',
   PLAYLIST_REPEAT_ALL_ENABLED: 'PLAYLIST_REPEAT_ALL_ENABLED',
   PLAYLIST_REPEAT_DISABLED: 'PLAYLIST_REPEAT_DISABLED',
+  PLAYLIST_UPDATING_FLAG_UPDATED: 'PLAYLIST_UPDATING_FLAG_UPDATED',
 }
 
 export function getItemIndex(playlist, target) {
@@ -26,16 +27,20 @@ export function getActiveItemIndex(playlist) {
 export function getNextSongIndex(playlist) {
   const { activeSong, songs, nextSong } = playlist
   const uuid = UUID.v4()
-  return index = activeSong ? songs[songs.length - 1].index + 1 : 0
+  return activeSong ? songs[songs.length - 1].index + 1 : 0
 }
 
 export function getNextSong(playlist, criteriaSong) {
   const { songs, shuffle, repeat, activeSong } = playlist
   criteriaSong = criteriaSong || activeSong
 
-  return criteriaSong
-    ? songs[songs.findIndex(v => v.uuid === criteriaSong.uuid) + 1] || null
-    : null
+  if (shuffle) {
+    return songs[Math.floor(Math.random() * songs.length)]
+  } else {
+    return criteriaSong
+      ? songs[songs.findIndex(v => v.uuid === criteriaSong.uuid) + 1] || null
+      : null
+  }
 }
 
 export function getPrevItem(playlist) {
@@ -98,13 +103,7 @@ export function replacePlaylistData(payload) {
 }
 
 export function updateShuffleState(shuffle) {
-  return (dispatch, getState) => {
-    // dispatch({
-    //   type: actions.PLAYLIST_SHUFFLE_ENABLED,
-    //   nextSong: shuffle ? getNextSong(getState().playlist),
-    // })
-    dispatch(enableRepeatAll())
-  }
+  return { type: actions.PLAYLIST_SHUFFLE_STATE_UPDATED, shuffle }
 }
 
 export function disableShuffle() {
@@ -123,12 +122,17 @@ export function disableRepeat() {
   return { type: actions.PLAYLIST_REPEAT_DISABLED }
 }
 
+export function updateUpdatingFlag() {
+  return { type: actions.PLAYLIST_UPDATING_FLAG_UPDATED }
+}
+
 export const initialState = {
   songs: [],
   shuffle: false,
   repeat: false,
   activeSong: null,
   nextItem: null,
+  hasPlaylistUpdated: false,
 }
 
 export default (state = initialState, action) => {
@@ -157,6 +161,7 @@ export default (state = initialState, action) => {
     case actions.PLAYLIST_ACTIVE_SONG_UPDATED:
       return { ...state,
         activeSong: action.activeSong,
+        hasPlaylistUpdated: true,
       }
 
     case actions.PLAYLIST_SHUFFLE_ENABLED:
@@ -182,6 +187,16 @@ export default (state = initialState, action) => {
     case actions.PLAYLIST_REPEAT_DISABLED:
       return { ...state,
         repeat: false,
+      }
+
+    case actions.PLAYLIST_SHUFFLE_STATE_UPDATED:
+      return { ...state,
+        shuffle: action.shuffle,
+      }
+
+    case actions.PLAYLIST_UPDATING_FLAG_UPDATED:
+      return { ...state,
+        hasPlaylistUpdated: false,
       }
 
     default:

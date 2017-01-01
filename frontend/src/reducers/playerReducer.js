@@ -1,4 +1,4 @@
-import { updateActiveSong, getNextSong } from './playlistReducer'
+import { updateActiveSong, getNextSong, updateUpdatingFlag } from './playlistReducer'
 import { sleep } from '../utils/util'
 import { APP_MODES } from './appReducer'
 
@@ -80,10 +80,10 @@ export function registerPlayer(youtubePlayer) {
 
         case CUED:
           console.log('CUED')
-          if (getState().playlist.activeSong) {
-            // TODO: Send duration info to server if app mode is host
-            dispatch(playSong())
-          }
+          // if (getState().playlist.activeSong) {
+          //   // TODO: Send duration info to server if app mode is host
+          //   dispatch(playSong())
+          // }
           break
 
         default:
@@ -121,7 +121,12 @@ export function finishFetch() {
 }
 
 export function updateYoutubePlayerState(youtubePlayerState) {
-  return { type: actions.PLAYER_YOUTUBE_STATE_UPDATED, youtubePlayerState }
+  return (dispatch, getState) => {
+    if (youtubePlayerState === YOUTUBE_STATE.PLAYING || youtubePlayerState === YOUTUBE_STATE.CUED) {
+      dispatch(updateUpdatingFlag()) // let playlist know activeItem has changed successfully
+    }
+    dispatch({ type: actions.PLAYER_YOUTUBE_STATE_UPDATED, youtubePlayerState })
+  }
 }
 
 // Play next song and update playlist when the song finished
@@ -136,38 +141,6 @@ export function finishSong() {
     dispatch({ type: actions.PLAYER_FINISHED })
 
     dispatch(updateActiveSong(getNextSong(playlist)))
-
-    // if (mode === APP_MODES.STANDALONE) {
-    //   return;
-    // }
-    //
-    // sleep(200).then(() => {
-    //   if (shuffle) {
-    //     const restItems = songs.filter(item => item.uuid !== activeSong.uuid)
-    //     const length = restItems.length
-    //
-    //     if (!length) {
-    //       dispatch(updateActiveSong(activeSong))
-    //       return
-    //     }
-    //
-    //     const randomItem = restItems[Math.floor(Math.random() * length)]
-    //     dispatch(updateActiveSong(randomItem))
-    //   } else if (repeat === 'one') {
-    //     youtubePlayer.seekTo(0)
-    //   } else if (repeat === 'all' && !playlist.doesNextItemExist) {
-    //     const firstItem = songs[0]
-    //     dispatch(updateActiveSong(firstItem))
-    //   } else if (playlist.doesNextItemExist) {
-    //     const nextItem = getNextSong(playlist)
-    //     dispatch(updateActiveSong(nextItem))
-    //     if (nextItem.id === activeSong.id) {
-    //       youtubePlayer.seekTo(0)
-    //     }
-    //   } else {
-    //     dispatch(updateActiveSong(null))
-    //   }
-    // })
   }
 }
 

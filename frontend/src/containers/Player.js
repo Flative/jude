@@ -29,6 +29,7 @@ class Player extends React.Component {
   onYouTubeReady(e) {
     const { dispatch } = this.props
     const youtubePlayer = e.target
+    youtubePlayer.mute()
     dispatch(registerPlayer(youtubePlayer))
   }
 
@@ -90,14 +91,7 @@ class Player extends React.Component {
   handleShuffleButtonClick() {
     const { playlist, app, dispatch } = this.props
 
-    if (app.mode === APP_MODES.STANDALONE) {
-      if (playlist.shuffle) {
-        dispatch(disableShuffle())
-      } else {
-        dispatch(updateShuffleState())
-      }
-      return
-    }
+    dispatch(updateShuffleState(!playlist.shuffle))
   }
 
   handleRepeatButtonClick() {
@@ -157,39 +151,45 @@ class Player extends React.Component {
     const _player = prevProps.player
     const { playlist, player, dispatch } = this.props
     const { youtubePlayer, updatePercentage, youtubePlayerState, isPaused, isFinished } = player
+    const { hasPlaylistUpdated, songs, activeSong } = playlist
 
     // A first song has been added to playlist
-    if (_playlist.songs.length === 0 && playlist.songs.length === 1) {
-      dispatch(updateActiveSong(playlist.songs[0]))
+    if (_playlist.songs.length === 0 && songs.length === 1) {
+      dispatch(updateActiveSong(songs[0]))
+    }
+
+    if (!activeSong) {
+      updatePercentage(0)
     }
 
     if (!isFinished && !_player.isPaused && isPaused) {
       youtubePlayer.pauseVideo()
-    } else if (_player.isPaused && !isPaused && playlist.activeSong) {
+    } else if (_player.isPaused && !isPaused && activeSong) {
       youtubePlayer.playVideo()
     }
 
-    // New song has been activated in playlist that has had no active song
-    if ((!_playlist.activeSong && playlist.activeSong) ||
-      (playlist.activeSong && _player.youtubePlayerState !== YOUTUBE_STATE.CUED && youtubePlayerState === YOUTUBE_STATE.CUED)) {
+    if (playlist.activeSong && _player.youtubePlayerState !== YOUTUBE_STATE.CUED && youtubePlayerState === YOUTUBE_STATE.CUED) {
       youtubePlayer.playVideo()
-
-      // Playlist has reached end of songs
-    } else if (!playlist.activeSong) {
-      updatePercentage(0)
-
       // Song has changed
-    } else if (_playlist.activeSong && playlist.activeSong && _playlist.activeSong.uuid !== playlist.activeSong.uuid) {
+    } else if (activeSong && !_playlist.hasPlaylistUpdated && hasPlaylistUpdated) {
       updatePercentage(0)
 
-      // Same song ID (which means user has added same song)
-      if (_playlist.activeSong && playlist.activeSong && _playlist.activeSong.id === playlist.activeSong.id) {
-        youtubePlayer.seekTo(0)
-      } else {
-        youtubePlayer.playVideo()
-      }
-    }
+      // New song has been activated in playlist that has had no active song previously
+      if ((!_playlist.activeSong && playlist.activeSong)
+        // (playlist.activeSong && _player.youtubePlayerState !== YOUTUBE_STATE.CUED && youtubePlayerState === YOUTUBE_STATE.CUED))
+      ) {
+          youtubePlayer.playVideo()
 
+      } else {
+        // Same song ID (which means user has added same song)
+        if (_playlist.activeSong.id === playlist.activeSong.id) {
+          youtubePlayer.seekTo(0)
+        } else {
+          youtubePlayer.playVideo()
+        }
+      }
+
+    }
   }
 
   render() {
@@ -202,11 +202,6 @@ class Player extends React.Component {
     if (activeSong) {
       style.backgroundImage = `url(https://i.ytimg.com/vi/${activeSong.id}/maxresdefault.jpg)`
     }
-
-    const shuffleButtonClass = classNames({
-      'player__btn-shuffle': true,
-      'player__btn--disable': !playlist.shuffle,
-    })
 
     const repeatButtonClass = classNames({
       'player__btn-repeat': true,
@@ -236,7 +231,7 @@ class Player extends React.Component {
               className="player__btn-prev"
               onClick={this.handlePrevButtonClick}
             />
-            {!activeSong || (isPaused && youtubePlayerState === YOUTUBE_STATE.PLAYING)
+            {!activeSong || youtubePlayerState !== YOUTUBE_STATE.PLAYING
               ? <PlayIcon
                 className="player__btn-pp"
                 onClick={this.handlePPButtonClick}
@@ -258,7 +253,11 @@ class Player extends React.Component {
           </div>
           <div className="player__controller__right">
             <ShuffleIcon
-              className={shuffleButtonClass}
+              className={classNames({
+                'player__btn-shuffle': true,
+                'player__btn--disable': !playlist.shuffle,
+              })
+              }
               onClick={this.handleShuffleButtonClick}
             />
             {repeat === 'one'
