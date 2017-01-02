@@ -1,0 +1,114 @@
+.mode-selector {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 10px;
+  margin-right: 10px;
+  width: 300px;
+  //height: 200px;
+  background-color: #fff;
+  z-index: 500000;
+  padding: 15px;
+
+  &--active {
+    display: block;
+  }
+
+  &__title {
+    font-size: 15px;
+    margin-bottom: 14px;
+  }
+
+  &__spinner {
+    float: right;
+    margin-top: -27px;
+  }
+
+  &__fg {
+    &-title {
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+
+    &-body {
+      margin-top: 8px;
+      font-size: 11px;
+    }
+
+    &-input-text {
+      height: 26px;
+      padding: 0 5px;
+      width: 100%;
+    }
+
+    &-input-radio {
+      position: absolute;
+      left: -100px;
+      top: -100px;
+      height: 0;
+
+      &-wrapper {
+        display: block;
+      }
+
+      &-wrapper + &-wrapper {
+        .mode-selector__fg-input-radio-label {
+          border-left: 0;
+        }
+      }
+
+      &:focus + &-label,
+      &:hover + &-label {
+        border: 1px solid #F8E1E4;
+      }
+
+      &:checked + &-label {
+        border: 1px solid #d54b5f;
+      }
+
+      &-label {
+        display: block;
+        float: left;
+        width: 50%;
+        padding: 12px 0;
+        background-color: #fff;
+        text-align: center;
+        font-size: 13px;
+        border-radius: 2px;
+        border: 1px solid $border-light-gray;
+      }
+    }
+  }
+
+  &__fg + &__fg {
+    margin-top: 20px;
+  }
+
+  &__buttons {
+    margin-top: 40px;
+    float: right;
+  }
+
+  &__button {
+    width: 50px;
+    height: 30px;
+    background-color: #fff;
+    color: #000000;
+    border: 0;
+    font-size: 12px;
+
+    &:focus,
+    &:hover {
+      background-color: #fafafa;
+    }
+
+    &--gray {
+      color: gray;
+    }
+
+    & + &__button {
+      margin-left: 3px;
+    }
+  }
+}

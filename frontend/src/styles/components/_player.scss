@@ -57,26 +57,29 @@
     }
   }
 
-  &__btn-pp {
+  &__btn--pp {
     margin: 0 14px;
     font-size: 30px;
     cursor: pointer;
   }
 
-  &__btn-repeat {
+  &__btn--repeat {
     margin-left: 14px;
   }
 
-  &__btn-prev,
-  &__btn-next,
-  &__btn-shuffle,
-  &__btn-repeat {
+  &__btn--prev,
+  &__btn--next,
+  &__btn--shuffle,
+  &__btn--repeat {
     font-size: 24px;
     cursor: pointer;
+    color: #cacaca;
+
+    &:hover { color: #ffffff }
   }
 
-  &__btn--disable {
-    color: #cacaca;
+  &__btn--active {
+    color: #ffffff;
   }
 
   .react-progress-bar.player__progressbar {

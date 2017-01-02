@@ -2,11 +2,83 @@
   height: $navbar-height;
   background-color: #efefef;
   padding: 0 $common-padding;
+  position: relative;
 
   &__title {
     font-size: 22px;
     font-weight: lighter;
     line-height: $navbar-height;
     float: left;
+  }
+  
+  .app-cover {
+    display: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    margin-top: $navbar-height;
+    z-index: 40000;
+
+    &--active {
+      display: block;
+    }
+  }
+}
+
+.navbar__switch {
+  float: right;
+  margin-top: 30px;
+  margin-right: 30px;
+
+  > input[type="checkbox"] {
+    display: none;
+  }
+
+  > label {
+    position: relative;
+    cursor: pointer;
+    width: 40px;
+    height: 0;
+    background-color: #3CAA63;
+  }
+
+  > label::before {
+    background: rgb(0, 0, 0);
+    box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+    content: '';
+    height: 16px;
+    margin-top: -8px;
+    position:absolute;
+    opacity: 0.3;
+    transition: all 0.2s ease-in-out;
+    width: 40px;
+  }
+
+  > label::after {
+    background: rgb(255, 255, 255);
+    border-radius: 16px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+    content: '';
+    width: 20px;
+    height: 20px;
+    left: -2px;
+    margin-top: -8px;
+    position: absolute;
+    top: -2px;
+    transition: all 0.2s ease-in-out;
+  }
+
+  > input[type="checkbox"]:checked + label::before {
+    background: inherit;
+    opacity: 0.6;
+  }
+
+  > input[type="checkbox"]:checked + label::after {
+    background: #fff;
+    left: 20px;
   }
 }

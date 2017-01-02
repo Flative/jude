@@ -39,6 +39,7 @@ const common = {
     extensions: ['', '.js', '.jsx', '.json', '.coffee'],
     alias: {
       utils: path.resolve('./src/utils'),
+      'react/lib/ReactMount': 'react-dom/lib/ReactMount',
     },
     root: [
       path.resolve('./src'),

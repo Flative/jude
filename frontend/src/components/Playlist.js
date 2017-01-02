@@ -1,15 +1,15 @@
-import React from 'react';
-import className from 'classnames';
-import ClearIcon from 'react-icons/lib/md/clear';
+import React, { PropTypes } from 'react'
+import className from 'classnames'
+import ClearIcon from 'react-icons/lib/md/clear'
 
 class Playlist extends React.Component {
   render() {
     const {
-      items,
-      activeItem,
+      songs,
+      activeSong,
       onItemClick,
       onRemoveButtonClick,
-    } = this.props;
+    } = this.props
 
     return (
       <div className="playlist">
@@ -18,31 +18,31 @@ class Playlist extends React.Component {
         </div>
         <ul className="playlist__body">
           {
-            items.length
-            ? items.map(item => {
+            songs.length
+            ? songs.map(item => {
               const itemClass = className({
                 'playlist__item': true,
-                'playlist__item--active': activeItem && (activeItem.uuid === item.uuid),
-              });
+                'playlist__item--active': activeSong && (activeSong.uuid === item.uuid),
+              })
               return (
                 <li
                   className={itemClass}
                   key={item.uuid}
                   onClick={(e) => {
-                    e.preventDefault();
-                    onItemClick(item);
+                    e.preventDefault()
+                    onItemClick(item)
                   }}
                 >
                   {item.title}
                   <ClearIcon
                     className="playlist__item__btn-clear"
                     onClick={(e) => {
-                      e.stopPropagation();
-                      onRemoveButtonClick(item);
+                      e.stopPropagation()
+                      onRemoveButtonClick(item)
                     }}
                   />
                 </li>
-              );
+              )
             })
             : <div className="playlist__blankslate">
               <h3 className="playlist__blankslate__title">
@@ -55,18 +55,21 @@ class Playlist extends React.Component {
           }
         </ul>
       </div>
-    );
+    )
   }
 }
 
 Playlist.propTypes = {
-  items: React.PropTypes.arrayOf(React.PropTypes.shape({
-    id: React.PropTypes.string,
-    uuid: React.PropTypes.string,
-    title: React.PropTypes.string,
+  songs: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string,
+    uuid: PropTypes.string,
+    title: PropTypes.string,
+    activeSong: PropTypes.object,
   })),
-  className: React.PropTypes.string,
-};
-Playlist.defaultProps = {};
+  activeSong: PropTypes.object,
+  onItemClick: PropTypes.func,
+  onRemoveButtonClick: PropTypes.func,
+}
+Playlist.defaultProps = {}
 
-export default Playlist;
+export default Playlist

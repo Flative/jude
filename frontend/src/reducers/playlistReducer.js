@@ -1,173 +1,166 @@
-import UUID from 'node-uuid';
-import { updatePlayerVideo, playPlayer } from './playerReducer';
+import UUID from 'node-uuid'
 
 export const actions = {
-  PLAYLIST_ITEM_ADDED: 'PLAYLIST_ITEM_ADDED',
-  PLAYLIST_ITEM_REMOVED: 'PLAYLIST_ITEM_REMOVED',
-  PLAYLIST_ACTIVE_ITEM_UPDATED: 'PLAYLIST_ACTIVE_ITEM_UPDATED',
-  PLAYLIST_SHUFFLE_ENABLED: 'PLAYLIST_SHUFFLE_ENABLED',
-  PLAYLIST_SHUFFLE_DISABLED: 'PLAYLIST_SHUFFLE_DISABLED',
-  PLAYLIST_REPEAT_ONE_ENABLED: 'PLAYLIST_REPEAT_ONE_ENABLED',
-  PLAYLIST_REPEAT_ALL_ENABLED: 'PLAYLIST_REPEAT_ALL_ENABLED',
-  PLAYLIST_REPEAT_DISABLED: 'PLAYLIST_REPEAT_DISABLED',
-};
+  PLAYLIST_SONG_ADDED: 'PLAYLIST_SONG_ADDED',
+  PLAYLIST_SONG_REMOVED: 'PLAYLIST_SONG_REMOVED',
+  PLAYLIST_DATA_REPLACED: 'PLAYLIST_DATA_REPLACED',
+  PLAYLIST_ACTIVE_SONG_UPDATED: 'PLAYLIST_ACTIVE_SONG_UPDATED',
+  PLAYLIST_SHUFFLE_STATE_UPDATED: 'PLAYLIST_SHUFFLE_STATE_UPDATED',
+  PLAYLIST_REPEAT_STATE_UPDATED: 'PLAYLIST_REPEAT_STATE_UPDATED',
+  PLAYLIST_UPDATING_FLAG_UPDATED: 'PLAYLIST_UPDATING_FLAG_UPDATED',
+}
 
 export function getItemIndex(playlist, target) {
-  return target ? playlist.items.findIndex(item => item.uuid === target.uuid) : null;
+  return target ? playlist.songs.findIndex(item => item.uuid === target.uuid) : null
 }
 
 export function getActiveItemIndex(playlist) {
-  return playlist.items.findIndex(item => item.uuid === playlist.activeItem.uuid);
+  return playlist.songs.findIndex(item => item.uuid === playlist.activeSong.uuid)
 }
 
-export function getNextItem(playlist) {
-  return playlist.activeItem ? playlist.items[getActiveItemIndex(playlist) + 1] : null;
+export function getNextSongIndex(playlist) {
+  const { activeSong, songs } = playlist
+  return activeSong ? songs[songs.length - 1].index + 1 : 0
+}
+
+export function getNextSong(playlist, criteriaSong) {
+  const { songs, shuffle, repeat, activeSong } = playlist
+  const _criteriaSong = criteriaSong || activeSong
+
+  if (shuffle) {
+    return songs[Math.floor(Math.random() * songs.length)]
+  } else if (repeat) {
+    if (repeat === 'one') {
+      return activeSong
+    }
+    const nextSong = songs[songs.findIndex(v => v.uuid === activeSong.uuid) + 1] || null
+    return nextSong || songs[0]
+  }
+
+  return _criteriaSong
+    ? songs[songs.findIndex(v => v.uuid === _criteriaSong.uuid) + 1] || null
+    : null
 }
 
 export function getPrevItem(playlist) {
-  return playlist.activeItem ? playlist.items[getActiveItemIndex(playlist) - 1] : null;
+  const { activeSong, songs } = playlist
+  if (!activeSong || !songs.length) {
+    return null
+  }
+
+  const prevIndexItem = songs[songs.findIndex(v => v.uuid === activeSong.uuid) - 1]
+
+  return prevIndexItem || songs[0]
 }
 
-export function addItemToPlaylist(id, title) {
+export function addSong(id, title) {
   return (dispatch, getState) => {
-    const { playlist } = getState();
-    const { activeItem, items } = playlist;
+    const { playlist } = getState()
+    const { activeSong, songs } = playlist
+    const uuid = UUID.v4()
+    const index = activeSong ? songs[songs.length - 1].index + 1 : 0
 
-    const uuid = UUID.v4();
-    const index = activeItem ? items[items.length - 1].index + 1 : 0;
-    const item = { id, title, uuid, index };
+    const song = { id, title, uuid, index }
 
     dispatch({
-      type: actions.PLAYLIST_ITEM_ADDED,
-      doesNextItemExist: activeItem ? true : false,
-      item
-    });
-
-    if (!activeItem) {
-      dispatch(updateActiveItemInPlaylist(item));
-    }
-  };
+      type: actions.PLAYLIST_SONG_ADDED,
+      song,
+    })
+  }
 }
 
-export function removeItemFromPlaylist(item) {
+export function removeSong(item) {
   return (dispatch, getState) => {
-    const { playlist, player } = getState();
-    const { activeItem } = playlist;
-
-    const itemIndex = getItemIndex(playlist, item);
-    const nextItem = playlist.items[itemIndex + 1];
+    const { playlist } = getState()
+    const { activeSong } = playlist
+    const hasActiveSongDeleted = activeSong && activeSong.uuid === item.uuid
+    const nextSong = getNextSong(playlist)
 
     dispatch({
-      type: actions.PLAYLIST_ITEM_REMOVED,
-      items: playlist.items.filter(v => v.uuid !== item.uuid),
-      doesNextItemExist: !!nextItem,
-    });
-
-    if (activeItem.uuid === item.uuid) {
-      dispatch(updateActiveItemInPlaylist(nextItem));
-    }
-  };
+      type: actions.PLAYLIST_SONG_REMOVED,
+      songs: playlist.songs.filter(v => v.uuid !== item.uuid),
+      activeSong: hasActiveSongDeleted ? nextSong : activeSong,
+      hasPlaylistUpdated: hasActiveSongDeleted, // Force update
+    })
+  }
 }
 
-export function updateActiveItemInPlaylist(item) {
-  return (dispatch, getState) => {
-    const { playlist, player } = getState();
-    const { youtubePlayer, onPercentageChange } = player;
-    const { activeItem, items } = playlist;
-
-    onPercentageChange(0);
-
-    dispatch({
-      type: actions.PLAYLIST_ACTIVE_ITEM_UPDATED,
-      doesNextItemExist: !!playlist.items[getItemIndex(playlist, item) + 1],
-      item,
-    });
-
-    if (!item) {
-      youtubePlayer.stopVideo();
-    } else if (activeItem && (item.id === activeItem.id)) {
-      youtubePlayer.seekTo(0);
-    }
-  };
+export function updateActiveSong(activeSong) {
+  return { type: actions.PLAYLIST_ACTIVE_SONG_UPDATED, activeSong }
 }
 
-export function enableShuffle() {
-  return (dispatch, getState) => {
-    dispatch({ type: actions.PLAYLIST_SHUFFLE_ENABLED })
-    dispatch(enableRepeatAll());
-  };
+export function replacePlaylistData(payload) {
+  return {
+    type: actions.PLAYLIST_DATA_REPLACED,
+    ...payload,
+  }
 }
 
-export function disableShuffle() {
-  return { type: actions.PLAYLIST_SHUFFLE_DISABLED };
+export function updateShuffleState(shuffle) {
+  return { type: actions.PLAYLIST_SHUFFLE_STATE_UPDATED, shuffle }
 }
 
-export function enableRepeatOne() {
-  return { type: actions.PLAYLIST_REPEAT_ONE_ENABLED };
+export function updateRepeatState(repeat) {
+  return { type: actions.PLAYLIST_REPEAT_STATE_UPDATED, repeat }
 }
 
-export function enableRepeatAll() {
-  return { type: actions.PLAYLIST_REPEAT_ALL_ENABLED };
-}
-
-export function disableRepeat() {
-  return { type: actions.PLAYLIST_REPEAT_DISABLED };
+export function updateUpdatingFlag() {
+  return { type: actions.PLAYLIST_UPDATING_FLAG_UPDATED }
 }
 
 export const initialState = {
-  items: [],
-  doesNextItemExist: false,
+  songs: [],
   shuffle: false,
   repeat: false,
-  activeItem: null,
-};
+  activeSong: null,
+  nextItem: null,
+  hasPlaylistUpdated: false,
+}
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case actions.PLAYLIST_ITEM_ADDED:
+    case actions.PLAYLIST_SONG_ADDED:
       return { ...state,
-        items: [...state.items, action.item],
-        doesNextItemExist: action.doesNextItemExist,
-      };
+        songs: [...state.songs, action.song],
+      }
 
-    case actions.PLAYLIST_ITEM_REMOVED:
+    case actions.PLAYLIST_SONG_REMOVED:
       return { ...state,
-        items: action.items,
-        doesNextItemExist: action.doesNextItemExist,
-      };
+        songs: action.songs,
+        activeSong: action.activeSong,
+        hasPlaylistUpdated: action.hasPlaylistUpdated,
+      }
 
-    case actions.PLAYLIST_ACTIVE_ITEM_UPDATED:
-      return { ...state,
-        activeItem: action.item,
-        doesNextItemExist: action.doesNextItemExist,
-      };
+    case actions.PLAYLIST_DATA_REPLACED:
+      return {
+        songs: action.songs,
+        activeSong: action.activeSong,
+        shuffle: action.isShuffleOn,
+        repeat: action.repeatingMode === 'none' ? false : action.repeatingMode,
+      }
 
-    case actions.PLAYLIST_SHUFFLE_ENABLED:
+    case actions.PLAYLIST_ACTIVE_SONG_UPDATED:
       return { ...state,
-        shuffle: true,
-      };
+        activeSong: action.activeSong,
+        hasPlaylistUpdated: true,
+      }
 
-    case actions.PLAYLIST_SHUFFLE_DISABLED:
+    case actions.PLAYLIST_REPEAT_STATE_UPDATED:
       return { ...state,
-        shuffle: false,
-      };
+        repeat: action.repeat,
+      }
 
-    case actions.PLAYLIST_REPEAT_ONE_ENABLED:
+    case actions.PLAYLIST_SHUFFLE_STATE_UPDATED:
       return { ...state,
-        repeat: 'one',
-      };
+        shuffle: action.shuffle,
+      }
 
-    case actions.PLAYLIST_REPEAT_ALL_ENABLED:
+    case actions.PLAYLIST_UPDATING_FLAG_UPDATED:
       return { ...state,
-        repeat: 'all',
-      };
-
-    case actions.PLAYLIST_REPEAT_DISABLED:
-      return { ...state,
-        repeat: false,
-      };
+        hasPlaylistUpdated: false,
+      }
 
     default:
-      return state;
+      return state
   }
-};
+}

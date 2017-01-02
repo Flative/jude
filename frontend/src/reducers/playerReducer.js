@@ -1,6 +1,5 @@
-import { updateActiveItemInPlaylist, getNextItem, enableRepeatAll } from './playlistReducer';
-import { youtubeTimeWatcher } from '../utils/youtube';
-import { sleep } from '../utils/util';
+import { updateActiveSong, getNextSong, updateUpdatingFlag } from './playlistReducer'
+import { sleep } from '../utils/util'
 
 export const actions = {
   PLAYER_INITIALIZED: 'PLAYER_INITIALIZED',
@@ -12,197 +11,169 @@ export const actions = {
   PLAYER_FETCHING_STARTED: 'PLAYER_FETCHING_STARTED',
   PLAYER_FETCHING_FINISHED: 'PLAYER_FETCHING_FINISHED',
   PLAYER_UPDATE_PROGRESSBAR_PERCENTAGE: 'PLAYER_UPDATE_PROGRESSBAR_PERCENTAGE',
-};
+  PLAYER_YOUTUBE_STATE_UPDATED: 'PLAYER_YOUTUBE_STATE_UPDATED',
+}
+
+export const YOUTUBE_STATE = {
+  UNSTARTED: -1,
+  ENDED: 0,
+  PLAYING: 1,
+  PAUSED: 2,
+  BUFFERING: 3,
+  CUED: 5,
+}
 
 // Store player instance to redux state tree when initializing
 export function registerPlayer(youtubePlayer) {
-  window.player = youtubePlayer;
+  window.player = youtubePlayer
   return (dispatch, getState) => {
-    const { ENDED, PLAYING, PAUSED, BUFFERING, CUED } = YT.PlayerState;
-    const { player } = getState();
-    const onPercentageChange = player.onPercentageChange;
+    const { ENDED, PLAYING, PAUSED, BUFFERING, CUED } = YOUTUBE_STATE
+    const { player } = getState()
+    const updatePercentage = player.updatePercentage
 
-    let isBufferingStarted = false;
-    let prevTime = -1;
-    let currentTime = 0;
+    let isBufferingStarted = false
+    let prevTime = -1
+    let currentTime = 0
 
     const updateTime = () => {
-      prevTime = currentTime;
-      currentTime = Math.floor(youtubePlayer.getCurrentTime());
+      prevTime = currentTime
+      currentTime = youtubePlayer.getCurrentTime()
       if (Math.abs(prevTime - currentTime) > 0) {
-        const duration = youtubePlayer.getDuration();
-        onPercentageChange((currentTime / duration) * 100);
-        // dispatch(updateProgressBarPercentage((currentTime / duration) * 100));
+        const duration = youtubePlayer.getDuration()
+        updatePercentage((currentTime / duration) * 100)
       }
-    };
+    }
 
     const timer = {
       handler: null,
-      start: () => timer.handler = setInterval(() => updateTime(), 100),
+      start: () => { timer.handler = setInterval(() => updateTime(), 200) }, // FIXME
       stop: () => clearTimeout(timer.handler),
-    };
+    }
 
     youtubePlayer.addEventListener('onStateChange', (e) => {
-      switch(e.data) {
+      dispatch(updateYoutubePlayerState(e.data))
+      switch (e.data) {
         case PLAYING:
-          console.log('PLAYING');
-          timer.stop();
-          timer.start();
-          dispatch(playPlayer());
-          break;
+          console.log('PLAYING')
+          timer.stop()
+          timer.start()
+          if (isBufferingStarted) {
+            isBufferingStarted = false
+          }
+          break
 
         case BUFFERING:
-          isBufferingStarted = true;
-          dispatch(startFetch());
-          break;
+          isBufferingStarted = true
+          break
 
         case PAUSED:
-          timer.stop();
-          updateTime();
-          console.log('PAUSED:', youtubePlayer.getCurrentTime(), currentTime);
-          if (isBufferingStarted) {
-            dispatch(finishFetch());
-            isBufferingStarted = false;
-          }
-          break;
+          timer.stop()
+          updateTime()
+          console.log('PAUSED:', youtubePlayer.getCurrentTime(), currentTime)
+          break
 
         case ENDED:
-          console.log('ENDED');
-          dispatch(finishPlayer());
-          break;
+          console.log('ENDED')
+          dispatch(finishSong())
+          break
 
         case CUED:
-          console.log('CUED');
-          if (getState().playlist.activeItem) {
-            youtubePlayer.playVideo();
-          }
-          break;
+          console.log('CUED')
+          // if (getState().playlist.activeSong) {
+          //   // TODO: Send duration info to server if app mode is host
+          //   dispatch(playSong())
+          // }
+          break
 
         default:
-          break;
+          break
       }
-    });
+    })
 
-    dispatch({ type: actions.PLAYER_INITIALIZED, youtubePlayer });
-  };
+    dispatch({ type: actions.PLAYER_INITIALIZED, youtubePlayer })
+  }
 }
 
-export function registerProgressBar(onPercentageChange) {
-  return { type: actions.PLAYER_REGISTER_PROGRESSBAR, onPercentageChange };
+export function registerProgressBar(updatePercentage) {
+  return { type: actions.PLAYER_REGISTER_PROGRESSBAR, updatePercentage }
 }
 
-export function pausePlayer() {
-  return (dispatch, getState) => {
-    getState().player.youtubePlayer.pauseVideo();
-    dispatch({ type: actions.PLAYER_PAUSED });
-  };
+export function pauseSong() {
+  return { type: actions.PLAYER_PAUSED }
 }
 
-export function playPlayer(isNewVideo) {
-  return (dispatch, getState) => {
-    dispatch({ type: actions.PLAYER_PLAYED });
-  };
-}
-
-// Play new song
-export function updatePlayerVideo(id, index) {
-  return (dispatch, getState) => {
-    // dispatch(playPlayer(true));
-  };
+export function playSong() {
+  return { type: actions.PLAYER_PLAYED }
 }
 
 // Fetching (buffering)
 export function startFetch() {
-  return { type: actions.PLAYER_FETCHING_STARTED };
+  return { type: actions.PLAYER_FETCHING_STARTED }
 }
 
 export function finishFetch() {
-  return { type: actions.PLAYER_FETCHING_FINISHED };
+  return { type: actions.PLAYER_FETCHING_FINISHED }
+}
+
+export function updateYoutubePlayerState(youtubePlayerState) {
+  return (dispatch, getState) => {
+    if (youtubePlayerState === YOUTUBE_STATE.PLAYING || youtubePlayerState === YOUTUBE_STATE.CUED) {
+      dispatch(updateUpdatingFlag()) // let playlist know activeItem has changed successfully
+    }
+    dispatch({ type: actions.PLAYER_YOUTUBE_STATE_UPDATED, youtubePlayerState })
+  }
 }
 
 // Play next song and update playlist when the song finished
-export function finishPlayer() {
+export function finishSong() {
   return (dispatch, getState) => {
-    const { player, playlist } = getState();
-    const { youtubePlayer, onPercentageChange } = player;
-    const { items, activeItem, shuffle, repeat } = playlist;
+    const { player, playlist } = getState()
+    const { updatePercentage } = player
 
-    onPercentageChange(99.9);
-    dispatch({ type: actions.PLAYER_FINISHED });
-
-    sleep(200).then(() => {
-      if (shuffle) {
-        const restItems = items.filter(item => item.uuid !== activeItem.uuid);
-        const length = restItems.length;
-        if (!length) {
-          dispatch(updateActiveItemInPlaylist(activeItem));
-          return;
-        }
-
-        const randomItem = restItems[Math.floor(Math.random() * length)];
-        dispatch(updateActiveItemInPlaylist(randomItem));
-      } else if (repeat === 'one') {
-        youtubePlayer.seekTo(0);
-      } else if (repeat === 'all' && !playlist.doesNextItemExist) {
-        const firstItem = items[0];
-        dispatch(updateActiveItemInPlaylist(firstItem));
-      } else if (playlist.doesNextItemExist) {
-        const nextItem = getNextItem(playlist);
-        dispatch(updateActiveItemInPlaylist(nextItem));
-
-        if (nextItem.id === activeItem.id) {
-          youtubePlayer.seekTo(0);
-        }
-      } else {
-        dispatch(updateActiveItemInPlaylist(null));
-      }
-    });
-  };
+    updatePercentage(99.9)
+    dispatch({ type: actions.PLAYER_FINISHED })
+    dispatch(updateActiveSong(getNextSong(playlist)))
+  }
 }
 
 export const initialState = {
   youtubePlayer: null,
-  onPercentageChange: null,
-  isPaused: true,
-  isFetching: true,
-};
+  updatePercentage: null,
+  youtubePlayerState: null,
+  isPaused: false,
+  isFinished: false,
+}
 
 export default (state = initialState, action) => {
   switch (action.type) {
     case actions.PLAYER_INITIALIZED:
       return { ...state,
         youtubePlayer: action.youtubePlayer,
-      };
-    // case actions.PLAYER_VIDEO_UPDATED:
-    //   return { ...state,
-    //     currentVideoId: action.id,
-    //   };
+      }
     case actions.PLAYER_FINISHED:
       return { ...state,
         currentVideoId: null,
-        isPaused: true,
-      };
+        isFinished: true,
+      }
     case actions.PLAYER_PLAYED:
       return { ...state,
         isPaused: false,
-      };
+        isFinished: false,
+      }
     case actions.PLAYER_PAUSED:
       return { ...state,
         isPaused: true,
-      };
-    case actions.PLAYER_FETCHING_STARTED:
-      return { ...state,
-        isFetching: true,
-      };
-    case actions.PLAYER_FETCHING_FINISHED:
-      return { ...state,
-        isFetching: false,
-      };
+      }
     case actions.PLAYER_REGISTER_PROGRESSBAR:
       return { ...state,
-        onPercentageChange: action.onPercentageChange,
-      };
+        updatePercentage: action.updatePercentage,
+      }
+    case actions.PLAYER_YOUTUBE_STATE_UPDATED:
+      return { ...state,
+        youtubePlayerState: action.youtubePlayerState,
+        isFinished: action.youtubePlayerState === YOUTUBE_STATE.ENDED,
+      }
     default:
-      return state;
+      return state
   }
-};
+}

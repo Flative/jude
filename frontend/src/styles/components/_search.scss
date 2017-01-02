@@ -5,7 +5,7 @@
   &__header {
     background-color: #fafafa;
     padding: $common-padding;
-    border-bottom: solid 1px #e1e1e1;
+    border-bottom: solid 1px $border-light-gray;
   }
   
   &__title {
@@ -103,7 +103,7 @@
         content: '';
         width: 100%;
         height: 1px;
-        background-color: #e1e1e1;
+        background-color: $border-light-gray;
         top: -7px;
         left: 0;
         z-index: 100;

@@ -1,5 +1,7 @@
-export const SearchResult = require('./SearchResult').default;
-export const Playlist = require('./Playlist').default;
-export const Navbar = require('./Navbar').default;
-export const Player = require('./../containers/PlayerContainer').default;
-export const ProgressBar = require('./ProgressBar').default;
+export SearchResult from './SearchResult'
+export Playlist from './Playlist'
+export Navbar from './Navbar'
+export Player from './../containers/Player'
+export ProgressBar from './ProgressBar'
+export YouTube from './YouTube'
+export Spinner from './Spinner'

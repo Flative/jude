@@ -1,15 +1,14 @@
-import React from 'react';
-import PlusIcon from 'react-icons/lib/fa/plus';
+import React, { PropTypes } from 'react'
+import PlusIcon from 'react-icons/lib/fa/plus'
 
 class SearchResult extends React.Component {
   render() {
-    const { query, items = [], handleOnClick } = this.props;
+    const { songs = [], handleItemClick } = this.props
 
     return (
       <div className="search__result">
-        {/*<h1>{query || 'No Result Found'}</h1>*/}
         <ul className="search__result__list">
-          {items.map((item, idx) => {
+          {songs.map((item, idx) => {
             return (
               <li className="search__result__item" key={item.id.videoId + idx}>
                 <div className="search__result__item__pad">
@@ -21,40 +20,41 @@ class SearchResult extends React.Component {
                   <div className="search__result__title">{item.snippet.title}</div>
                   <div
                     className="search__result__item__cover"
-                    onClick={() => handleOnClick(item.id.videoId, item.snippet.title)}
+                    onClick={() => handleItemClick(item.id.videoId, item.snippet.title)}
                   >
                     <PlusIcon />
                   </div>
                 </div>
               </li>
-            );
+            )
           })}
         </ul>
       </div>
-    );
+    )
   }
 }
 
 SearchResult.propTypes = {
-  query: React.PropTypes.string,
-  items: React.PropTypes.arrayOf(React.PropTypes.shape({
-    id: React.PropTypes.shape({
-      kind: React.PropTypes.string,
-      videoId: React.PropTypes.string,
+  query: PropTypes.string,
+  songs: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.shape({
+      kind: PropTypes.string,
+      videoId: PropTypes.string,
     }),
-    snippet: React.PropTypes.shape({
-      title: React.PropTypes.string,
-      description: React.PropTypes.string,
-      thumbnails: React.PropTypes.shape({
-        high: React.PropTypes.shape({
-          url: React.PropTypes.string,
-          width: React.PropTypes.number,
-          height: React.PropTypes.number,
+    snippet: PropTypes.shape({
+      title: PropTypes.string,
+      description: PropTypes.string,
+      thumbnails: PropTypes.shape({
+        high: PropTypes.shape({
+          url: PropTypes.string,
+          width: PropTypes.number,
+          height: PropTypes.number,
         }),
       }),
     }),
   })),
-};
-SearchResult.defaultProps = {};
+  handleItemClick: PropTypes.func,
+}
+SearchResult.defaultProps = {}
 
-export default SearchResult;
+export default SearchResult

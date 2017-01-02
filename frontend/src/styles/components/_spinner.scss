@@ -1,0 +1,34 @@
+$spinner-size: 2em;
+$spinner-border-size: $spinner-size / 10;
+$spinner-border-color: #2b78b8;
+$spinner-background-color: rgba(0, 0, 0, 0.1);
+
+.spinner {
+  display: none;
+
+  &--active {
+    display: block;
+  }
+
+  &__element {
+    font-size: 10px;
+    position: relative;
+    text-indent: -9999em;
+    border-top: $spinner-border-size solid $spinner-border-color;
+    border-right: $spinner-border-size solid $spinner-border-color;
+    border-bottom: $spinner-border-size solid $spinner-border-color;
+    border-left: $spinner-border-size solid $spinner-background-color;
+    -webkit-transform: translateZ(0);
+    -ms-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-animation: load8 1.1s infinite linear;
+    animation: load8 1.1s infinite linear;
+  }
+
+  &__element,
+  &__element:after {
+    border-radius: 50%;
+    width: $spinner-size;
+    height: $spinner-size;
+  }
+}
