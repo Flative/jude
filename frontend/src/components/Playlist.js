@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { PropTypes } from 'react'
 import className from 'classnames'
 import ClearIcon from 'react-icons/lib/md/clear'
 
@@ -60,12 +60,15 @@ class Playlist extends React.Component {
 }
 
 Playlist.propTypes = {
-  songs: React.PropTypes.arrayOf(React.PropTypes.shape({
-    id: React.PropTypes.string,
-    uuid: React.PropTypes.string,
-    title: React.PropTypes.string,
+  songs: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string,
+    uuid: PropTypes.string,
+    title: PropTypes.string,
+    activeSong: PropTypes.object,
   })),
-  className: React.PropTypes.string,
+  activeSong: PropTypes.object,
+  onItemClick: PropTypes.func,
+  onRemoveButtonClick: PropTypes.func,
 }
 Playlist.defaultProps = {}
 

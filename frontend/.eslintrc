@@ -1,4 +1,5 @@
 {
+  "parser": "babel-eslint",
   "extends": "airbnb",
   "rules": {
     "arrow-body-style": [0, "as-needed"],
@@ -12,7 +13,11 @@
     "quote-props": [2, "consistent"],
     "no-alert": 0,
     "semi": 0,
-    "no-console": 0
+    "no-console": 0,
+    "import/no-extraneous-dependencies": 0,
+    "react/jsx-filename-extension": 0,
+    "react/forbid-prop-types": 0,
+    "react/prefer-statelses-function": [0]
   },
   "env": {
     "browser": true,
@@ -24,7 +29,7 @@
     "YT": true
   },
   "parserOptions": {
-    "ecmaVersion": 6,
+    "ecmaVersion": 7,
     "ecmaFeatures": {
       "experimentalObjectRestSpread": true
     }

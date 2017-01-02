@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import classNames from 'classnames'
+
 class Spinner extends Component {
   render() {
     const { active } = this.props
@@ -16,7 +17,7 @@ class Spinner extends Component {
 }
 
 Spinner.propTypes = {
-  isContainerNeeded: PropTypes.bool,
+  active: PropTypes.bool,
 }
 Spinner.defaultProps = {}
 

@@ -1,6 +1,5 @@
 import { updateActiveSong, getNextSong, updateUpdatingFlag } from './playlistReducer'
 import { sleep } from '../utils/util'
-import { APP_MODES } from './appReducer'
 
 export const actions = {
   PLAYER_INITIALIZED: 'PLAYER_INITIALIZED',
@@ -47,7 +46,7 @@ export function registerPlayer(youtubePlayer) {
 
     const timer = {
       handler: null,
-      start: () => timer.handler = setInterval(() => updateTime(), 200), // FIXME
+      start: () => { timer.handler = setInterval(() => updateTime(), 200) }, // FIXME
       stop: () => clearTimeout(timer.handler),
     }
 
@@ -100,15 +99,11 @@ export function registerProgressBar(updatePercentage) {
 }
 
 export function pauseSong() {
-  return (dispatch, getState) => {
-    dispatch({ type: actions.PLAYER_PAUSED })
-  }
+  return { type: actions.PLAYER_PAUSED }
 }
 
 export function playSong() {
-  return (dispatch, getState) => {
-    dispatch({ type: actions.PLAYER_PLAYED })
-  }
+  return { type: actions.PLAYER_PLAYED }
 }
 
 // Fetching (buffering)
@@ -132,14 +127,11 @@ export function updateYoutubePlayerState(youtubePlayerState) {
 // Play next song and update playlist when the song finished
 export function finishSong() {
   return (dispatch, getState) => {
-    const { player, playlist, app } = getState()
-    const { youtubePlayer, updatePercentage } = player
-    const { nextSong, songs, activeSong, shuffle, repeat } = playlist
-    const { mode } = app
+    const { player, playlist } = getState()
+    const { updatePercentage } = player
 
     updatePercentage(99.9)
     dispatch({ type: actions.PLAYER_FINISHED })
-
     dispatch(updateActiveSong(getNextSong(playlist)))
   }
 }

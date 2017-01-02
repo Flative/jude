@@ -1,18 +1,12 @@
 import UUID from 'node-uuid'
-import { APP_MODES } from './appReducer'
 
 export const actions = {
   PLAYLIST_SONG_ADDED: 'PLAYLIST_SONG_ADDED',
   PLAYLIST_SONG_REMOVED: 'PLAYLIST_SONG_REMOVED',
   PLAYLIST_DATA_REPLACED: 'PLAYLIST_DATA_REPLACED',
   PLAYLIST_ACTIVE_SONG_UPDATED: 'PLAYLIST_ACTIVE_SONG_UPDATED',
-  PLAYLIST_SHUFFLE_ENABLED: 'PLAYLIST_SHUFFLE_ENABLED',
-  PLAYLIST_SHUFFLE_DISABLED: 'PLAYLIST_SHUFFLE_DISABLED',
   PLAYLIST_SHUFFLE_STATE_UPDATED: 'PLAYLIST_SHUFFLE_STATE_UPDATED',
   PLAYLIST_REPEAT_STATE_UPDATED: 'PLAYLIST_REPEAT_STATE_UPDATED',
-  PLAYLIST_REPEAT_ONE_ENABLED: 'PLAYLIST_REPEAT_ONE_ENABLED',
-  PLAYLIST_REPEAT_ALL_ENABLED: 'PLAYLIST_REPEAT_ALL_ENABLED',
-  PLAYLIST_REPEAT_DISABLED: 'PLAYLIST_REPEAT_DISABLED',
   PLAYLIST_UPDATING_FLAG_UPDATED: 'PLAYLIST_UPDATING_FLAG_UPDATED',
 }
 
@@ -25,14 +19,13 @@ export function getActiveItemIndex(playlist) {
 }
 
 export function getNextSongIndex(playlist) {
-  const { activeSong, songs, nextSong } = playlist
-  const uuid = UUID.v4()
+  const { activeSong, songs } = playlist
   return activeSong ? songs[songs.length - 1].index + 1 : 0
 }
 
 export function getNextSong(playlist, criteriaSong) {
   const { songs, shuffle, repeat, activeSong } = playlist
-  criteriaSong = criteriaSong || activeSong
+  const _criteriaSong = criteriaSong || activeSong
 
   if (shuffle) {
     return songs[Math.floor(Math.random() * songs.length)]
@@ -44,8 +37,8 @@ export function getNextSong(playlist, criteriaSong) {
     return nextSong || songs[0]
   }
 
-  return criteriaSong
-    ? songs[songs.findIndex(v => v.uuid === criteriaSong.uuid) + 1] || null
+  return _criteriaSong
+    ? songs[songs.findIndex(v => v.uuid === _criteriaSong.uuid) + 1] || null
     : null
 }
 
@@ -111,22 +104,6 @@ export function updateRepeatState(repeat) {
   return { type: actions.PLAYLIST_REPEAT_STATE_UPDATED, repeat }
 }
 
-export function disableShuffle() {
-  return { type: actions.PLAYLIST_SHUFFLE_DISABLED }
-}
-
-export function enableRepeatOne() {
-  return { type: actions.PLAYLIST_REPEAT_ONE_ENABLED }
-}
-
-export function enableRepeatAll() {
-  return { type: actions.PLAYLIST_REPEAT_ALL_ENABLED }
-}
-
-export function disableRepeat() {
-  return { type: actions.PLAYLIST_REPEAT_DISABLED }
-}
-
 export function updateUpdatingFlag() {
   return { type: actions.PLAYLIST_UPDATING_FLAG_UPDATED }
 }
@@ -155,8 +132,6 @@ export default (state = initialState, action) => {
       }
 
     case actions.PLAYLIST_DATA_REPLACED:
-      const activeSongIndex = action.activeSong ? action.songs.findIndex(v => v.uuid === action.activeSong.uuid) : -1
-
       return {
         songs: action.songs,
         activeSong: action.activeSong,

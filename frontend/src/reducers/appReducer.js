@@ -1,6 +1,4 @@
-import { noop } from '../utils/util'
 import { replacePlaylistData } from './playlistReducer'
-import {  } from './playerReducer'
 
 export const actions = {
   CHANGE_APP_MODE_ATTEMPTED: 'CHANGE_APP_MODE_ATTEMPTED',
@@ -27,10 +25,10 @@ export function establishWSConnection(mode, address) {
     try {
       const wsConnection = new WebSocket(`ws://${address}/ws`)
       window.a = wsConnection
-      wsConnection.onerror = (e) => {
+      wsConnection.onerror = () => {
         dispatch({ type: actions.CHANGE_APP_MODE_FAILED })
       }
-      wsConnection.onopen = (e) => {
+      wsConnection.onopen = () => {
         dispatch({ type: actions.CHANGE_APP_MODE_SUCCEEDED, mode, wsConnection })
       }
       wsConnection.onmessage = (msg) => {
@@ -38,7 +36,7 @@ export function establishWSConnection(mode, address) {
         console.log(res)
         dispatch(replacePlaylistData(res))
       }
-    } catch(e) {
+    } catch (e) {
       dispatch({ type: actions.CHANGE_APP_MODE_FAILED })
     }
   };
@@ -56,11 +54,15 @@ export function disconnectWSConnection(cb) {
 
     try {
       wsConnection.close()
-      dispatch({ type: actions.CHANGE_APP_MODE_SUCCEEDED, mode: APP_MODES.STANDALONE, wsConnection: null })
+      dispatch({
+        type: actions.CHANGE_APP_MODE_SUCCEEDED,
+        mode: APP_MODES.STANDALONE,
+        wsConnection: null,
+      })
       if (cb) {
         cb()
       }
-    } catch(e) {
+    } catch (e) {
       dispatch({ type: actions.CHANGE_APP_MODE_FAILED })
       if (cb) {
         cb()

@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { PropTypes } from 'react'
 import PlusIcon from 'react-icons/lib/fa/plus'
 
 class SearchResult extends React.Component {
   render() {
-    const { query, songs = [], handleItemClick } = this.props
+    const { songs = [], handleItemClick } = this.props
 
     return (
       <div className="search__result">
@@ -35,24 +35,25 @@ class SearchResult extends React.Component {
 }
 
 SearchResult.propTypes = {
-  query: React.PropTypes.string,
-  songs: React.PropTypes.arrayOf(React.PropTypes.shape({
-    id: React.PropTypes.shape({
-      kind: React.PropTypes.string,
-      videoId: React.PropTypes.string,
+  query: PropTypes.string,
+  songs: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.shape({
+      kind: PropTypes.string,
+      videoId: PropTypes.string,
     }),
-    snippet: React.PropTypes.shape({
-      title: React.PropTypes.string,
-      description: React.PropTypes.string,
-      thumbnails: React.PropTypes.shape({
-        high: React.PropTypes.shape({
-          url: React.PropTypes.string,
-          width: React.PropTypes.number,
-          height: React.PropTypes.number,
+    snippet: PropTypes.shape({
+      title: PropTypes.string,
+      description: PropTypes.string,
+      thumbnails: PropTypes.shape({
+        high: PropTypes.shape({
+          url: PropTypes.string,
+          width: PropTypes.number,
+          height: PropTypes.number,
         }),
       }),
     }),
   })),
+  handleItemClick: PropTypes.func,
 }
 SearchResult.defaultProps = {}
 

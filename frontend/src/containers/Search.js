@@ -1,11 +1,11 @@
-import React from 'react'
+import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
 import UUID from 'node-uuid'
+import SearchIcon from 'react-icons/lib/md/search'
 import { searchVideos } from '../utils/youtube'
 import { SearchResult } from '../components'
-import { addSong, removeSong } from '../reducers/playlistReducer'
+import { addSong } from '../reducers/playlistReducer'
 import { APP_MODES } from '../reducers/appReducer'
-import SearchIcon from 'react-icons/lib/md/search'
 
 class Search extends React.Component {
   constructor(props) {
@@ -22,7 +22,7 @@ class Search extends React.Component {
 
   componentDidMount() {
     // For development
-    this.search('3초를')
+    // this.search('3초를')
   }
 
   handleSearchInputKeyPress(e) {
@@ -36,7 +36,7 @@ class Search extends React.Component {
   }
 
   handleSearchResultItemClick(id, title) {
-    const { app, playlist, player, dispatch } = this.props;
+    const { app, playlist, player, dispatch } = this.props
     const { activeSong, songs } = playlist
 
     // TODO
@@ -62,14 +62,13 @@ class Search extends React.Component {
   // TODO: Need to display some interaction stuff while fetching
   search(query) {
     searchVideos(query)
-      .then(searchResult => {
+      .then((searchResult) => {
         this.setState({ query, searchResult })
       })
   }
 
   render() {
     const { query, searchResult } = this.state
-    const { dispatch, playlist, app } = this.props
 
     return (
       <div className="search">
@@ -99,9 +98,14 @@ class Search extends React.Component {
   }
 }
 
-Search.propTypes = {}
+Search.propTypes = {
+  dispatch: PropTypes.func,
+  playlist: PropTypes.object,
+  player: PropTypes.object,
+  app: PropTypes.object,
+}
 Search.defaultProps = {}
 
 export default connect(
-  state => state
+  state => state,
 )(Search)

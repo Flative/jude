@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
 import classNames from 'classnames'
 
@@ -11,15 +11,24 @@ import RepeatIcon from 'react-icons/lib/md/repeat'
 import RepeatOneIcon from 'react-icons/lib/md/repeat-one'
 
 import { ProgressBar, YouTube } from '../components'
-import { YOUTUBE_STATE, playSong, pauseSong, registerPlayer, registerProgressBar } from '../reducers/playerReducer'
 import {
-  updateActiveSong, getPrevItem, updateShuffleState, enableRepeatAll,
-  enableRepeatOne, disableRepeat, updateRepeatState, getNextSong,
+  YOUTUBE_STATE, playSong, pauseSong, registerPlayer, registerProgressBar,
+} from '../reducers/playerReducer'
+import {
+  updateActiveSong, getPrevItem, updateShuffleState, updateRepeatState, getNextSong,
 } from '../reducers/playlistReducer'
 import { APP_MODES } from '../reducers/appReducer'
 
 
 class Player extends React.Component {
+  static youtubeOptions = {
+    height: '0',
+    width: '0',
+    playerVars: { // https://developers.google.com/youtube/player_parameters
+      autoplay: true,
+    },
+  }
+
   constructor(props) {
     super(props)
     this.onYouTubeReady = this.onYouTubeReady.bind(this)
@@ -30,11 +39,69 @@ class Player extends React.Component {
     this.handleRepeatButtonClick = this.handleRepeatButtonClick.bind(this)
   }
 
+  componentDidUpdate(prevProps) {
+    const _playlist = prevProps.playlist
+    const _player = prevProps.player
+    const { playlist, player, dispatch } = this.props
+    const { youtubePlayer, updatePercentage, youtubePlayerState, isPaused, isFinished } = player
+    const { hasPlaylistUpdated, songs, activeSong } = playlist
+
+    // A first song has been added to playlist
+    if (_playlist.songs.length === 0 && songs.length === 1) {
+      dispatch(updateActiveSong(songs[0]))
+    }
+
+    if (!activeSong) {
+      updatePercentage(0)
+    }
+
+    if (!isFinished && !_player.isPaused && isPaused) {
+      youtubePlayer.pauseVideo()
+    } else if (_player.isPaused && !isPaused && activeSong) {
+      youtubePlayer.playVideo()
+    }
+
+    // New song has been added to playlist for the first time
+    if (playlist.activeSong && _player.youtubePlayerState !== YOUTUBE_STATE.CUED &&
+      youtubePlayerState === YOUTUBE_STATE.CUED) {
+      youtubePlayer.playVideo()
+
+      // Song has changed
+    } else if (activeSong && !_playlist.hasPlaylistUpdated && hasPlaylistUpdated) {
+      updatePercentage(0)
+
+      // New song has been activated in playlist that has had no active song previously
+      if (!_playlist.activeSong && playlist.activeSong) {
+        youtubePlayer.playVideo()
+
+      // Same song ID (which means user has added same song)
+      } else if (_playlist.activeSong.id === playlist.activeSong.id) {
+        youtubePlayer.seekTo(0)
+      } else {
+        youtubePlayer.playVideo()
+      }
+    }
+  }
+
   onYouTubeReady(e) {
     const { dispatch } = this.props
     const youtubePlayer = e.target
-    youtubePlayer.mute()
+
     dispatch(registerPlayer(youtubePlayer))
+  }
+
+  getSongTitle() {
+    const { player, playlist, app, dispatch } = this.props
+    const { activeSong } = playlist
+    const { youtubePlayer } = player
+    const { mode } = app
+
+    if (mode === APP_MODES.CLIENT) {
+      // TODO
+      return ''
+    }
+
+    return activeSong && youtubePlayer ? youtubePlayer.getVideoData().title : ''
   }
 
   handlePrevButtonClick() {
@@ -49,7 +116,7 @@ class Player extends React.Component {
 
   handlePPButtonClick() {
     const { dispatch, player, app, playlist } = this.props
-    const { isPaused, youtubePlayer, youtubePlayerState } = player
+    const { isPaused, youtubePlayerState } = player
     const { songs, activeSong } = playlist
 
     if (!songs.length || youtubePlayerState === YOUTUBE_STATE.BUFFERING) {
@@ -90,79 +157,6 @@ class Player extends React.Component {
     }
   }
 
-  getYoutubeOptions() {
-    return {
-      height: '0',
-      width: '0',
-      playerVars: { // https://developers.google.com/youtube/player_parameters
-        autoplay: true,
-      },
-    }
-  }
-
-  getSongTitle() {
-    const { player, playlist, app, dispatch } = this.props
-    const { activeSong, repeat } = playlist
-    const { youtubePlayer } = player
-    const { mode } = app
-
-    if (mode === APP_MODES.CLIENT) {
-      // TODO
-      return ''
-    }
-
-    return activeSong && youtubePlayer ? youtubePlayer.getVideoData().title : ''
-  }
-
-  componentWillReceiveProps(nextProps) {
-  }
-
-  componentDidUpdate(prevProps) {
-    const _playlist = prevProps.playlist
-    const _player = prevProps.player
-    const { playlist, player, dispatch } = this.props
-    const { youtubePlayer, updatePercentage, youtubePlayerState, isPaused, isFinished } = player
-    const { hasPlaylistUpdated, songs, activeSong } = playlist
-
-    // A first song has been added to playlist
-    if (_playlist.songs.length === 0 && songs.length === 1) {
-      dispatch(updateActiveSong(songs[0]))
-    }
-
-    if (!activeSong) {
-      updatePercentage(0)
-    }
-
-    if (!isFinished && !_player.isPaused && isPaused) {
-      youtubePlayer.pauseVideo()
-    } else if (_player.isPaused && !isPaused && activeSong) {
-      youtubePlayer.playVideo()
-    }
-
-    if (playlist.activeSong && _player.youtubePlayerState !== YOUTUBE_STATE.CUED && youtubePlayerState === YOUTUBE_STATE.CUED) {
-      youtubePlayer.playVideo()
-      // Song has changed
-    } else if (activeSong && !_playlist.hasPlaylistUpdated && hasPlaylistUpdated) {
-      updatePercentage(0)
-
-      // New song has been activated in playlist that has had no active song previously
-      if ((!_playlist.activeSong && playlist.activeSong)
-        // (playlist.activeSong && _player.youtubePlayerState !== YOUTUBE_STATE.CUED && youtubePlayerState === YOUTUBE_STATE.CUED))
-      ) {
-          youtubePlayer.playVideo()
-
-      } else {
-        // Same song ID (which means user has added same song)
-        if (_playlist.activeSong.id === playlist.activeSong.id) {
-          youtubePlayer.seekTo(0)
-        } else {
-          youtubePlayer.playVideo()
-        }
-      }
-
-    }
-  }
-
   render() {
     const { player, playlist, app, dispatch } = this.props
     const { isPaused, isFinished, youtubePlayerState } = player
@@ -188,7 +182,7 @@ class Player extends React.Component {
           <YouTube
             className="player__youtube"
             onReady={this.onYouTubeReady}
-            opts={this.getYoutubeOptions()}
+            opts={Player.youtubeOptions}
             videoId={activeSong ? activeSong.id : null}
           /> : null
         }
@@ -219,7 +213,9 @@ class Player extends React.Component {
           </div>
           <div className="player__controller__center">
             <ProgressBar
-              onProgressBarReady={updatePercentage => dispatch(registerProgressBar(updatePercentage))}
+              onProgressBarReady={updatePercentage =>
+                dispatch(registerProgressBar(updatePercentage))
+              }
             />
           </div>
           <div className="player__controller__right">
@@ -250,15 +246,15 @@ class Player extends React.Component {
 }
 
 Player.propTypes = {
-  isPaused: React.PropTypes.bool,
-  isFetching: React.PropTypes.bool,
+  dispatch: PropTypes.func,
+  playlist: PropTypes.object,
+  player: PropTypes.object,
+  app: PropTypes.object,
 }
 Player.defaultProps = {}
 
-export default connect(
-  (state) => ({
-    player: state.player,
-    playlist: state.playlist,
-    app: state.app,
-  })
-)(Player)
+export default connect(state => ({
+  player: state.player,
+  playlist: state.playlist,
+  app: state.app,
+}))(Player)

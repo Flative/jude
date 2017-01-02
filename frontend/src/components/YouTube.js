@@ -53,7 +53,7 @@ function filterResetOptions(opts) {
 function shouldResetPlayer(prevProps, props) {
   return !isEqual(
     filterResetOptions(prevProps.opts),
-    filterResetOptions(props.opts)
+    filterResetOptions(props.opts),
   )
 }
 
@@ -195,7 +195,7 @@ class YouTube extends React.Component {
         break
 
       default:
-        return
+        break
     }
   }
 
