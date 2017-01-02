@@ -73,11 +73,14 @@ export function removeSong(item) {
   return (dispatch, getState) => {
     const { playlist } = getState()
     const { activeSong } = playlist
+    const hasActiveSongDeleted = activeSong && activeSong.uuid === item.uuid
+    const nextSong = getNextSong(playlist)
 
     dispatch({
       type: actions.PLAYLIST_SONG_REMOVED,
       songs: playlist.songs.filter(v => v.uuid !== item.uuid),
-      activeSong: item.uuid === activeSong.uuid ? null : activeSong,
+      activeSong: hasActiveSongDeleted ? nextSong : activeSong,
+      hasPlaylistUpdated: hasActiveSongDeleted, // Force update
     })
   }
 }
@@ -92,12 +95,6 @@ export function updateActiveSong(activeSong) {
       type: actions.PLAYLIST_ACTIVE_SONG_UPDATED,
       activeSong,
     })
-
-    // if (!song) {
-    //   youtubePlayer.stopVideo()
-    // } else if (activeSong && (song.id === activeSong.id)) {
-    //   youtubePlayer.seekTo(0)
-    // }
   }
 }
 
@@ -156,6 +153,7 @@ export default (state = initialState, action) => {
       return { ...state,
         songs: action.songs,
         activeSong: action.activeSong,
+        hasPlaylistUpdated: action.hasPlaylistUpdated,
       }
 
     case actions.PLAYLIST_DATA_REPLACED:
