@@ -148,8 +148,8 @@ export const initialState = {
   youtubePlayer: null,
   updatePercentage: null,
   youtubePlayerState: null,
-  isPaused: true,
-  isFinished: true,
+  isPaused: false,
+  isFinished: false,
 }
 
 export default (state = initialState, action) => {

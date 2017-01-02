@@ -2,11 +2,6 @@ import React from 'react'
 import { connect } from 'react-redux'
 import classNames from 'classnames'
 
-import { ProgressBar, YouTube } from '../components'
-import { YOUTUBE_STATE, playSong, pauseSong, registerPlayer, registerProgressBar } from '../reducers/playerReducer'
-import { updateActiveSong, getNextSong, getPrevItem, updateShuffleState, enableRepeatAll, enableRepeatOne, disableShuffle, disableRepeat } from '../reducers/playlistReducer'
-import { APP_MODES } from '../reducers/appReducer'
-
 import PrevIcon from 'react-icons/lib/md/skip-previous'
 import NextIcon from 'react-icons/lib/md/skip-next'
 import PlayIcon from 'react-icons/lib/md/play-circle-outline'
@@ -14,6 +9,14 @@ import PauseIcon from 'react-icons/lib/md/pause-circle-outline'
 import ShuffleIcon from 'react-icons/lib/md/shuffle'
 import RepeatIcon from 'react-icons/lib/md/repeat'
 import RepeatOneIcon from 'react-icons/lib/md/repeat-one'
+
+import { ProgressBar, YouTube } from '../components'
+import { YOUTUBE_STATE, playSong, pauseSong, registerPlayer, registerProgressBar } from '../reducers/playerReducer'
+import {
+  updateActiveSong, getPrevItem, updateShuffleState, enableRepeatAll, enableRepeatOne, disableRepeat, updateRepeatState,
+} from '../reducers/playlistReducer'
+import { APP_MODES } from '../reducers/appReducer'
+
 
 class Player extends React.Component {
   constructor(props) {
@@ -98,25 +101,18 @@ class Player extends React.Component {
     const { playlist, app, dispatch } = this.props
     const { repeat, shuffle } = playlist
 
-    // If shuffle is active, repeat is automatically turned on
+    // Repeat is automatically turned on if shuffle is active
     if (shuffle) {
-      // TODO: Should give a feedback to user
-      console.log('Nothing there')
       return
     }
 
-    if (app.mode === APP_MODES.STANDALONE) {
-      if (!repeat) {
-        dispatch(enableRepeatAll())
-      } else if (repeat === 'all') {
-        dispatch(enableRepeatOne())
-      } else if (repeat === 'one') {
-        dispatch(disableRepeat())
-      }
-      return
+    if (!repeat) {
+      dispatch(updateRepeatState('all'))
+    } else if (repeat === 'all') {
+      dispatch(updateRepeatState('one'))
+    } else if (repeat === 'one') {
+      dispatch(updateRepeatState(false))
     }
-
-    // TODO
   }
 
   getYoutubeOptions() {
@@ -195,7 +191,7 @@ class Player extends React.Component {
   render() {
     const { player, playlist, app, dispatch } = this.props
     const { isPaused, isFinished, youtubePlayerState } = player
-    const { songs, activeSong, repeat } = playlist
+    const { songs, activeSong, repeat, shuffle } = playlist
     const { mode } = app
 
     const style = {}
@@ -204,8 +200,8 @@ class Player extends React.Component {
     }
 
     const repeatButtonClass = classNames({
-      'player__btn-repeat': true,
-      'player__btn--disable': !playlist.repeat,
+      'player__btn--repeat': true,
+      'player__btn--active': shuffle || playlist.repeat !== false,
     })
 
     return (
@@ -228,21 +224,21 @@ class Player extends React.Component {
         <div className="player__controller">
           <div className="player__controller__left">
             <PrevIcon
-              className="player__btn-prev"
+              className="player__btn--prev"
               onClick={this.handlePrevButtonClick}
             />
             {!activeSong || youtubePlayerState !== YOUTUBE_STATE.PLAYING
               ? <PlayIcon
-                className="player__btn-pp"
+                className="player__btn--pp"
                 onClick={this.handlePPButtonClick}
               />
               : <PauseIcon
-                className="player__btn-pp"
+                className="player__btn--pp"
                 onClick={this.handlePPButtonClick}
               />
             }
             <NextIcon
-              className="player__btn-next"
+              className="player__btn--next"
               onClick={this.handleNextButtonClick}
             />
           </div>
@@ -254,18 +250,18 @@ class Player extends React.Component {
           <div className="player__controller__right">
             <ShuffleIcon
               className={classNames({
-                'player__btn-shuffle': true,
-                'player__btn--disable': !playlist.shuffle,
+                'player__btn--shuffle': true,
+                'player__btn--active': playlist.shuffle,
               })
               }
               onClick={this.handleShuffleButtonClick}
             />
-            {repeat === 'one'
-              ? <RepeatOneIcon
+            {repeat !== 'one' || shuffle
+              ? <RepeatIcon
                 className={repeatButtonClass}
                 onClick={this.handleRepeatButtonClick}
               />
-              : <RepeatIcon
+              : <RepeatOneIcon
                 className={repeatButtonClass}
                 onClick={this.handleRepeatButtonClick}
               />

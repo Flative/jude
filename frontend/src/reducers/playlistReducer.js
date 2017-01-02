@@ -36,11 +36,17 @@ export function getNextSong(playlist, criteriaSong) {
 
   if (shuffle) {
     return songs[Math.floor(Math.random() * songs.length)]
-  } else {
-    return criteriaSong
-      ? songs[songs.findIndex(v => v.uuid === criteriaSong.uuid) + 1] || null
-      : null
+  } else if (repeat) {
+    if (repeat === 'one') {
+      return activeSong
+    }
+    const nextSong = songs[songs.findIndex(v => v.uuid === activeSong.uuid) + 1] || null
+    return nextSong || songs[0]
   }
+
+  return criteriaSong
+    ? songs[songs.findIndex(v => v.uuid === criteriaSong.uuid) + 1] || null
+    : null
 }
 
 export function getPrevItem(playlist) {
@@ -106,6 +112,10 @@ export function updateShuffleState(shuffle) {
   return { type: actions.PLAYLIST_SHUFFLE_STATE_UPDATED, shuffle }
 }
 
+export function updateRepeatState(repeat) {
+  return { type: actions.PLAYLIST_REPEAT_STATE_UPDATED, repeat }
+}
+
 export function disableShuffle() {
   return { type: actions.PLAYLIST_SHUFFLE_DISABLED }
 }
@@ -164,29 +174,9 @@ export default (state = initialState, action) => {
         hasPlaylistUpdated: true,
       }
 
-    case actions.PLAYLIST_SHUFFLE_ENABLED:
+    case actions.PLAYLIST_REPEAT_STATE_UPDATED:
       return { ...state,
-        shuffle: true,
-      }
-
-    case actions.PLAYLIST_SHUFFLE_DISABLED:
-      return { ...state,
-        shuffle: false,
-      }
-
-    case actions.PLAYLIST_REPEAT_ONE_ENABLED:
-      return { ...state,
-        repeat: 'one',
-      }
-
-    case actions.PLAYLIST_REPEAT_ALL_ENABLED:
-      return { ...state,
-        repeat: 'all',
-      }
-
-    case actions.PLAYLIST_REPEAT_DISABLED:
-      return { ...state,
-        repeat: false,
+        repeat: action.repeat,
       }
 
     case actions.PLAYLIST_SHUFFLE_STATE_UPDATED:
