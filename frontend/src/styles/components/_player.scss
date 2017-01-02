@@ -74,6 +74,8 @@
     font-size: 24px;
     cursor: pointer;
     color: #cacaca;
+
+    &:hover { color: #ffffff }
   }
 
   &__btn--active {

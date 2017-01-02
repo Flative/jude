@@ -50,7 +50,14 @@ export function getNextSong(playlist, criteriaSong) {
 }
 
 export function getPrevItem(playlist) {
-  return playlist.activeSong ? playlist.songs[getActiveItemIndex(playlist) - 1] : null
+  const { activeSong, songs } = playlist
+  if (!activeSong || !songs.length) {
+    return null
+  }
+
+  const prevIndexItem = songs[songs.findIndex(v => v.uuid === activeSong.uuid) - 1]
+
+  return prevIndexItem || songs[0]
 }
 
 export function addSong(id, title) {
@@ -86,16 +93,7 @@ export function removeSong(item) {
 }
 
 export function updateActiveSong(activeSong) {
-  return (dispatch, getState) => {
-    const { playlist, player } = getState()
-    const { youtubePlayer, updatePercentage } = player
-    const { songs } = playlist
-
-    dispatch({
-      type: actions.PLAYLIST_ACTIVE_SONG_UPDATED,
-      activeSong,
-    })
-  }
+  return { type: actions.PLAYLIST_ACTIVE_SONG_UPDATED, activeSong }
 }
 
 export function replacePlaylistData(payload) {

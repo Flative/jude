@@ -13,7 +13,8 @@ import RepeatOneIcon from 'react-icons/lib/md/repeat-one'
 import { ProgressBar, YouTube } from '../components'
 import { YOUTUBE_STATE, playSong, pauseSong, registerPlayer, registerProgressBar } from '../reducers/playerReducer'
 import {
-  updateActiveSong, getPrevItem, updateShuffleState, enableRepeatAll, enableRepeatOne, disableRepeat, updateRepeatState,
+  updateActiveSong, getPrevItem, updateShuffleState, enableRepeatAll,
+  enableRepeatOne, disableRepeat, updateRepeatState, getNextSong,
 } from '../reducers/playlistReducer'
 import { APP_MODES } from '../reducers/appReducer'
 
@@ -37,39 +38,13 @@ class Player extends React.Component {
   }
 
   handlePrevButtonClick() {
-    const { player, playlist, app, dispatch } = this.props
-    const prevItem = getPrevItem(playlist)
-
-    if (!prevItem) {
-      // TODO: Should give a feedback to user
-      console.log('Nothing there')
-      return
-    }
-
-    if (app.mode === APP_MODES.STANDALONE) {
-      dispatch(updateActiveSong(prevItem))
-      return
-    }
-
-    // TODO
+    const { playlist, dispatch } = this.props
+    dispatch(updateActiveSong(getPrevItem(playlist)))
   }
 
   handleNextButtonClick() {
-    const { player, playlist, app, dispatch } = this.props
-    // const nextItem = getNextSong(playlist)
-    //
-    // if (!nextItem) {
-    //   TODO: Should give a feedback to user
-      // console.log('Nothing there')
-      // return
-    // }
-    //
-    // if (app.mode === APP_MODES.STANDALONE) {
-    //   dispatch(updateActiveSong(nextItem))
-    //   return
-    // }
-    //
-    // TODO
+    const { playlist, dispatch } = this.props
+    dispatch(updateActiveSong(getNextSong(playlist)))
   }
 
   handlePPButtonClick() {
