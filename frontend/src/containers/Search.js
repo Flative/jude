@@ -47,16 +47,7 @@ class Search extends React.Component {
     const uuid = UUID.v4()
     const index = activeSong ? songs[songs.length - 1].index + 1 : 0
 
-    if (app.mode === APP_MODES.STANDALONE) {
-      dispatch(addSong(id, title, uuid, index))
-      return
-    }
-
-    app.wsConnection.send(JSON.stringify({
-      action: 'add',
-      body: { id, title, uuid, index },
-    }))
-    // TODO
+    dispatch(addSong(id, title, uuid, index))
   }
 
   // TODO: Need to display some interaction stuff while fetching

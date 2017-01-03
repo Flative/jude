@@ -133,10 +133,10 @@ export default (state = initialState, action) => {
 
     case actions.PLAYLIST_DATA_REPLACED:
       return {
-        songs: action.songs,
-        activeSong: action.activeSong,
-        shuffle: action.isShuffleOn,
-        repeat: action.repeatingMode === 'none' ? false : action.repeatingMode,
+        songs: action.songs || [],
+        activeSong: action.activeSong || null,
+        shuffle: action.isShuffleOn || false,
+        repeat: action.repeat === 'none' ? false : action.repeatingMode,
       }
 
     case actions.PLAYLIST_ACTIVE_SONG_UPDATED:

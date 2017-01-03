@@ -1,9 +1,11 @@
 import { replacePlaylistData } from './playlistReducer'
+import { replacePlayerState } from './playerReducer'
 
 export const actions = {
   CHANGE_APP_MODE_ATTEMPTED: 'CHANGE_APP_MODE_ATTEMPTED',
   CHANGE_APP_MODE_FAILED: 'CHANGE_APP_MODE_FAILED',
   CHANGE_APP_MODE_SUCCEEDED: 'CHANGE_APP_MODE_SUCCEEDED',
+  WS_SEND_DATA_ATTEMPTED: 'SEND_DATA_ATTEMPTED',
 }
 
 export const APP_MODES = {
@@ -32,9 +34,15 @@ export function establishWSConnection(mode, address) {
         dispatch({ type: actions.CHANGE_APP_MODE_SUCCEEDED, mode, wsConnection })
       }
       wsConnection.onmessage = (msg) => {
-        const res = JSON.parse(msg.data)
-        console.log(res)
-        dispatch(replacePlaylistData(res))
+        const res = msg.data || {}
+        const { playlist, player } = res
+
+        if (playlist) {
+          dispatch(replacePlaylistData(JSON.parse(playlist)))
+        }
+        if (player) {
+          dispatch(replacePlayerState(JSON.parse(player)))
+        }
       }
     } catch (e) {
       dispatch({ type: actions.CHANGE_APP_MODE_FAILED })

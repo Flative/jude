@@ -12,6 +12,7 @@ export const actions = {
   PLAYER_FETCHING_FINISHED: 'PLAYER_FETCHING_FINISHED',
   PLAYER_UPDATE_PROGRESSBAR_PERCENTAGE: 'PLAYER_UPDATE_PROGRESSBAR_PERCENTAGE',
   PLAYER_YOUTUBE_STATE_UPDATED: 'PLAYER_YOUTUBE_STATE_UPDATED',
+  PLAYER_STATE_REPLACED: 'PLAYER_STATE_REPLACED',
 }
 
 export const YOUTUBE_STATE = {
@@ -115,6 +116,10 @@ export function finishFetch() {
   return { type: actions.PLAYER_FETCHING_FINISHED }
 }
 
+export function replacePlayerState(payload) {
+  return { type: actions.PLAYER_STATE_REPLACED, payload }
+}
+
 export function updateYoutubePlayerState(youtubePlayerState) {
   return (dispatch, getState) => {
     if (youtubePlayerState === YOUTUBE_STATE.PLAYING || youtubePlayerState === YOUTUBE_STATE.CUED) {
@@ -172,6 +177,11 @@ export default (state = initialState, action) => {
       return { ...state,
         youtubePlayerState: action.youtubePlayerState,
         isFinished: action.youtubePlayerState === YOUTUBE_STATE.ENDED,
+      }
+    case actions.PLAYER_STATE_REPLACED:
+      return { ...state,
+        isFinished: state.isFinished || action.isFinished,
+        isPaused: state.isPaused || action.isPaused,
       }
     default:
       return state

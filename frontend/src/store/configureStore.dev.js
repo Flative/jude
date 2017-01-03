@@ -12,7 +12,7 @@ export default function configureStore(initialState) {
       applyMiddleware(snatcher, thunk, createLogger({
         collapsed: () => true,
       })),
-      window.devToolsExtension ? window.devToolsExtension() : f => f
+      window.devToolsExtension ? window.devToolsExtension() : f => f,
     ),
   )
   
