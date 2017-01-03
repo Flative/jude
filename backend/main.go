@@ -15,7 +15,7 @@ var upgrader = &websocket.Upgrader{
 	},
 }
 
-var storedData = []byte(`{"playlist":{"songs":[],"shuffle":false,"repeat":false,"activeSong":null,"nextItem":null,"hasPlaylistUpdated":false},"player":{"youtubePlayer":null,"updatePercentage":null,"youtubePlayerState":null,"isPaused":false,"isFinished":false},"app":{"mode":"HOST_CLIENT","isModeChanging":false,"wsConnection":null,"serverState":null}}`)
+var storedData = []byte("")
 
 func main() {
 	manager := newManager()
