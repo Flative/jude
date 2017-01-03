@@ -7,8 +7,8 @@ import (
 )
 
 type Playlist struct {
-	SongList      []*Song `json:"items"`
-	ActiveSong    *Song   `json:"activeItem"`
+	SongList      []*Song `json:"songs"`
+	ActiveSong    *Song   `json:"activeSong"`
 	IsPaused      bool    `json:"isPaused"`
 	CurrentTime   int     `json:"currentTime"`
 	Duration      int     `json:"duration"`
