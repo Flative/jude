@@ -10,7 +10,7 @@ response :
 
 ```json
 {
-    "items": [
+    "songs": [
         {
             "id": "ecFZkVn4iW4",
             "title": "This is title of song",
@@ -28,7 +28,7 @@ response :
             "index": 3
         }
     ],
-    "activeItem": {
+    "activeSong": {
         "id": "xnPQhqEgkkQ",
         "title": "This is title of song",
         "uuid": "705999e4-4c5c-4258-bee0-501eb0a27b3a",

@@ -1,28 +1,56 @@
 package main
 
 import (
-	"flag"
-	"html/template"
+	"log"
 	"net/http"
 
-	"log"
+	"github.com/gorilla/websocket"
 )
 
-var (
-	addr         = flag.String("addr", "127.0.0.1:5050", "http service address")
-	homeTemplate = template.Must(template.ParseFiles("static/index.html"))
-)
+var upgrader = &websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
+}
+
+var storedData = []byte("")
 
 func main() {
 	manager := newManager()
-	log.Printf("\n\n* Running on\n* ws://%s/ws\n* http://%s/\n\n(Press CTRL+C to quit)\n", *addr, *addr)
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		homeTemplate.Execute(w, r.Host)
-	})
-	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		serveWs(manager, w, r)
+		conn, err := upgrader.Upgrade(w, r, nil)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+
+		err = conn.WriteMessage(1, storedData)
+		if err != nil {
+			conn.Close()
+			return
+		}
+
+		go func() {
+			client := newClient(manager, conn)
+			manager.register(client)
+
+			for {
+				_, data, err := conn.ReadMessage()
+				if err != nil {
+					client.Conn.Close()
+					return
+				}
+				storedData = data
+				if err := manager.broadcast(data); err != nil {
+					log.Println(err)
+					return
+				}
+			}
+		}()
+
 	})
-	log.Fatal(http.ListenAndServe(*addr, nil))
+	log.Printf("\n\n* Running on\n* ws://0.0.0.0:5050/ws\n\n(Press CTRL+C to quit)\n")
+	log.Fatalln(http.ListenAndServe("0.0.0.0:5050", nil))
 }
