@@ -117,7 +117,7 @@ export function finishFetch() {
 }
 
 export function replacePlayerState(payload) {
-  return { type: actions.PLAYER_STATE_REPLACED, payload }
+  return { type: actions.PLAYER_STATE_REPLACED, ...payload }
 }
 
 export function updateYoutubePlayerState(youtubePlayerState) {
@@ -180,8 +180,8 @@ export default (state = initialState, action) => {
       }
     case actions.PLAYER_STATE_REPLACED:
       return { ...state,
-        isFinished: state.isFinished || action.isFinished,
-        isPaused: state.isPaused || action.isPaused,
+        isFinished: action.isFinished || state.isFinished,
+        isPaused: action.isPaused || state.isPaused,
       }
     default:
       return state

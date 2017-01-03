@@ -26,7 +26,6 @@ export function establishWSConnection(mode, address) {
 
     try {
       const wsConnection = new WebSocket(`ws://${address}/ws`)
-      window.a = wsConnection
       wsConnection.onerror = () => {
         dispatch({ type: actions.CHANGE_APP_MODE_FAILED })
       }
@@ -34,14 +33,19 @@ export function establishWSConnection(mode, address) {
         dispatch({ type: actions.CHANGE_APP_MODE_SUCCEEDED, mode, wsConnection })
       }
       wsConnection.onmessage = (msg) => {
-        const res = msg.data || {}
+        let res
+        try {
+          res = JSON.parse(msg.data)
+        } catch (e) {
+          res = {}
+        }
         const { playlist, player } = res
 
         if (playlist) {
-          dispatch(replacePlaylistData(JSON.parse(playlist)))
+          dispatch(replacePlaylistData(playlist))
         }
         if (player) {
-          dispatch(replacePlayerState(JSON.parse(player)))
+          dispatch(replacePlayerState(player))
         }
       }
     } catch (e) {

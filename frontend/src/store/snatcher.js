@@ -5,13 +5,15 @@ import { actions as playerActions } from '../reducers/playerReducer'
 const snatcher = store => next => action => {
   const { app } = store.getState()
 
-  if (app.mode === APP_MODES.STANDALONE || action.type === playlistActions.PLAYLIST_DATA_REPLACED) {
-    return next(action)
+  const result = next(action)
+  if (app.mode === APP_MODES.STANDALONE ||
+    action.type === playlistActions.PLAYLIST_STATE_REPLACED ||
+    action.type === playerActions.PLAYER_STATE_REPLACED
+  ) {
+    return result
   }
 
   const { wsConnection } = app
-  next(action)
-
   const state = store.getState()
 
   wsConnection.send(JSON.stringify({

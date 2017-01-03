@@ -94,14 +94,9 @@ class Player extends React.Component {
     const { player, playlist, app, dispatch } = this.props
     const { activeSong } = playlist
     const { youtubePlayer } = player
-    const { mode } = app
+    const videoData = youtubePlayer ? youtubePlayer.getVideoData() : null
 
-    if (mode === APP_MODES.CLIENT) {
-      // TODO
-      return ''
-    }
-
-    return activeSong && youtubePlayer ? youtubePlayer.getVideoData().title : ''
+    return activeSong && videoData ? videoData.title : ''
   }
 
   handlePrevButtonClick() {
