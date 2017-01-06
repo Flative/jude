@@ -91,12 +91,10 @@ class Player extends React.Component {
   }
 
   getSongTitle() {
-    const { player, playlist, app, dispatch } = this.props
+    const { player, playlist } = this.props
     const { activeSong } = playlist
-    const { youtubePlayer } = player
-    const videoData = youtubePlayer ? youtubePlayer.getVideoData() : null
 
-    return activeSong && videoData ? videoData.title : ''
+    return activeSong ? activeSong.title : ''
   }
 
   handlePrevButtonClick() {

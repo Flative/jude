@@ -51,45 +51,48 @@ export function registerPlayer(youtubePlayer) {
       stop: () => clearTimeout(timer.handler),
     }
 
-    youtubePlayer.addEventListener('onStateChange', (e) => {
-      dispatch(updateYoutubePlayerState(e.data))
-      switch (e.data) {
-        case PLAYING:
-          console.log('PLAYING')
-          timer.stop()
-          timer.start()
-          if (isBufferingStarted) {
-            isBufferingStarted = false
-          }
-          break
+    if (youtubePlayer.addEventListner) {
+      youtubePlayer.addEventListener('onStateChange', (e) => {
+        dispatch(updateYoutubePlayerState(e.data))
+        switch (e.data) {
+          case PLAYING:
+            console.log('PLAYING')
+            timer.stop()
+            timer.start()
+            if (isBufferingStarted) {
+              isBufferingStarted = false
+            }
+            break
 
-        case BUFFERING:
-          isBufferingStarted = true
-          break
+          case BUFFERING:
+            isBufferingStarted = true
+            break
 
-        case PAUSED:
-          timer.stop()
-          updateTime()
-          console.log('PAUSED:', youtubePlayer.getCurrentTime(), currentTime)
-          break
+          case PAUSED:
+            timer.stop()
+            updateTime()
+            console.log('PAUSED:', youtubePlayer.getCurrentTime(), currentTime)
+            break
 
-        case ENDED:
-          console.log('ENDED')
-          dispatch(finishSong())
-          break
+          case ENDED:
+            console.log('ENDED')
+            dispatch(finishSong())
+            break
 
-        case CUED:
-          console.log('CUED')
-          // if (getState().playlist.activeSong) {
-          //   // TODO: Send duration info to server if app mode is host
-          //   dispatch(playSong())
-          // }
-          break
+          case CUED:
+            console.log('CUED')
+            // if (getState().playlist.activeSong) {
+            //   // TODO: Send duration info to server if app mode is host
+            //   dispatch(playSong())
+            // }
+            break
 
-        default:
-          break
-      }
-    })
+          default:
+            break
+        }
+      })
+    }
+
 
     dispatch({ type: actions.PLAYER_INITIALIZED, youtubePlayer })
   }

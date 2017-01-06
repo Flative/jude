@@ -1,5 +1,5 @@
 import { replacePlaylistData } from './playlistReducer'
-import { replacePlayerState } from './playerReducer'
+import { replacePlayerState, registerPlayer } from './playerReducer'
 
 export const actions = {
   CHANGE_APP_MODE_ATTEMPTED: 'CHANGE_APP_MODE_ATTEMPTED',
@@ -31,6 +31,13 @@ export function establishWSConnection(mode, address) {
       }
       wsConnection.onopen = () => {
         dispatch({ type: actions.CHANGE_APP_MODE_SUCCEEDED, mode, wsConnection })
+        if (mode === APP_MODES.CLIENT) {
+          dispatch(registerPlayer({
+            pauseVideo: () => null,
+            playVideo: () => null,
+            seekTo: () => null,
+          }))
+        }
       }
       wsConnection.onmessage = (msg) => {
         let res
@@ -59,7 +66,7 @@ export function disconnectWSConnection(cb) {
     const { isModeChanging, wsConnection } = getState().app
 
     if (isModeChanging) {
-      return;
+      return
     }
 
     dispatch({ type: actions.CHANGE_APP_MODE_ATTEMPTED })
