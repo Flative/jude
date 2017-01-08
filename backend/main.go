@@ -58,10 +58,10 @@ func main() {
 	port := flag.Int("port", 8000, "This is port")
 	flag.Parse()
 	homeTemplate := template.Must(template.ParseFiles("../frontend/index.html"))
-	log.Printf("\n\n* Running on\n* ws://0.0.0.0:%d/ws\n\n(Press CTRL+C to quit)\n", *port)
-	log.Fatalln(http.ListenAndServe(fmt.Sprintf("0.0.0.0:%d", *port), nil))
+	log.Printf("\n\n* Running on\n* ws://0.0.0.0:%d/ws\n* http://0.0.0.0:%d/\n\n(Press CTRL+C to quit)\n", *port, *port)
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		homeTemplate.Execute(w, r.Host)
 	})
+	log.Fatalln(http.ListenAndServe(fmt.Sprintf("0.0.0.0:%d", *port), nil))
 }
