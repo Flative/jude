@@ -5,7 +5,7 @@
   top: 100%;
   margin-top: 10px;
   margin-right: 10px;
-  width: 300px;
+  width: 480px;
   //height: 200px;
   background-color: #fff;
   z-index: 500000;
@@ -26,6 +26,8 @@
   }
 
   &__fg {
+    margin-top: 24px;
+
     &-title {
       font-size: 12px;
       margin-bottom: 4px;
@@ -58,11 +60,6 @@
         }
       }
 
-      &:focus + &-label,
-      &:hover + &-label {
-        border: 1px solid #F8E1E4;
-      }
-
       &:checked + &-label {
         border: 1px solid #d54b5f;
       }
@@ -70,8 +67,7 @@
       &-label {
         display: block;
         float: left;
-        width: 50%;
-        padding: 12px 0;
+        padding: 12px 20px;
         background-color: #fff;
         text-align: center;
         font-size: 13px;

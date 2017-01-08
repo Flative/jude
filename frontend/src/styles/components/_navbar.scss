@@ -26,12 +26,38 @@
       display: block;
     }
   }
+
+  &__mode-btn {
+    float: right;
+    margin: 12px 0 0 0;
+    height: 34px;
+    padding: 0 14px;
+    color: #555555;
+    background-color: #f9f9f9;
+    border: 1px solid #e1e1e1;
+
+    &--active {
+      background-color: #fff;
+      border-color: #b5b5b5;
+    }
+  }
 }
 
 .navbar__switch {
   float: right;
   margin-top: 30px;
   margin-right: 30px;
+
+  &-label {
+    position: absolute;
+    display: inline-block;
+    width: 100px;
+    top: 50%;
+    right: 30px;
+    margin-top: -7px;
+    color: #222222;
+    font-size: 14px;
+  }
 
   > input[type="checkbox"] {
     display: none;

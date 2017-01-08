@@ -4,6 +4,12 @@ import { Spinner } from './'
 import { APP_MODES } from '../reducers/appReducer'
 
 class NavBar extends React.Component {
+  static MODE_MAPPER = {
+    [APP_MODES.STANDALONE]: 'Standalone',
+    [APP_MODES.CLIENT]: 'Remote Control',
+    [APP_MODES.HOST_CLIENT]: 'Speaker',
+  }
+
   constructor(props) {
     super(props)
     this.state = {
@@ -14,7 +20,7 @@ class NavBar extends React.Component {
     this.toggleModeSelector = this.toggleModeSelector.bind(this)
     this.handleModeSelectorApplyButton = this.handleModeSelectorApplyButton.bind(this)
     this.handleModeTypeChange = this.handleModeTypeChange.bind(this)
-    this.handleSwitchClick = this.handleSwitchClick.bind(this)
+    this.handleModeButtonClick = this.handleModeButtonClick.bind(this)
   }
 
   componentWillReceiveProps(nextProps) {
@@ -29,25 +35,11 @@ class NavBar extends React.Component {
 
   // TODO: Animation on mode selector
   toggleModeSelector(v) {
-    this.switch.checked = v !== undefined ? v : !this.switch.checked
-    this.setState({ isSelectorOpened: this.switch.checked })
+    this.setState({ isSelectorOpened: v || !this.state.isSelectorOpened })
   }
 
-  handleSwitchClick(e) {
-    e.preventDefault()
-
-    if (this.props.mode !== APP_MODES.STANDALONE) {
-      this.props.disconnectConnection(() => {
-        setTimeout(() => {
-          this.toggleModeSelector(!this.switch.checked)
-        }, 50)
-      })
-      return;
-    }
-
-    setTimeout(() => {
-      this.toggleModeSelector(!this.switch.checked)
-    }, 50)
+  handleModeButtonClick(e) {
+    this.toggleModeSelector();
   }
 
   // TODO: Should be implemented
@@ -70,76 +62,27 @@ class NavBar extends React.Component {
     const { isSelectorOpened, isCheckboxChecked } = this.state
     const { isModeChanging, mode } = this.props
 
-    const modeSelectorClass = classNames({
-      'mode-selector': true,
-      'mode-selector--active': isSelectorOpened,
-    })
-    const appCoverClass = classNames(['app-cover', { 'app-cover--active': isSelectorOpened }])
-    const applyButtonClass = classNames({
-      'mode-selector__button': true,
-      'mode-selector__button-gray': isModeChanging,
-    })
+    const renderButton = (modeType) => {
+      return (
+        <button
+          key={modeType}
+          className={classNames({
+            'navbar__mode-btn': true,
+            'navbar__mode-btn--active': mode === modeType,
+          })}
+          onClick={this.props.changeAppMode(modeType)}
+        >
+          {NavBar.MODE_MAPPER[modeType]}
+        </button>
+      )
+    }
 
     return (
       <div className="navbar">
         <h1 className="navbar__title">Jude</h1>
-        <div className="material-switch navbar__switch">
-          <input
-            id="navbarSwitch"
-            ref={(input) => { this.switch = input }}
-            type="checkbox"
-            onChange={e => e.preventDefault()}
-            onClick={this.handleSwitchClick}
-          />
-          <label htmlFor="navbarSwitch" />
-        </div>
-        <div className={appCoverClass} onClick={() => this.toggleModeSelector(false)} />
-        <div
-          className={modeSelectorClass}
-          onKeyDown={(e) => {
-            if (e.keyCode === 27) {
-              this.toggleModeSelector(false)
-            }
-          }}
-        >
-          <p className="mode-selector__title">Change Mode</p>
-
-          <div className="mode-selector__spinner">
-            <Spinner active={isModeChanging} />
-          </div>
-
-          <div className="mode-selector__fg">
-            <div className="mode-selector__fg-title">
-              Type
-            </div>
-            <div className="mode-selector__fg-body" onChange={this.handleModeTypeChange}>
-              <label className="mode-selector__fg-input-radio-wrapper" htmlFor="hostRadio">
-                <input className="mode-selector__fg-input-radio" type="radio" value={APP_MODES.HOST_CLIENT} id="hostRadio" name="radio" />
-                <span className="mode-selector__fg-input-radio-label">Host</span>
-              </label>
-              <label className="mode-selector__fg-input-radio-wrapper" htmlFor="clientRadio">
-                <input className="mode-selector__fg-input-radio" type="radio" value={APP_MODES.CLIENT} id="clientRadio" name="radio" />
-                <span className="mode-selector__fg-input-radio-label">Client</span>
-              </label>
-              <div className="clearfix"></div>
-            </div>
-          </div>
-
-          <div className="mode-selector__buttons">
-            <button
-              className="mode-selector__button mode-selector__button--gray"
-              onClick={() => this.toggleModeSelector(false)}
-            >
-              Cancel
-            </button>
-            <button
-              className={applyButtonClass}
-              onClick={this.handleModeSelectorApplyButton}
-            >
-              Apply
-            </button>
-          </div>
-        </div>
+        {renderButton(APP_MODES.HOST_CLIENT)}
+        {renderButton(APP_MODES.CLIENT)}
+        {renderButton(APP_MODES.STANDALONE)}
       </div>
     )
   }

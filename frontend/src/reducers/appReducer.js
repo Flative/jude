@@ -14,23 +14,41 @@ export const APP_MODES = {
   CLIENT: 'CLIENT',
 }
 
-export function establishWSConnection(mode, address) {
+export function changeAppMode(mode) {
   return (dispatch, getState) => {
-    const { app } = getState()
+    const { isModeChanging, wsConnection } = getState().app
 
-    if (app.isModeChanging) {
+    if (isModeChanging) {
       return;
     }
 
     dispatch({ type: actions.CHANGE_APP_MODE_ATTEMPTED })
 
-    try {
-      const wsConnection = new WebSocket(`ws://${address}/ws`)
-      wsConnection.onerror = () => {
-        dispatch({ type: actions.CHANGE_APP_MODE_FAILED })
+    if (mode === APP_MODES.STANDALONE) {
+      try {
+        wsConnection.close()
+        dispatch({
+          type: actions.CHANGE_APP_MODE_SUCCEEDED,
+          wsConnection: null,
+          mode,
+        })
+      } catch (e) {
+        dispatch({ type: actions.CHANGE_APP_MODE_FAILED, e })
       }
-      wsConnection.onopen = () => {
-        dispatch({ type: actions.CHANGE_APP_MODE_SUCCEEDED, mode, wsConnection })
+      return;
+    }
+
+    try {
+      const newWsConnection = new WebSocket(`ws://${location.hostname}:8000/ws`)
+      newWsConnection.onerror = (e) => {
+        dispatch({ type: actions.CHANGE_APP_MODE_FAILED, e })
+      }
+      newWsConnection.onopen = () => {
+        dispatch({
+          type: actions.CHANGE_APP_MODE_SUCCEEDED,
+          wsConnection: newWsConnection,
+          mode,
+        })
         if (mode === APP_MODES.CLIENT) {
           dispatch(registerPlayer({
             pauseVideo: () => null,
@@ -39,7 +57,7 @@ export function establishWSConnection(mode, address) {
           }))
         }
       }
-      wsConnection.onmessage = (msg) => {
+      newWsConnection.onmessage = (msg) => {
         let res
         try {
           res = JSON.parse(msg.data)
@@ -64,10 +82,6 @@ export function establishWSConnection(mode, address) {
 export function disconnectWSConnection(cb) {
   return (dispatch, getState) => {
     const { isModeChanging, wsConnection } = getState().app
-
-    if (isModeChanging) {
-      return
-    }
 
     dispatch({ type: actions.CHANGE_APP_MODE_ATTEMPTED })
 
