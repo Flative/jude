@@ -56,9 +56,10 @@ func main() {
 
 	})
 	port := flag.Int("port", 8000, "This is port")
-	flag.Parse()
 	homeTemplate := template.Must(template.ParseFiles("../frontend/index.html"))
+	flag.Parse()
 	log.Printf("\n\n* Running on\n* ws://0.0.0.0:%d/ws\n* http://0.0.0.0:%d/\n\n(Press CTRL+C to quit)\n", *port, *port)
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("../static"))))
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		homeTemplate.Execute(w, r.Host)
