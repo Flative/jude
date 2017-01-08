@@ -2,7 +2,7 @@ import { updateActiveSong, getNextSong, updateUpdatingFlag } from './playlistRed
 import { sleep } from '../utils/util'
 
 export const actions = {
-  PLAYER_INITIALIZED: 'PLAYER_INITIALIZED',
+  PLAYER_REGISTERED: 'PLAYER_REGISTERED',
   PLAYER_VIDEO_UPDATED: 'PLAYER_VIDEO_UPDATED',
   PLAYER_PAUSED: 'PLAYER_PAUSED',
   PLAYER_PLAYED: 'PLAYER_PLAYED',
@@ -51,7 +51,7 @@ export function registerPlayer(youtubePlayer) {
       stop: () => clearTimeout(timer.handler),
     }
 
-    if (youtubePlayer.addEventListner) {
+    if (youtubePlayer.addEventListener) {
       youtubePlayer.addEventListener('onStateChange', (e) => {
         dispatch(updateYoutubePlayerState(e.data))
         switch (e.data) {
@@ -94,7 +94,7 @@ export function registerPlayer(youtubePlayer) {
     }
 
 
-    dispatch({ type: actions.PLAYER_INITIALIZED, youtubePlayer })
+    dispatch({ type: actions.PLAYER_REGISTERED, youtubePlayer })
   }
 }
 
@@ -154,7 +154,7 @@ export const initialState = {
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case actions.PLAYER_INITIALIZED:
+    case actions.PLAYER_REGISTERED:
       return { ...state,
         youtubePlayer: action.youtubePlayer,
       }

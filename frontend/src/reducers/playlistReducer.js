@@ -137,6 +137,7 @@ export default (state = initialState, action) => {
         activeSong: action.activeSong || null,
         shuffle: action.shuffle || false,
         repeat: action.repeat || false,
+        hasPlaylistUpdated: action.hasPlaylistUpdated || false,
       }
 
     case actions.PLAYLIST_ACTIVE_SONG_UPDATED:
