@@ -7,18 +7,19 @@ const gulpWebpack = require('gulp-webpack');
 const webpackConfig = require('./webpack.config');
 
 gulp.task('webpack-dev-server', () =>
-    new WebpackDevServer(webpack(webpackConfig.dev), {
-      publicPath: webpackConfig.dev.output.publicPath,
-      hot: true,
-      historyApiFallback: true,
-      quiet: true,
-    }).listen(webpackConfig.dev.port, '0.0.0.0')
+  new WebpackDevServer(webpack(webpackConfig.dev), {
+    publicPath: webpackConfig.dev.output.publicPath,
+    hot: true,
+    historyApiFallback: true,
+    quiet: false,
+  }).listen(webpackConfig.dev.port, '0.0.0.0')
 );
 
-gulp.task('webpack:build', () =>
-    gulp.src(webpackConfig.APP_PATH.jude)
-        .pipe(gulpWebpack(webpackConfig.prod))
-        .pipe(gulp.dest('./static/js/'))
+gulp.task('webpack:build', () => {
+  return gulp.src(webpackConfig.APP_PATH.jude)
+    .pipe(gulpWebpack(webpackConfig.prod))
+    .pipe(gulp.dest('./static'))
+  }
 );
 
 // Development server

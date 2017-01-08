@@ -1,20 +1,20 @@
 const path = require('path');
 const webpack = require('webpack');
 const merge = require('webpack-merge');
-const Dashboard = require('webpack-dashboard');
-const DashboardPlugin = require('webpack-dashboard/plugin');
-const dashboard = new Dashboard();
+// const Dashboard = require('webpack-dashboard');
+// const DashboardPlugin = require('webpack-dashboard/plugin');
+// const dashboard = new Dashboard();
 
 const APP_PATH = {
   jude: 'src/index.js',
 };
 const BUILD_PATH = 'static/';
-const PORT = 1111;
+const PORT = 8001;
 
 const common = {
   stats: {
-    colors: true,
-    reasons: true,
+    // colors: true,
+    // reasons: true,
   },
   module: {
     loaders: [{
@@ -60,17 +60,26 @@ const dev = merge(common, {
   },
   output: {
     path: path.join(__dirname, BUILD_PATH),
-    publicPath: `http://localhost:${PORT}/`,
+    publicPath: `http://0.0.0.0:${PORT}/static/`,
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin(),
-    new DashboardPlugin(dashboard.setData),
   ],
 });
 
 // Production config
 const prod = merge(common, {
+  module: {
+    loaders: [{
+      test: /\.js$/,
+      exclude: /node_modules/,
+      loader: 'react-hot!babel!strip-loader?strip[]=console.log',
+    }],
+  },
+  entry: {
+    jude: path.join(__dirname, APP_PATH.jude),
+  },
   plugins: [
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': '"production"',
