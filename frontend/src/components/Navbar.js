@@ -8,28 +8,23 @@ class NavBar extends React.Component {
     super(props)
     this.state = {
       isSelectorOpened: false,
-      modeSelectorAddressVal: '',
       modeSelectorTypeVal: null,
       isCheckboxChecked: false,
     }
     this.toggleModeSelector = this.toggleModeSelector.bind(this)
     this.handleModeSelectorApplyButton = this.handleModeSelectorApplyButton.bind(this)
-    this.handleAddressInputChange = this.handleAddressInputChange.bind(this)
     this.handleModeTypeChange = this.handleModeTypeChange.bind(this)
     this.handleSwitchClick = this.handleSwitchClick.bind(this)
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({ isCheckboxChecked: nextProps.mode !== APP_MODES.STANDALONE })
+  }
+
   componentDidUpdate(prevProps, prevState) {
-    if (!prevState.isSelectorOpened && this.state.isSelectorOpened) {
-      this.refs.serverAddressInput.focus()
-    }
     if (prevProps.isModeChanging && !this.props.isModeChanging) {
       this.setState({ isSelectorOpened: false })
     }
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.setState({ isCheckboxChecked: nextProps.mode !== APP_MODES.STANDALONE })
   }
 
   // TODO: Animation on mode selector
@@ -58,17 +53,13 @@ class NavBar extends React.Component {
   // TODO: Should be implemented
   handleModeSelectorApplyButton() {
     const { isModeChanging } = this.props
-    const { modeSelectorAddressVal, modeSelectorTypeVal } = this.state
+    const { modeSelectorTypeVal } = this.state
 
-    if (isModeChanging || !modeSelectorAddressVal.length || !modeSelectorTypeVal.length) {
+    if (isModeChanging || !modeSelectorTypeVal.length) {
       alert('nop')
     }
 
-    this.props.establishConnection(modeSelectorTypeVal, modeSelectorAddressVal)
-  }
-
-  handleAddressInputChange(e) {
-    this.setState({ modeSelectorAddressVal: e.target.value })
+    this.props.establishConnection(modeSelectorTypeVal, `${location.hostname}:8000`)
   }
 
   handleModeTypeChange(e) {
@@ -115,21 +106,6 @@ class NavBar extends React.Component {
 
           <div className="mode-selector__spinner">
             <Spinner active={isModeChanging} />
-          </div>
-
-          <div className="mode-selector__fg">
-            <div className="mode-selector__fg-title">
-              Server Address
-            </div>
-            <div className="mode-selector__fg-body">
-              <input
-                className="mode-selector__fg-input-text"
-                type="text"
-                ref="serverAddressInput"
-                onChange={this.handleAddressInputChange}
-                placeholder="127.0.0.1:5050"
-              />
-            </div>
           </div>
 
           <div className="mode-selector__fg">
