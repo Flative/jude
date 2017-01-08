@@ -30,9 +30,6 @@ const snatcher = store => next => action => {
     },
   }
 
-  if (dataToSend.playlist.songs.length === 0) {
-    debugger
-  }
   wsConnection.send(JSON.stringify(dataToSend))
 
   return { type: 'WS_SEND_DATA_ATTEMPTED' }

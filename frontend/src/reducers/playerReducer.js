@@ -10,7 +10,7 @@ export const actions = {
   PLAYER_REGISTER_PROGRESSBAR: 'PLAYER_REGISTER_PROGRESSBAR',
   PLAYER_FETCHING_STARTED: 'PLAYER_FETCHING_STARTED',
   PLAYER_FETCHING_FINISHED: 'PLAYER_FETCHING_FINISHED',
-  PLAYER_UPDATE_PROGRESSBAR_PERCENTAGE: 'PLAYER_UPDATE_PROGRESSBAR_PERCENTAGE',
+  PLAYER_PROGRESSBAR_PERCENTAGE_UPDATED: 'PLAYER_PROGRESSBAR_PERCENTAGE_UPDATED',
   PLAYER_YOUTUBE_STATE_UPDATED: 'PLAYER_YOUTUBE_STATE_UPDATED',
   PLAYER_STATE_REPLACED: 'PLAYER_STATE_REPLACED',
 }
@@ -26,32 +26,30 @@ export const YOUTUBE_STATE = {
 
 // Store player instance to redux state tree when initializing
 export function registerPlayer(youtubePlayer) {
-  window.player = youtubePlayer
   return (dispatch, getState) => {
-    const { ENDED, PLAYING, PAUSED, BUFFERING, CUED } = YOUTUBE_STATE
-    const { player } = getState()
-    const updatePercentage = player.updatePercentage
-
-    let isBufferingStarted = false
-    let prevTime = -1
-    let currentTime = 0
-
-    const updateTime = () => {
-      prevTime = currentTime
-      currentTime = youtubePlayer.getCurrentTime()
-      if (Math.abs(prevTime - currentTime) > 0) {
-        const duration = youtubePlayer.getDuration()
-        updatePercentage((currentTime / duration) * 100)
-      }
-    }
-
-    const timer = {
-      handler: null,
-      start: () => { timer.handler = setInterval(() => updateTime(), 200) }, // FIXME
-      stop: () => clearTimeout(timer.handler),
-    }
-
     if (youtubePlayer.addEventListener) {
+      const { ENDED, PLAYING, PAUSED, BUFFERING, CUED } = YOUTUBE_STATE
+      const { player } = getState()
+
+      let hasBufferingStarted = false
+      let prevTime = -1
+      let currentTime = 0
+
+      const updateTime = () => {
+        prevTime = currentTime
+        currentTime = youtubePlayer.getCurrentTime()
+        if (Math.abs(prevTime - currentTime) > 0) {
+          const duration = youtubePlayer.getDuration()
+          dispatch(updateProgressBarPercentage((currentTime / duration) * 100))
+        }
+      }
+
+      const timer = {
+        handler: null,
+        start: () => { timer.handler = setInterval(() => updateTime(), 400) },
+        stop: () => clearTimeout(timer.handler),
+      }
+
       youtubePlayer.addEventListener('onStateChange', (e) => {
         dispatch(updateYoutubePlayerState(e.data))
         switch (e.data) {
@@ -59,13 +57,13 @@ export function registerPlayer(youtubePlayer) {
             console.log('PLAYING')
             timer.stop()
             timer.start()
-            if (isBufferingStarted) {
-              isBufferingStarted = false
+            if (hasBufferingStarted) {
+              hasBufferingStarted = false
             }
             break
 
           case BUFFERING:
-            isBufferingStarted = true
+            hasBufferingStarted = true
             break
 
           case PAUSED:
@@ -100,6 +98,10 @@ export function registerPlayer(youtubePlayer) {
 
 export function registerProgressBar(updatePercentage) {
   return { type: actions.PLAYER_REGISTER_PROGRESSBAR, updatePercentage }
+}
+
+export function updateProgressBarPercentage(progressBarPercentage) {
+  return { type: actions.PLAYER_PROGRESSBAR_PERCENTAGE_UPDATED, progressBarPercentage }
 }
 
 export function pauseSong() {
@@ -146,6 +148,7 @@ export function finishSong() {
 
 export const initialState = {
   youtubePlayer: null,
+  progressBarPercentage: 0,
   updatePercentage: null,
   youtubePlayerState: null,
   isPaused: false,
@@ -176,6 +179,10 @@ export default (state = initialState, action) => {
       return { ...state,
         updatePercentage: action.updatePercentage,
       }
+    case actions.PLAYER_PROGRESSBAR_PERCENTAGE_UPDATED:
+      return { ...state,
+        progressBarPercentage: action.progressBarPercentage,
+      }
     case actions.PLAYER_YOUTUBE_STATE_UPDATED:
       return { ...state,
         youtubePlayerState: action.youtubePlayerState,
@@ -186,6 +193,7 @@ export default (state = initialState, action) => {
         isFinished: action.isFinished,
         isPaused: action.isPaused,
         youtubePlayerState: action.youtubePlayerState,
+        progressBarPercentage: action.progressBarPercentage || 0,
       }
     default:
       return state
