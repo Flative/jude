@@ -42,12 +42,13 @@ class Player extends React.Component {
   componentDidUpdate(prevProps) {
     const _playlist = prevProps.playlist
     const _player = prevProps.player
-    const { playlist, player, dispatch } = this.props
+    const { playlist, player, app, dispatch } = this.props
     const { youtubePlayer, updatePercentage, youtubePlayerState, isPaused, isFinished } = player
     const { hasPlaylistUpdated, songs, activeSong } = playlist
+    const { mode } = app
 
     // A first song has been added to playlist
-    if (_playlist.songs.length === 0 && songs.length === 1) {
+    if (_playlist.songs.length === 0 && songs.length === 1 && mode !== APP_MODES.CLIENT) {
       dispatch(updateActiveSong(songs[0]))
     }
 

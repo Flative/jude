@@ -5,10 +5,16 @@ import { actions as playerActions } from '../reducers/playerReducer'
 const snatcher = store => next => action => {
   const { app } = store.getState()
 
+  if (action.type !== playlistActions.PLAYLIST_STATE_REPLACED &&
+    action.type !== playerActions.PLAYER_STATE_REPLACED) {
+    console.log(action.type)
+  }
   const result = next(action)
   if (app.mode === APP_MODES.STANDALONE ||
+    !action.type ||
     action.type === playlistActions.PLAYLIST_STATE_REPLACED ||
-    action.type === playerActions.PLAYER_STATE_REPLACED
+    action.type === playerActions.PLAYER_STATE_REPLACED ||
+    action.type === playerActions.PLAYER_REGISTERED
   ) {
     return result
   }
@@ -16,13 +22,18 @@ const snatcher = store => next => action => {
   const { wsConnection } = app
   const state = store.getState()
 
-  wsConnection.send(JSON.stringify({
+  const dataToSend = {
     playlist: state.playlist,
     player: {
-      isPaused: state.player.isPaused,
-      isFinished: state.player.isFinished,
+      ...state.player,
+      youtubePlayer: null,
     },
-  }))
+  }
+
+  if (dataToSend.playlist.songs.length === 0) {
+    debugger
+  }
+  wsConnection.send(JSON.stringify(dataToSend))
 
   return { type: 'WS_SEND_DATA_ATTEMPTED' }
 }

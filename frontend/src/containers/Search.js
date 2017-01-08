@@ -22,7 +22,7 @@ class Search extends React.Component {
 
   componentDidMount() {
     // For development
-    // this.search('3초를')
+    this.search('빈지노')
   }
 
   handleSearchInputKeyPress(e) {

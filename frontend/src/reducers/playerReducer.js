@@ -183,8 +183,9 @@ export default (state = initialState, action) => {
       }
     case actions.PLAYER_STATE_REPLACED:
       return { ...state,
-        isFinished: action.isFinished || state.isFinished,
-        isPaused: action.isPaused || state.isPaused,
+        isFinished: action.isFinished,
+        isPaused: action.isPaused,
+        youtubePlayerState: action.youtubePlayerState,
       }
     default:
       return state
