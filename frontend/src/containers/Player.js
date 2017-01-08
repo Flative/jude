@@ -10,9 +10,10 @@ import ShuffleIcon from 'react-icons/lib/md/shuffle'
 import RepeatIcon from 'react-icons/lib/md/repeat'
 import RepeatOneIcon from 'react-icons/lib/md/repeat-one'
 
-import { ProgressBar, YouTube } from '../components'
+import { YouTube } from '../components'
+import ProgressBar from 'react-progress-bar-plus'
 import {
-  YOUTUBE_STATE, playSong, pauseSong, registerPlayer, registerProgressBar,
+  YOUTUBE_STATE, playSong, pauseSong, registerPlayer, registerProgressBar, updateProgressBarPercentage,
 } from '../reducers/playerReducer'
 import {
   updateActiveSong, getPrevItem, updateShuffleState, updateRepeatState, getNextSong,
@@ -42,17 +43,18 @@ class Player extends React.Component {
   componentDidUpdate(prevProps) {
     const _playlist = prevProps.playlist
     const _player = prevProps.player
-    const { playlist, player, dispatch } = this.props
-    const { youtubePlayer, updatePercentage, youtubePlayerState, isPaused, isFinished } = player
+    const { playlist, player, app, dispatch } = this.props
+    const { youtubePlayer, youtubePlayerState, isPaused, isFinished, progressBarPercentage } = player
     const { hasPlaylistUpdated, songs, activeSong } = playlist
+    const { mode } = app
 
     // A first song has been added to playlist
-    if (_playlist.songs.length === 0 && songs.length === 1) {
+    if (_playlist.songs.length === 0 && songs.length === 1 && mode !== APP_MODES.CLIENT) {
       dispatch(updateActiveSong(songs[0]))
     }
 
-    if (!activeSong) {
-      updatePercentage(0)
+    if (_playlist.activeSong && !activeSong && progressBarPercentage !== 0) {
+      dispatch(updateProgressBarPercentage(0))
     }
 
     if (!isFinished && !_player.isPaused && isPaused) {
@@ -68,7 +70,7 @@ class Player extends React.Component {
 
       // Song has changed
     } else if (activeSong && !_playlist.hasPlaylistUpdated && hasPlaylistUpdated) {
-      updatePercentage(0)
+      dispatch(updateProgressBarPercentage(0))
 
       // New song has been activated in playlist that has had no active song previously
       if (!_playlist.activeSong && playlist.activeSong) {
@@ -91,17 +93,10 @@ class Player extends React.Component {
   }
 
   getSongTitle() {
-    const { player, playlist, app, dispatch } = this.props
+    const { player, playlist } = this.props
     const { activeSong } = playlist
-    const { youtubePlayer } = player
-    const { mode } = app
 
-    if (mode === APP_MODES.CLIENT) {
-      // TODO
-      return ''
-    }
-
-    return activeSong && youtubePlayer ? youtubePlayer.getVideoData().title : ''
+    return activeSong ? activeSong.title : ''
   }
 
   handlePrevButtonClick() {
@@ -159,7 +154,7 @@ class Player extends React.Component {
 
   render() {
     const { player, playlist, app, dispatch } = this.props
-    const { isPaused, isFinished, youtubePlayerState } = player
+    const { isPaused, isFinished, youtubePlayerState, progressBarPercentage } = player
     const { songs, activeSong, repeat, shuffle } = playlist
     const { mode } = app
 
@@ -213,8 +208,14 @@ class Player extends React.Component {
           </div>
           <div className="player__controller__center">
             <ProgressBar
-              onProgressBarReady={updatePercentage =>
-                dispatch(registerProgressBar(updatePercentage))
+              className="player__progressbar"
+              percent={progressBarPercentage}
+              spinner={false}
+              onTop={false}
+            />
+            <ProgressBar
+              onProgressBarReady={instance =>
+                dispatch(registerProgressBar(instance))
               }
             />
           </div>

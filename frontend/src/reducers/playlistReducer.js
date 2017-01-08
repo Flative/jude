@@ -3,7 +3,7 @@ import UUID from 'node-uuid'
 export const actions = {
   PLAYLIST_SONG_ADDED: 'PLAYLIST_SONG_ADDED',
   PLAYLIST_SONG_REMOVED: 'PLAYLIST_SONG_REMOVED',
-  PLAYLIST_DATA_REPLACED: 'PLAYLIST_DATA_REPLACED',
+  PLAYLIST_STATE_REPLACED: 'PLAYLIST_STATE_REPLACED',
   PLAYLIST_ACTIVE_SONG_UPDATED: 'PLAYLIST_ACTIVE_SONG_UPDATED',
   PLAYLIST_SHUFFLE_STATE_UPDATED: 'PLAYLIST_SHUFFLE_STATE_UPDATED',
   PLAYLIST_REPEAT_STATE_UPDATED: 'PLAYLIST_REPEAT_STATE_UPDATED',
@@ -91,7 +91,7 @@ export function updateActiveSong(activeSong) {
 
 export function replacePlaylistData(payload) {
   return {
-    type: actions.PLAYLIST_DATA_REPLACED,
+    type: actions.PLAYLIST_STATE_REPLACED,
     ...payload,
   }
 }
@@ -131,12 +131,13 @@ export default (state = initialState, action) => {
         hasPlaylistUpdated: action.hasPlaylistUpdated,
       }
 
-    case actions.PLAYLIST_DATA_REPLACED:
+    case actions.PLAYLIST_STATE_REPLACED:
       return {
-        songs: action.songs,
-        activeSong: action.activeSong,
-        shuffle: action.isShuffleOn,
-        repeat: action.repeatingMode === 'none' ? false : action.repeatingMode,
+        songs: action.songs || [],
+        activeSong: action.activeSong || null,
+        shuffle: action.shuffle || false,
+        repeat: action.repeat || false,
+        hasPlaylistUpdated: action.hasPlaylistUpdated || false,
       }
 
     case actions.PLAYLIST_ACTIVE_SONG_UPDATED:
