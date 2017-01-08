@@ -69,6 +69,7 @@ class NavBar extends React.Component {
           className={classNames({
             'navbar__mode-btn': true,
             'navbar__mode-btn--active': mode === modeType,
+            'navbar__mode-btn--deactivated': mode === APP_MODES.STANDALONE ? [APP_MODES.CLIENT, APP_MODES.HOST_CLIENT].indexOf(modeType) != -1 : modeType === APP_MODES.STANDALONE
           })}
           onClick={this.props.changeAppMode(modeType)}
         >

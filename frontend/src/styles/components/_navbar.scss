@@ -29,17 +29,28 @@
 
   &__mode-btn {
     float: right;
-    margin: 12px 0 0 0;
+    margin: 12px 3px 0 0;
     height: 34px;
     padding: 0 14px;
     color: #555555;
     background-color: #f9f9f9;
     border: 1px solid #e1e1e1;
+    outline: none;
+
+    &:last-of-type {
+      margin: 12px 10px 0 0;
+    }
 
     &--active {
       background-color: #fff;
-      border-color: #b5b5b5;
+      border-color: #3caa63;
+      border-radius: 2px;
     }
+
+    &--deactivated {
+      background-color: #dfdfdf;
+    }
+
   }
 }
 
