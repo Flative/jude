@@ -22,7 +22,6 @@ class Search extends React.Component {
 
   componentDidMount() {
     // For development
-    this.search('빈지노')
   }
 
   handleSearchInputKeyPress(e) {
