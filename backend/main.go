@@ -1,8 +1,12 @@
 package main
 
 import (
+	"flag"
+	"html/template"
 	"log"
 	"net/http"
+
+	"fmt"
 
 	"github.com/gorilla/websocket"
 )
@@ -51,6 +55,13 @@ func main() {
 		}()
 
 	})
-	log.Printf("\n\n* Running on\n* ws://0.0.0.0:5050/ws\n\n(Press CTRL+C to quit)\n")
-	log.Fatalln(http.ListenAndServe("0.0.0.0:5050", nil))
+	port := flag.Int("port", 8000, "This is port")
+	flag.Parse()
+	homeTemplate := template.Must(template.ParseFiles("../frontend/index.html"))
+	log.Printf("\n\n* Running on\n* ws://0.0.0.0:%d/ws\n\n(Press CTRL+C to quit)\n", *port)
+	log.Fatalln(http.ListenAndServe(fmt.Sprintf("0.0.0.0:%d", *port), nil))
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		homeTemplate.Execute(w, r.Host)
+	})
 }
