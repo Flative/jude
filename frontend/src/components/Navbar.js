@@ -81,12 +81,10 @@ class NavBar extends React.Component {
       <div className="navbar">
         <h1 className="navbar__title">Jude</h1>
         <fieldset>
-          <legend>With Server</legend>
           {renderButton(APP_MODES.HOST_CLIENT)}
           {renderButton(APP_MODES.CLIENT)}
         </fieldset>
         <fieldset>
-          <legend>Without Server</legend>
           {renderButton(APP_MODES.STANDALONE)}
         </fieldset>
       </div>
