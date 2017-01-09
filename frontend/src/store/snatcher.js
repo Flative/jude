@@ -5,10 +5,10 @@ import { actions as playerActions } from '../reducers/playerReducer'
 const snatcher = store => next => action => {
   const { app } = store.getState()
 
-  if (action.type !== playlistActions.PLAYLIST_STATE_REPLACED &&
-    action.type !== playerActions.PLAYER_STATE_REPLACED) {
-    console.log(action.type)
-  }
+  // if (action.type !== playlistActions.PLAYLIST_STATE_REPLACED &&
+  //   action.type !== playerActions.PLAYER_STATE_REPLACED) {
+  //   console.log(action.type)
+  // }
   const result = next(action)
   if (app.mode === APP_MODES.STANDALONE ||
     !action.type ||

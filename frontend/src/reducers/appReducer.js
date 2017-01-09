@@ -1,5 +1,5 @@
-import { replacePlaylistData } from './playlistReducer'
-import { replacePlayerState, registerPlayer } from './playerReducer'
+import { replacePlaylistState, initialState as playlistInitialState } from './playlistReducer'
+import { replacePlayerState, registerPlayer, initialState as playerInitialState } from './playerReducer'
 
 export const actions = {
   CHANGE_APP_MODE_ATTEMPTED: 'CHANGE_APP_MODE_ATTEMPTED',
@@ -14,9 +14,9 @@ export const APP_MODES = {
   CLIENT: 'CLIENT',
 }
 
-export function changeAppMode(mode) {
+export function changeAppMode(newMode) {
   return (dispatch, getState) => {
-    const { isModeChanging, wsConnection } = getState().app
+    const { isModeChanging, wsConnection, mode } = getState().app
 
     if (isModeChanging) {
       return;
@@ -24,14 +24,17 @@ export function changeAppMode(mode) {
 
     dispatch({ type: actions.CHANGE_APP_MODE_ATTEMPTED })
 
-    if (mode === APP_MODES.STANDALONE) {
+    if (newMode === APP_MODES.STANDALONE) {
       try {
         wsConnection.close()
         dispatch({
           type: actions.CHANGE_APP_MODE_SUCCEEDED,
           wsConnection: null,
-          mode,
+          mode: newMode,
         })
+
+        dispatch(replacePlaylistState(playlistInitialState))
+        dispatch(replacePlayerState(playerInitialState))
       } catch (e) {
         dispatch({ type: actions.CHANGE_APP_MODE_FAILED, e })
       }
@@ -47,9 +50,9 @@ export function changeAppMode(mode) {
         dispatch({
           type: actions.CHANGE_APP_MODE_SUCCEEDED,
           wsConnection: newWsConnection,
-          mode,
+          mode: newMode,
         })
-        if (mode === APP_MODES.CLIENT) {
+        if (newMode === APP_MODES.CLIENT) {
           dispatch(registerPlayer({
             pauseVideo: () => null,
             playVideo: () => null,
@@ -67,7 +70,7 @@ export function changeAppMode(mode) {
         const { playlist, player } = res
 
         if (playlist) {
-          dispatch(replacePlaylistData(playlist))
+          dispatch(replacePlaylistState(playlist))
         }
         if (player) {
           dispatch(replacePlayerState(player))

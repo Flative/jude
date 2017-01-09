@@ -89,7 +89,7 @@ export function updateActiveSong(activeSong) {
   return { type: actions.PLAYLIST_ACTIVE_SONG_UPDATED, activeSong }
 }
 
-export function replacePlaylistData(payload) {
+export function replacePlaylistState(payload) {
   return {
     type: actions.PLAYLIST_STATE_REPLACED,
     ...payload,
