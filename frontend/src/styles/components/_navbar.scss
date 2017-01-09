@@ -27,30 +27,32 @@
     }
   }
 
+  fieldset {
+    float: right;
+    display: inline-block;
+    margin-top: 5px;
+    padding: 5px;
+
+    legend {
+      font-size: 10px;
+    }
+  }
+
   &__mode-btn {
     float: right;
-    margin: 12px 3px 0 0;
+    margin: 0 3px 0 0;
     height: 34px;
     padding: 0 14px;
     color: #555555;
-    background-color: #f9f9f9;
+    background-color: #dfdfdf;
     border: 1px solid #e1e1e1;
     outline: none;
-
-    &:last-of-type {
-      margin: 12px 10px 0 0;
-    }
 
     &--active {
       background-color: #fff;
       border-color: #3caa63;
       border-radius: 2px;
     }
-
-    &--deactivated {
-      background-color: #dfdfdf;
-    }
-
   }
 }
 

@@ -69,7 +69,6 @@ class NavBar extends React.Component {
           className={classNames({
             'navbar__mode-btn': true,
             'navbar__mode-btn--active': mode === modeType,
-            'navbar__mode-btn--deactivated': mode === APP_MODES.STANDALONE ? [APP_MODES.CLIENT, APP_MODES.HOST_CLIENT].indexOf(modeType) != -1 : modeType === APP_MODES.STANDALONE
           })}
           onClick={this.props.changeAppMode(modeType)}
         >
@@ -81,9 +80,15 @@ class NavBar extends React.Component {
     return (
       <div className="navbar">
         <h1 className="navbar__title">Jude</h1>
-        {renderButton(APP_MODES.HOST_CLIENT)}
-        {renderButton(APP_MODES.CLIENT)}
-        {renderButton(APP_MODES.STANDALONE)}
+        <fieldset>
+          <legend>With Server</legend>
+          {renderButton(APP_MODES.HOST_CLIENT)}
+          {renderButton(APP_MODES.CLIENT)}
+        </fieldset>
+        <fieldset>
+          <legend>Without Server</legend>
+          {renderButton(APP_MODES.STANDALONE)}
+        </fieldset>
       </div>
     )
   }
