@@ -26,6 +26,7 @@ const snatcher = store => next => action => {
     playlist: state.playlist,
     player: {
       ...state.player,
+      updatePercentage: null,
       youtubePlayer: null,
     },
   }
