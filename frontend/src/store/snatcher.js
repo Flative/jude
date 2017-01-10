@@ -28,11 +28,12 @@ const snatcher = store => next => action => {
   }
 
   try {
-    wsConnection.send(JSON.stringify(dataToSend))
+    if (wsConnection.readyState === wsConnection.CONNECTING) {
+      wsConnection.send(JSON.stringify(dataToSend))
+    }
   } catch (e) {
     console.warn(e)
   }
-
 
   return { type: 'WS_SEND_DATA_ATTEMPTED' }
 }
