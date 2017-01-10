@@ -1,23 +1,4 @@
-language: go
-
-go:
-  - 1.7.x
-  - tip
-
-go_import_path: github.com/flative/jude
-
-before_install:
-  - CURRENT_DIR=`pwd`
-  - cd $CURRENT_DIR/backend
-  - go get github.com/Masterminds/glide
-  - go get golang.org/x/tools/cmd/cover
-  - go get github.com/mattn/goveralls
-  - glide install
-
-install:
- - echo "Start"
-
-script:
-  - cd $CURRENT_DIR/backend
-  - go test -v -covermode=count -coverprofile=coverage.out
-  - goveralls -coverprofile=coverage.out -service=jude -repotoken $COVERALLS_REPO_TOKEN
+language: node_js
+node_js:
+  - "6"
+before_install: cd frontend
