@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react'
 import classNames from 'classnames'
-import { Spinner } from './'
 import { APP_MODES } from '../reducers/appReducer'
 
 class NavBar extends React.Component {
