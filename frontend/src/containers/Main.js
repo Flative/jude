@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { removeSong, updateActiveSong } from '../reducers/playlistReducer'
 import { Navbar, Playlist } from '../components'
 import { Search, Player } from './'
-import { establishWSConnection, disconnectWSConnection } from '../reducers/appReducer'
+import { changeAppMode, disconnectWSConnection } from '../reducers/appReducer'
 
 class Main extends React.Component {
   constructor(props) {
@@ -31,8 +31,7 @@ class Main extends React.Component {
     return (
       <div className="main">
         <Navbar
-          establishConnection={(mode, address) => dispatch(establishWSConnection(mode, address))}
-          disconnectConnection={cb => dispatch(disconnectWSConnection(cb))}
+          changeAppMode={(mode) => () => dispatch(changeAppMode(mode))}
           isModeChanging={app.isModeChanging}
           mode={app.mode}
         />

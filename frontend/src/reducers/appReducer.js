@@ -1,5 +1,5 @@
-import { replacePlaylistData } from './playlistReducer'
-import { replacePlayerState, registerPlayer } from './playerReducer'
+import { replacePlaylistState, initialState as playlistInitialState } from './playlistReducer'
+import { replacePlayerState, registerPlayer, initialState as playerInitialState } from './playerReducer'
 
 export const actions = {
   CHANGE_APP_MODE_ATTEMPTED: 'CHANGE_APP_MODE_ATTEMPTED',
@@ -14,24 +14,45 @@ export const APP_MODES = {
   CLIENT: 'CLIENT',
 }
 
-export function establishWSConnection(mode, address) {
+export function changeAppMode(newMode) {
   return (dispatch, getState) => {
-    const { app } = getState()
+    const { isModeChanging, wsConnection, mode } = getState().app
 
-    if (app.isModeChanging) {
+    if (isModeChanging) {
       return;
     }
 
     dispatch({ type: actions.CHANGE_APP_MODE_ATTEMPTED })
 
-    try {
-      const wsConnection = new WebSocket(`ws://${address}/ws`)
-      wsConnection.onerror = () => {
-        dispatch({ type: actions.CHANGE_APP_MODE_FAILED })
+    if (newMode === APP_MODES.STANDALONE) {
+      try {
+        wsConnection.close()
+        dispatch({
+          type: actions.CHANGE_APP_MODE_SUCCEEDED,
+          wsConnection: null,
+          mode: newMode,
+        })
+
+        dispatch(replacePlaylistState(playlistInitialState))
+        dispatch(replacePlayerState(playerInitialState))
+      } catch (e) {
+        dispatch({ type: actions.CHANGE_APP_MODE_FAILED, e })
       }
-      wsConnection.onopen = () => {
-        dispatch({ type: actions.CHANGE_APP_MODE_SUCCEEDED, mode, wsConnection })
-        if (mode === APP_MODES.CLIENT) {
+      return;
+    }
+
+    try {
+      const newWsConnection = new WebSocket(`ws://${location.hostname}:8000/ws`)
+      newWsConnection.onerror = (e) => {
+        dispatch({ type: actions.CHANGE_APP_MODE_FAILED, e })
+      }
+      newWsConnection.onopen = () => {
+        dispatch({
+          type: actions.CHANGE_APP_MODE_SUCCEEDED,
+          wsConnection: newWsConnection,
+          mode: newMode,
+        })
+        if (newMode === APP_MODES.CLIENT) {
           dispatch(registerPlayer({
             pauseVideo: () => null,
             playVideo: () => null,
@@ -39,7 +60,7 @@ export function establishWSConnection(mode, address) {
           }))
         }
       }
-      wsConnection.onmessage = (msg) => {
+      newWsConnection.onmessage = (msg) => {
         let res
         try {
           res = JSON.parse(msg.data)
@@ -49,7 +70,7 @@ export function establishWSConnection(mode, address) {
         const { playlist, player } = res
 
         if (playlist) {
-          dispatch(replacePlaylistData(playlist))
+          dispatch(replacePlaylistState(playlist))
         }
         if (player) {
           dispatch(replacePlayerState(player))
@@ -64,10 +85,6 @@ export function establishWSConnection(mode, address) {
 export function disconnectWSConnection(cb) {
   return (dispatch, getState) => {
     const { isModeChanging, wsConnection } = getState().app
-
-    if (isModeChanging) {
-      return
-    }
 
     dispatch({ type: actions.CHANGE_APP_MODE_ATTEMPTED })
 

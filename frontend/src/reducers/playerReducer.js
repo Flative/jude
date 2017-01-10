@@ -138,9 +138,6 @@ export function updateYoutubePlayerState(youtubePlayerState) {
 export function finishSong() {
   return (dispatch, getState) => {
     const { player, playlist } = getState()
-    const { updatePercentage } = player
-
-    updatePercentage(99.9)
     dispatch({ type: actions.PLAYER_FINISHED })
     dispatch(updateActiveSong(getNextSong(playlist)))
   }
@@ -165,6 +162,7 @@ export default (state = initialState, action) => {
       return { ...state,
         currentVideoId: null,
         isFinished: true,
+        updatePercentage: 99.9,
       }
     case actions.PLAYER_PLAYED:
       return { ...state,

@@ -4,7 +4,6 @@
 $susy: (
   columns: 12,
   gutters: 0,
-  //container: 1200px,
 );
 
 // Global variables
@@ -16,10 +15,8 @@ $panel-header-height: 74px;
 @import "base/reset";
 @import "base/variables";
 @import "base/default";
-@import "base/grid";
 
 @import "utils/utils";
-@import "utils/animations";
 
 @import "containers/main";
 
@@ -30,5 +27,3 @@ $panel-header-height: 74px;
 @import "components/player";
 @import "components/playlist";
 @import "components/divider";
-@import "components/spinner";
-@import "components/mode-selector";

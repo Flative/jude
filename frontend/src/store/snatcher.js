@@ -5,10 +5,6 @@ import { actions as playerActions } from '../reducers/playerReducer'
 const snatcher = store => next => action => {
   const { app } = store.getState()
 
-  if (action.type !== playlistActions.PLAYLIST_STATE_REPLACED &&
-    action.type !== playerActions.PLAYER_STATE_REPLACED) {
-    console.log(action.type)
-  }
   const result = next(action)
   if (app.mode === APP_MODES.STANDALONE ||
     !action.type ||
@@ -26,11 +22,17 @@ const snatcher = store => next => action => {
     playlist: state.playlist,
     player: {
       ...state.player,
+      updatePercentage: null,
       youtubePlayer: null,
     },
   }
 
-  wsConnection.send(JSON.stringify(dataToSend))
+  try {
+    wsConnection.send(JSON.stringify(dataToSend))
+  } catch (e) {
+    console.warn(e)
+  }
+
 
   return { type: 'WS_SEND_DATA_ATTEMPTED' }
 }
