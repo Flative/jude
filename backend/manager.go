@@ -24,13 +24,12 @@ func (m *Manager) broadcast(data []byte) error {
 	var disconnectedIDs []uuid.UUID
 
 	for _, client := range m.Clients {
-		err := client.Conn.WriteMessage(1, data)
-		if err != nil {
+		client.mu.Lock()
+		if err := client.Conn.WriteMessage(1, data); err != nil {
 			disconnectedIDs = append(disconnectedIDs, client.ID)
 			client.Conn.Close()
-			continue
 		}
-
+		client.mu.Unlock()
 	}
 
 	for _, ID := range disconnectedIDs {
