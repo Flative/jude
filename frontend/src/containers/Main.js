@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { removeSong, updateActiveSong } from '../reducers/playlistReducer'
 import { Navbar, Playlist } from '../components'
 import { Search, Player } from './'
-import { changeAppMode, disconnectWSConnection } from '../reducers/appReducer'
+import { changeAppMode, APP_MODES } from '../reducers/appReducer'
 
 class Main extends React.Component {
   constructor(props) {
@@ -24,6 +24,15 @@ class Main extends React.Component {
     dispatch(updateActiveSong(item))
   }
 
+  componentDidMount() {
+    const pathname = window.location.pathname
+
+    if (pathname.indexOf('controller') !== -1) {
+      this.props.dispatch(changeAppMode(APP_MODES.CLIENT))
+    } else if (pathname.indexOf('speaker') !== -1) {
+      this.props.dispatch(changeAppMode(APP_MODES.HOST_CLIENT))
+    }
+  }
 
   render() {
     const { dispatch, playlist, app } = this.props

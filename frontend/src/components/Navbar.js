@@ -79,11 +79,11 @@ class NavBar extends React.Component {
     return (
       <div className="navbar">
         <h1 className="navbar__title">Jude</h1>
-        <div className="navbar__btn-group">
-          {renderButton(APP_MODES.STANDALONE)}
-          {renderButton(APP_MODES.CLIENT)}
-          {renderButton(APP_MODES.HOST_CLIENT)}
-        </div>
+        {/*<div className="navbar__btn-group">*/}
+          {/*{renderButton(APP_MODES.STANDALONE)}*/}
+          {/*{renderButton(APP_MODES.CLIENT)}*/}
+          {/*{renderButton(APP_MODES.HOST_CLIENT)}*/}
+        {/*</div>*/}
       </div>
     )
   }

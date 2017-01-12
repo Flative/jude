@@ -28,7 +28,7 @@ const snatcher = store => next => action => {
   }
 
   try {
-    if (wsConnection.readyState === wsConnection.CONNECTING) {
+    if (wsConnection.readyState === wsConnection.OPEN) {
       wsConnection.send(JSON.stringify(dataToSend))
     }
   } catch (e) {
