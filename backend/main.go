@@ -5,6 +5,8 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 
 	"fmt"
 
@@ -23,6 +25,12 @@ var upgrader = &websocket.Upgrader{
 var storedData = []byte("")
 
 func main() {
+	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Print(dir)
+
 	manager := newManager()
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		conn, err := upgrader.Upgrade(w, r, nil)
@@ -60,7 +68,7 @@ func main() {
 	homeTemplate := template.Must(template.ParseFiles("../frontend/index.html"))
 	flag.Parse()
 	log.Printf("\n\n* Running on\n* ws://0.0.0.0:%d/ws\n* http://0.0.0.0:%d/\n\n(Press CTRL+C to quit)\n", *port, *port)
-	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("../frontend/static"))))
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir(dir+"/../frontend/static"))))
 	rtr := mux.NewRouter()
 
 	indexHandler := func(w http.ResponseWriter, r *http.Request) {
