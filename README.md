@@ -12,7 +12,7 @@
 
 ## Demo
 
-[https:/jude.flative.io](https:/jude.flative.io)
+[https://flative.github.io/jude/](https://flative.github.io/jude/)
 
 
 
@@ -34,8 +34,7 @@
 
 1. We have a speaker that is connected with public laptop in the office
 2. We have to do the journey if we want to control the music player (4~5M, distance)
-3. So our music player (YouTube Website) has never been controlled
-4. And basically it plays a video with autoplay feature with some ads as well..
+3. So the music player has never been controlled
 
 
 
@@ -51,3 +50,6 @@ You might need to read [this documentation](https://github.com/Flative/jude/blob
 
 
 
+## License
+
+MIT © Flative
