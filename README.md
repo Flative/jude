@@ -20,7 +20,7 @@
 - Repeat
 - Prev / Next
 
-Basic features as music player are supported. even remotely! 🔥
+🔥 Basic features as music player are supported, **even remotly!** 
 
 
 
