@@ -1,4 +1,25 @@
-# jude
+# Jude
 ![travis-ci(https://travis-ci.org/Flative/jude)](https://travis-ci.org/Flative/jude.svg?branch=master)
 
-![Jude Preview Image](https://raw.github.com/Flative/jude/master/screenshots/1.png "Jude Preview Image")
+> Self hosted, remote controllable music player built with React, Go
+
+
+
+## DEMO
+
+[https:/jude.flative.io](https:/jude.flative.io)
+
+
+
+## Get Started
+
+```shell
+$ git clone https://github.com/Flative/jude.git
+$ cd frontend && npm install && npm run build
+$ cd backend && go run *.go
+```
+
+You might need to read [this documentation](https://github.com/Flative/jude/blob/master/backend/docs/run.md) if you are not friendly with Go
+
+
+
