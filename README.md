@@ -6,6 +6,10 @@
 
 
 
+![Jude Preview Image](https://raw.github.com/Flative/jude/master/screenshots/1.png "Jude Preview Image")
+
+
+
 ## Demo
 
 [https:/jude.flative.io](https:/jude.flative.io)
@@ -21,7 +25,7 @@
 - Repeat
 - Prev / Next
 
-🔥 Basic features as music player are supported, **even remotly!** 
+🔥 Basic features as music player are supported, **even remotly!** (standalone mode also supported) 
 
 
 
