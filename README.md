@@ -12,8 +12,15 @@
 
 
 
+## Purpose
+
+We have a speaker that is connected with public laptop in the office. If we want to control the music player, we have to do the journey (4~5m). So our music player (YouTube Website) has never been controlled and basically it plays a video with autoplay feature. with some ads as well...
+
+
+
 ## Features
 
+- Use YouTube API (iFrame Player)
 - Add a song to playlist
 - Remove a song from playlist
 - Shuffle
@@ -33,8 +40,6 @@ $ cd backend && go run *.go
 ```
 
 You might need to read [this documentation](https://github.com/Flative/jude/blob/master/backend/docs/run.md) if you are not friendly with Go environment
-
-
 
 
 
