@@ -1,42 +1,33 @@
 # How to run server
 
-#### We are using this:
+#### 1. Install Go 1.7
 
-- `Go` 1.7
-- `glide` for managing go package
+Follow below link
 
-#### 1. Install dependencies
-
-```bash
-brew install go glide
-```
+https://golang.org/doc/install#install
 
 #### 2. Set up your go environment
 
-`Go` needs its own directory.
-
-So create `new` directory for `Go` project.
+Add below scripts to your `.bashrc` or `your own rc`
 
 ```bash
-# example export GOPATH="$HOME/Go"
-export GOPATH="PATH for new project"
-mkdir -p $GOPATH/src
+export PATH=$PATH:/usr/local/go/bin
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOPATH/bin
 ```
 
-#### 3. Clone repository:
+#### 3. Get jude
 
 ```bash
-git clone https://github.com/Flative/jude.git $GOPATH/src/jude
+go get github.com/Flative/jude/backend
 ```
 
 #### 4. Start server:
 
 ```bash
-cd $GOPATH/src/jude/backend
-go run *.go
+cd $GOPATH/src/github.com/flative/jude/backend
+go build -o runner && ./runner
+# OR
+go build -o runner && ./runner -port 1234
 ```
-
-#### 5. Open web browser
-
-`http://127.0.0.1:5050`
 
