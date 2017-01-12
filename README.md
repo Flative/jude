@@ -12,12 +12,6 @@
 
 
 
-## Purpose
-
-We have a speaker that is connected with public laptop in the office. If we want to control the music player, we have to do the journey (4~5m). So our music player (YouTube Website) has never been controlled and basically it plays a video with autoplay feature. with some ads as well...
-
-
-
 ## Features
 
 - Use YouTube API (iFrame Player)
@@ -28,6 +22,15 @@ We have a speaker that is connected with public laptop in the office. If we want
 - Prev / Next
 
 🔥 Basic features as music player are supported, **even remotly!** 
+
+
+
+## Purpose
+
+1. We have a speaker that is connected with public laptop in the office
+2. We have to do the journey if we want to control the music player (4~5M, distance)
+3. So our music player (YouTube Website) has never been controlled
+4. And basically it plays a video with autoplay feature with some ads as well..
 
 
 
