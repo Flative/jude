@@ -8,6 +8,7 @@ import (
 
 	"fmt"
 
+	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 )
 
@@ -60,9 +61,15 @@ func main() {
 	flag.Parse()
 	log.Printf("\n\n* Running on\n* ws://0.0.0.0:%d/ws\n* http://0.0.0.0:%d/\n\n(Press CTRL+C to quit)\n", *port, *port)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("../frontend/static"))))
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	rtr := mux.NewRouter()
+
+	indexHandler := func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		homeTemplate.Execute(w, r.Host)
-	})
+	}
+
+	rtr.HandleFunc("/{*}", indexHandler)
+	rtr.HandleFunc("/", indexHandler)
+	http.Handle("/", rtr)
 	log.Fatalln(http.ListenAndServe(fmt.Sprintf("0.0.0.0:%d", *port), nil))
 }
