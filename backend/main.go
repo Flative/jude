@@ -1,12 +1,15 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"html/template"
 	"log"
 	"net/http"
 
 	"fmt"
+
+	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
@@ -31,30 +34,59 @@ func main() {
 			return
 		}
 
-		err = conn.WriteMessage(1, storedData)
-		if err != nil {
-			conn.Close()
-			return
-		}
+		client := newClient(manager, conn)
+		manager.register(client)
+		for {
+			_, data, err := conn.ReadMessage()
+			if err != nil {
+				client.Conn.Close()
+				log.Println(err)
+				return
+			}
 
-		go func() {
-			client := newClient(manager, conn)
-			manager.register(client)
+			event := new(Event)
+			if err = json.Unmarshal(data, &event); err != nil {
+				log.Println(err)
+				continue
+			}
 
-			for {
-				_, data, err := conn.ReadMessage()
-				if err != nil {
-					client.Conn.Close()
+			switch event.Action {
+			case "init":
+				typeInit := EventTypeInit{}
+				if err = json.Unmarshal(event.Body, &typeInit); err != nil {
+					log.Println(err)
+					continue
+				}
+
+				if strings.Compare(typeInit.Name, "speaker") == 0 {
+					isFirstSpeaker := true
+					for _, client := range manager.Clients {
+						if client.isAuthenticated && client.isSpeaker {
+							isFirstSpeaker = false
+						}
+					}
+
+					if !isFirstSpeaker {
+						conn.Close()
+						return
+					}
+
+					client.isSpeaker = true
+				}
+
+				client.isAuthenticated = true
+				if err := client.send(storedData); err != nil {
+					log.Println(err)
 					return
 				}
-				storedData = data
-				if err := manager.broadcast(data); err != nil {
+			case "update":
+				storedData = event.Body
+				if err := manager.broadcast(storedData); err != nil {
 					log.Println(err)
 					return
 				}
 			}
-		}()
-
+		}
 	})
 	port := flag.Int("port", 8000, "This is port")
 	homeTemplate := template.Must(template.ParseFiles("../frontend/index.html"))
