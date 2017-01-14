@@ -1,6 +1,7 @@
 CURRENT=`pwd`
-
-brew install go glide
+if [ -d "dist" ]; then
+  rm -rf dist
+fi
 
 cd $CURRENT/frontend
 yarn
@@ -8,6 +9,7 @@ npm run build
 
 cd $CURRENT/backend
 glide install
+brew install go glide
 
 echo "Building backend binaries"
 for GOOS in darwin linux windows; do
