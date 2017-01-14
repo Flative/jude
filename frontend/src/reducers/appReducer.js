@@ -10,8 +10,8 @@ export const actions = {
 
 export const APP_MODES = {
   STANDALONE: 'STANDALONE',
-  HOST_CLIENT: 'HOST_CLIENT',
-  CLIENT: 'CLIENT',
+  SPEAKER: 'SPEAKER',
+  CONTROLLER: 'CONTROLLER',
 }
 
 export function changeAppMode(newMode) {
@@ -52,7 +52,7 @@ export function changeAppMode(newMode) {
           wsConnection: newWsConnection,
           mode: newMode,
         })
-        if (newMode === APP_MODES.CLIENT) {
+        if (newMode === APP_MODES.CONTROLLER) {
           const noop = () => null
           dispatch(registerPlayer({
             pauseVideo: noop,
@@ -61,6 +61,12 @@ export function changeAppMode(newMode) {
             setVolume: noop,
           }))
         }
+        newWsConnection.send(JSON.stringify({
+          action: 'init',
+          body: {
+            type: newMode,
+          },
+        }))
       }
       newWsConnection.onmessage = (msg) => {
         let res
@@ -77,6 +83,10 @@ export function changeAppMode(newMode) {
         if (player) {
           dispatch(replacePlayerState(player))
         }
+      }
+      newWsConnection.onclose = () => {
+        alert('Oops! something went wrong. please try again.')
+        window.location = '/'
       }
     } catch (e) {
       dispatch({ type: actions.CHANGE_APP_MODE_FAILED })

@@ -61,7 +61,7 @@ class Player extends React.Component {
     const { mode } = app
 
     // A first song has been added to playlist
-    if (_playlist.songs.length === 0 && songs.length === 1 && mode !== APP_MODES.CLIENT) {
+    if (_playlist.songs.length === 0 && songs.length === 1 && mode !== APP_MODES.CONTROLLER) {
       dispatch(updateActiveSong(songs[0]))
     }
 
@@ -254,7 +254,7 @@ class Player extends React.Component {
         className="player"
         style={style}
       >
-        {mode !== APP_MODES.CLIENT ?
+        {mode !== APP_MODES.CONTROLLER ?
           <YouTube
             className="player__youtube"
             onReady={this.onYouTubeReady}

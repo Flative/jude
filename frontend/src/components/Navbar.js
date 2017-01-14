@@ -5,8 +5,8 @@ import { APP_MODES } from '../reducers/appReducer'
 class NavBar extends React.Component {
   static MODE_MAPPER = {
     [APP_MODES.STANDALONE]: 'Standalone',
-    [APP_MODES.CLIENT]: 'Remote Control',
-    [APP_MODES.HOST_CLIENT]: 'Speaker',
+    [APP_MODES.CONTROLLER]: 'Remote Control',
+    [APP_MODES.SPEAKER]: 'Speaker',
   }
 
   constructor(props) {

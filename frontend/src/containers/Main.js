@@ -28,9 +28,9 @@ class Main extends React.Component {
     const pathname = window.location.pathname
 
     if (pathname.indexOf('controller') !== -1) {
-      this.props.dispatch(changeAppMode(APP_MODES.CLIENT))
+      this.props.dispatch(changeAppMode(APP_MODES.CONTROLLER))
     } else if (pathname.indexOf('speaker') !== -1) {
-      this.props.dispatch(changeAppMode(APP_MODES.HOST_CLIENT))
+      this.props.dispatch(changeAppMode(APP_MODES.SPEAKER))
     }
   }
 
