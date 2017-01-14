@@ -9,7 +9,7 @@ npm run build
 cd $CURRENT/backend
 glide install
 
-echo "Building binaries"
+echo "Building backend binaries"
 for GOOS in darwin linux windows; do
   for GOARCH in 386 amd64; do
     cd $CURRENT
