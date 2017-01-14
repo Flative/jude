@@ -1,5 +1,4 @@
 import { updateActiveSong, getNextSong, updateUpdatingFlag } from './playlistReducer'
-import { sleep } from '../utils/util'
 
 export const actions = {
   PLAYER_REGISTERED: 'PLAYER_REGISTERED',
@@ -12,6 +11,7 @@ export const actions = {
   PLAYER_FETCHING_FINISHED: 'PLAYER_FETCHING_FINISHED',
   PLAYER_PROGRESSBAR_PERCENTAGE_UPDATED: 'PLAYER_PROGRESSBAR_PERCENTAGE_UPDATED',
   PLAYER_YOUTUBE_STATE_UPDATED: 'PLAYER_YOUTUBE_STATE_UPDATED',
+  PLAYER_VOLUME_UPDATED: 'PLAYER_VOLUME_UPDATED',
   PLAYER_STATE_REPLACED: 'PLAYER_STATE_REPLACED',
 }
 
@@ -26,6 +26,8 @@ export const YOUTUBE_STATE = {
 
 // Store player instance to redux state tree when initializing
 export function registerPlayer(youtubePlayer) {
+  youtubePlayer.setVolume(50)
+
   return (dispatch, getState) => {
     if (youtubePlayer.addEventListener) {
       const { ENDED, PLAYING, PAUSED, BUFFERING, CUED } = YOUTUBE_STATE
@@ -143,6 +145,10 @@ export function finishSong() {
   }
 }
 
+export function setVolume(volume) {
+  return { type: actions.PLAYER_VOLUME_UPDATED, volume }
+}
+
 export const initialState = {
   youtubePlayer: null,
   progressBarPercentage: 0,
@@ -150,6 +156,7 @@ export const initialState = {
   youtubePlayerState: null,
   isPaused: false,
   isFinished: false,
+  volume: 50,
 }
 
 export default (state = initialState, action) => {
@@ -192,6 +199,11 @@ export default (state = initialState, action) => {
         isPaused: action.isPaused,
         youtubePlayerState: action.youtubePlayerState,
         progressBarPercentage: action.progressBarPercentage || 0,
+        volume: action.volume,
+      }
+    case actions.PLAYER_VOLUME_UPDATED:
+      return { ...state,
+        volume: action.volume,
       }
     default:
       return state

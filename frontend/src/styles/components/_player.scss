@@ -52,34 +52,76 @@
     &__center {
       display: inline-block;
       position: relative;
-      width: 60%;
+      width: 50%;
       margin: 0 24px;
     }
   }
 
+  &__btn {
+    font-size: 24px;
+    cursor: pointer;
+    color: #cacaca;
+
+    &:hover, &:focus { color: #ffffff }
+  }
+
   &__btn--pp {
     margin: 0 14px;
-    font-size: 30px;
+    font-size: 28px;
     cursor: pointer;
+    color: #fff;
   }
 
   &__btn--repeat {
     margin-left: 14px;
   }
 
-  &__btn--prev,
-  &__btn--next,
-  &__btn--shuffle,
-  &__btn--repeat {
-    font-size: 24px;
-    cursor: pointer;
-    color: #cacaca;
-
-    &:hover { color: #ffffff }
-  }
-
   &__btn--active {
     color: #ffffff;
+  }
+
+  &__btn--volume {
+    margin-left: 10px;
+    font-size: 20px;
+
+    &:hover + .player__volume {
+      display: inline-block;
+    }
+  }
+
+  &__volume {
+    display: inline-block;
+    margin: 0 10px;
+  }
+
+  &__volume-control {
+    display: inline-block;
+    width: 50px;
+    margin-left: 10px;
+
+    &:hover {
+      display: inline-block;
+    }
+
+    .rc-slider-rail {
+      height: 3px;
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .rc-slider-track {
+      height: 3px;
+      background-color: #fff;
+    }
+
+    .rc-slider-handle {
+      border: 0;
+      background-color: #dcdcdc;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-top: -4px;
+      margin-left: -5px;
+    }
   }
 
   .react-progress-bar.player__progressbar {

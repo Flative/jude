@@ -53,10 +53,12 @@ export function changeAppMode(newMode) {
           mode: newMode,
         })
         if (newMode === APP_MODES.CLIENT) {
+          const noop = () => null
           dispatch(registerPlayer({
-            pauseVideo: () => null,
-            playVideo: () => null,
-            seekTo: () => null,
+            pauseVideo: noop,
+            playVideo: noop,
+            seekTo: noop,
+            setVolume: noop,
           }))
         }
       }

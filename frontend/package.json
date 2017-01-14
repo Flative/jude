@@ -80,6 +80,7 @@
     "jest": "^17.0.3",
     "mocha": "^3.1.2",
     "node-uuid": "^1.4.7",
+    "rc-slider": "^5.4.3",
     "react-icons": "^2.1.0",
     "react-progress-bar-plus": "^1.2.0",
     "redux-mock-store": "^1.2.1"
