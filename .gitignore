@@ -171,3 +171,5 @@ backend/vendor/*/
 
 ### binary
 backend/backend
+backend/jude
+dist/
