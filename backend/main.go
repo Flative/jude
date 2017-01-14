@@ -62,7 +62,7 @@ func main() {
 					continue
 				}
 
-				if strings.Compare(typeInit.Name, "speaker") == 0 {
+				if strings.Compare(typeInit.Name, "SPEAKER") == 0 {
 					isFirstSpeaker := true
 					for _, client := range manager.Clients {
 						if err := client.ping(); err == nil && client.isAuthenticated && client.isSpeaker {
