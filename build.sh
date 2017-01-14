@@ -1,8 +1,13 @@
 CURRENT=`pwd`
 
+brew install go glide
+
 cd $CURRENT/frontend
 yarn
 npm run build
+
+cd $CURRENT/backend
+glide install
 
 echo "Building binaries"
 for GOOS in darwin linux windows; do

@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "gulp",
     "start": "gulp",
-    "build": "gulp build",
+    "build": "gulp build-silent",
     "test": "mocha --compilers js:babel-core/register",
     "watch": "mocha --compilers js:babel-core/register --watch",
     "lint": "eslint src"
