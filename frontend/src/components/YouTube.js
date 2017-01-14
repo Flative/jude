@@ -1,3 +1,7 @@
+/* eslint-disable */
+
+/*
+
 import React from 'react'
 import isEqual from 'lodash.isequal'
 import youTubePlayer from 'youtube-player'
@@ -304,3 +308,5 @@ class YouTube extends React.Component {
 }
 
 export default YouTube
+
+/* eslint-enable */

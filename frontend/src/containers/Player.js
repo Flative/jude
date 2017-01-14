@@ -70,7 +70,7 @@ class Player extends React.Component {
     }
 
     if (_player.volume !== volume) {
-      this.setState({ innerVolume: volume })
+      this.setState({ innerVolume: volume }) // eslint-disable-line
       youtubePlayer.setVolume(volume)
     }
 
@@ -110,7 +110,7 @@ class Player extends React.Component {
   }
 
   getSongTitle() {
-    const { player, playlist } = this.props
+    const { playlist } = this.props
     const { activeSong } = playlist
 
     return activeSong ? activeSong.title : ''
@@ -127,7 +127,7 @@ class Player extends React.Component {
   }
 
   handlePPButtonClick() {
-    const { dispatch, player, app, playlist } = this.props
+    const { dispatch, player, playlist } = this.props
     const { isPaused, youtubePlayerState } = player
     const { songs, activeSong } = playlist
 
@@ -146,7 +146,7 @@ class Player extends React.Component {
   }
 
   handleShuffleButtonClick() {
-    const { playlist, app, dispatch } = this.props
+    const { playlist, dispatch } = this.props
 
     dispatch(updateShuffleState(!playlist.shuffle))
   }
@@ -156,7 +156,7 @@ class Player extends React.Component {
   }
 
   handleRepeatButtonClick() {
-    const { playlist, app, dispatch } = this.props
+    const { playlist, dispatch } = this.props
     const { repeat, shuffle } = playlist
 
     // Repeat is automatically turned on if shuffle is active
@@ -174,9 +174,8 @@ class Player extends React.Component {
   }
 
   renderVolumeButton() {
-    const { player, playlist, app, dispatch } = this.props
-    const { youtubePlayerState, progressBarPercentage, volume } = player
-    const { activeSong, repeat, shuffle } = playlist
+    const { player, dispatch } = this.props
+    const { volume } = player
 
     let Component
     if (volume > 40) {
@@ -204,9 +203,9 @@ class Player extends React.Component {
   }
 
   renderPPButton() {
-    const { player, playlist, app, dispatch } = this.props
-    const { youtubePlayerState, progressBarPercentage } = player
-    const { activeSong, repeat, shuffle } = playlist
+    const { player, playlist } = this.props
+    const { youtubePlayerState } = player
+    const { activeSong } = playlist
 
     const Component = !activeSong || youtubePlayerState !== YOUTUBE_STATE.PLAYING
       ? PlayIcon
@@ -221,8 +220,8 @@ class Player extends React.Component {
   }
 
   renderRepeatButton() {
-    const { player, playlist, app, dispatch } = this.props
-    const { activeSong, repeat, shuffle } = playlist
+    const { playlist } = this.props
+    const { repeat, shuffle } = playlist
 
     const Component = repeat !== 'one' || shuffle ? RepeatIcon : RepeatOneIcon
 
@@ -240,8 +239,8 @@ class Player extends React.Component {
 
   render() {
     const { player, playlist, app, dispatch } = this.props
-    const { youtubePlayerState, progressBarPercentage } = player
-    const { activeSong, repeat, shuffle } = playlist
+    const { progressBarPercentage } = player
+    const { activeSong } = playlist
     const { mode } = app
 
     const style = {}

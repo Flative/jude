@@ -8,7 +8,8 @@
     "start": "gulp",
     "build": "gulp build",
     "test": "mocha --compilers js:babel-core/register",
-    "watch": "mocha --compilers js:babel-core/register --watch"
+    "watch": "mocha --compilers js:babel-core/register --watch",
+    "lint": "eslint src"
   },
   "author": "",
   "license": "MIT",

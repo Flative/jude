@@ -1,5 +1,7 @@
 import { replacePlaylistState, initialState as playlistInitialState } from './playlistReducer'
-import { replacePlayerState, registerPlayer, initialState as playerInitialState } from './playerReducer'
+import {
+  replacePlayerState, registerPlayer, initialState as playerInitialState,
+} from './playerReducer'
 
 export const actions = {
   CHANGE_APP_MODE_ATTEMPTED: 'CHANGE_APP_MODE_ATTEMPTED',
@@ -16,7 +18,7 @@ export const APP_MODES = {
 
 export function changeAppMode(newMode) {
   return (dispatch, getState) => {
-    const { isModeChanging, wsConnection, mode } = getState().app
+    const { isModeChanging, wsConnection } = getState().app
 
     if (isModeChanging) {
       return;
@@ -96,7 +98,7 @@ export function changeAppMode(newMode) {
 
 export function disconnectWSConnection(cb) {
   return (dispatch, getState) => {
-    const { isModeChanging, wsConnection } = getState().app
+    const { wsConnection } = getState().app
 
     dispatch({ type: actions.CHANGE_APP_MODE_ATTEMPTED })
 

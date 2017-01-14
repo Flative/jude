@@ -28,10 +28,9 @@ export const YOUTUBE_STATE = {
 export function registerPlayer(youtubePlayer) {
   youtubePlayer.setVolume(50)
 
-  return (dispatch, getState) => {
+  return (dispatch) => {
     if (youtubePlayer.addEventListener) {
       const { ENDED, PLAYING, PAUSED, BUFFERING, CUED } = YOUTUBE_STATE
-      const { player } = getState()
 
       let hasBufferingStarted = false
       let prevTime = -1
@@ -56,44 +55,28 @@ export function registerPlayer(youtubePlayer) {
         dispatch(updateYoutubePlayerState(e.data))
         switch (e.data) {
           case PLAYING:
-            console.log('PLAYING')
             timer.stop()
             timer.start()
             if (hasBufferingStarted) {
               hasBufferingStarted = false
             }
             break
-
           case BUFFERING:
             hasBufferingStarted = true
             break
-
           case PAUSED:
             timer.stop()
             updateTime()
-            console.log('PAUSED:', youtubePlayer.getCurrentTime(), currentTime)
             break
-
           case ENDED:
-            console.log('ENDED')
             dispatch(finishSong())
             break
-
           case CUED:
-            console.log('CUED')
-            // if (getState().playlist.activeSong) {
-            //   // TODO: Send duration info to server if app mode is host
-            //   dispatch(playSong())
-            // }
-            break
-
           default:
             break
         }
       })
     }
-
-
     dispatch({ type: actions.PLAYER_REGISTERED, youtubePlayer })
   }
 }
@@ -128,7 +111,7 @@ export function replacePlayerState(payload) {
 }
 
 export function updateYoutubePlayerState(youtubePlayerState) {
-  return (dispatch, getState) => {
+  return (dispatch) => {
     if (youtubePlayerState === YOUTUBE_STATE.PLAYING || youtubePlayerState === YOUTUBE_STATE.CUED) {
       dispatch(updateUpdatingFlag()) // let playlist know activeItem has changed successfully
     }
@@ -139,7 +122,7 @@ export function updateYoutubePlayerState(youtubePlayerState) {
 // Play next song and update playlist when the song finished
 export function finishSong() {
   return (dispatch, getState) => {
-    const { player, playlist } = getState()
+    const { playlist } = getState()
     dispatch({ type: actions.PLAYER_FINISHED })
     dispatch(updateActiveSong(getNextSong(playlist)))
   }
