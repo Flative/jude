@@ -18,18 +18,19 @@ const snatcher = store => next => action => {
   const { wsConnection } = app
   const state = store.getState()
 
-  const dataToSend = {
-    playlist: state.playlist,
-    player: {
-      ...state.player,
-      updatePercentage: null,
-      youtubePlayer: null,
-    },
-  }
-
   try {
     if (wsConnection.readyState === wsConnection.OPEN) {
-      wsConnection.send(JSON.stringify(dataToSend))
+      wsConnection.send(JSON.stringify({
+        action: 'update',
+        body: {
+          playlist: state.playlist,
+          player: {
+            ...state.player,
+            updatePercentage: null,
+            youtubePlayer: null,
+          },
+        },
+      }))
     }
   } catch (e) {
     console.warn(e)

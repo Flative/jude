@@ -1,41 +1,38 @@
 import React, { PropTypes } from 'react'
 import PlusIcon from 'react-icons/lib/fa/plus'
 
-class SearchResult extends React.Component {
-  render() {
-    const { songs = [], handleItemClick } = this.props
+const SearchResult = (props) => {
+  const { songs = [], handleItemClick } = props
 
-    return (
-      <div className="search__result">
-        <ul className="search__result__list">
-          {songs.map((item, idx) => {
-            return (
-              <li className="search__result__item" key={item.id.videoId + idx}>
-                <div className="search__result__item__pad">
-                  <img
-                    className="search__result__thumbnail"
-                    src={item.snippet.thumbnails.high.url}
-                    role="presentation"
-                  />
-                  <div className="search__result__title">{item.snippet.title}</div>
-                  <div
-                    className="search__result__item__cover"
-                    onClick={() => handleItemClick(item.id.videoId, item.snippet.title)}
-                  >
-                    <PlusIcon />
-                  </div>
+  return (
+    <div className="search__result">
+      <ul className="search__result__list">
+        {songs.map((item, idx) => {
+          return (
+            <li className="search__result__item" key={item.id.videoId + idx}>
+              <div className="search__result__item__pad">
+                <img
+                  className="search__result__thumbnail"
+                  src={item.snippet.thumbnails.high.url}
+                  role="presentation"
+                />
+                <div className="search__result__title">{item.snippet.title}</div>
+                <div
+                  className="search__result__item__cover"
+                  onClick={() => handleItemClick(item.id.videoId, item.snippet.title)}
+                >
+                  <PlusIcon />
                 </div>
-              </li>
-            )
-          })}
-        </ul>
-      </div>
-    )
-  }
+              </div>
+            </li>
+          )
+        })}
+      </ul>
+    </div>
+  )
 }
 
 SearchResult.propTypes = {
-  query: PropTypes.string,
   songs: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.shape({
       kind: PropTypes.string,

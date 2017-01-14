@@ -1,7 +1,3 @@
-import React, { PropTypes } from 'react'
-import { connect } from 'react-redux'
-import classNames from 'classnames'
-
 import PrevIcon from 'react-icons/lib/md/skip-previous'
 import NextIcon from 'react-icons/lib/md/skip-next'
 import PlayIcon from 'react-icons/lib/md/play-circle-outline'
@@ -9,11 +5,20 @@ import PauseIcon from 'react-icons/lib/md/pause-circle-outline'
 import ShuffleIcon from 'react-icons/lib/md/shuffle'
 import RepeatIcon from 'react-icons/lib/md/repeat'
 import RepeatOneIcon from 'react-icons/lib/md/repeat-one'
+import VolumeUpIcon from 'react-icons/lib/md/volume-up'
+import VolumeDownIcon from 'react-icons/lib/md/volume-down'
+import VolumeMuteIcon from 'react-icons/lib/md/volume-mute'
 
-import { YouTube } from '../components'
+import React, { PropTypes } from 'react'
+import { connect } from 'react-redux'
+import classNames from 'classnames'
+
 import ProgressBar from 'react-progress-bar-plus'
+import Slider from 'rc-slider';
+import { YouTube } from '../components'
 import {
-  YOUTUBE_STATE, playSong, pauseSong, registerPlayer, registerProgressBar, updateProgressBarPercentage,
+  YOUTUBE_STATE, playSong, pauseSong, registerPlayer, registerProgressBar,
+  updateProgressBarPercentage, setVolume,
 } from '../reducers/playerReducer'
 import {
   updateActiveSong, getPrevItem, updateShuffleState, updateRepeatState, getNextSong,
@@ -38,23 +43,35 @@ class Player extends React.Component {
     this.handleNextButtonClick = this.handleNextButtonClick.bind(this)
     this.handleShuffleButtonClick = this.handleShuffleButtonClick.bind(this)
     this.handleRepeatButtonClick = this.handleRepeatButtonClick.bind(this)
+    this.handleVolumeButtonClick = this.handleVolumeButtonClick.bind(this)
+
+    this.state = {
+      innerVolume: 50,
+    }
   }
 
   componentDidUpdate(prevProps) {
     const _playlist = prevProps.playlist
     const _player = prevProps.player
     const { playlist, player, app, dispatch } = this.props
-    const { youtubePlayer, youtubePlayerState, isPaused, isFinished, progressBarPercentage } = player
+    const {
+      youtubePlayer, youtubePlayerState, isPaused, isFinished, progressBarPercentage, volume,
+    } = player
     const { hasPlaylistUpdated, songs, activeSong } = playlist
     const { mode } = app
 
     // A first song has been added to playlist
-    if (_playlist.songs.length === 0 && songs.length === 1 && mode !== APP_MODES.CLIENT) {
+    if (_playlist.songs.length === 0 && songs.length === 1 && mode !== APP_MODES.CONTROLLER) {
       dispatch(updateActiveSong(songs[0]))
     }
 
     if (_playlist.activeSong && !activeSong && progressBarPercentage !== 0) {
       dispatch(updateProgressBarPercentage(0))
+    }
+
+    if (_player.volume !== volume) {
+      this.setState({ innerVolume: volume }) // eslint-disable-line
+      youtubePlayer.setVolume(volume)
     }
 
     if (!isFinished && !_player.isPaused && isPaused) {
@@ -93,7 +110,7 @@ class Player extends React.Component {
   }
 
   getSongTitle() {
-    const { player, playlist } = this.props
+    const { playlist } = this.props
     const { activeSong } = playlist
 
     return activeSong ? activeSong.title : ''
@@ -110,7 +127,7 @@ class Player extends React.Component {
   }
 
   handlePPButtonClick() {
-    const { dispatch, player, app, playlist } = this.props
+    const { dispatch, player, playlist } = this.props
     const { isPaused, youtubePlayerState } = player
     const { songs, activeSong } = playlist
 
@@ -129,13 +146,17 @@ class Player extends React.Component {
   }
 
   handleShuffleButtonClick() {
-    const { playlist, app, dispatch } = this.props
+    const { playlist, dispatch } = this.props
 
     dispatch(updateShuffleState(!playlist.shuffle))
   }
 
+  handleVolumeButtonClick() {
+    this.props.dispatch(setVolume(0))
+  }
+
   handleRepeatButtonClick() {
-    const { playlist, app, dispatch } = this.props
+    const { playlist, dispatch } = this.props
     const { repeat, shuffle } = playlist
 
     // Repeat is automatically turned on if shuffle is active
@@ -152,10 +173,74 @@ class Player extends React.Component {
     }
   }
 
+  renderVolumeButton() {
+    const { player, dispatch } = this.props
+    const { volume } = player
+
+    let Component
+    if (volume > 40) {
+      Component = VolumeUpIcon
+    } else if (volume > 1) {
+      Component = VolumeDownIcon
+    } else {
+      Component = VolumeMuteIcon
+    }
+
+    return (
+      <div className="player__volume">
+        <Component
+          className="player__btn player__btn--volume"
+          onClick={this.handleVolumeButtonClick}
+        />
+        <Slider
+          className="player__volume-control"
+          onChange={v => this.setState({ innerVolume: v })}
+          onAfterChange={v => dispatch(setVolume(v))}
+          value={this.state.innerVolume}
+        />
+      </div>
+    )
+  }
+
+  renderPPButton() {
+    const { player, playlist } = this.props
+    const { youtubePlayerState } = player
+    const { activeSong } = playlist
+
+    const Component = !activeSong || youtubePlayerState !== YOUTUBE_STATE.PLAYING
+      ? PlayIcon
+      : PauseIcon
+
+    return (
+      <Component
+        className="player__btn player__btn--pp"
+        onClick={this.handlePPButtonClick}
+      />
+    )
+  }
+
+  renderRepeatButton() {
+    const { playlist } = this.props
+    const { repeat, shuffle } = playlist
+
+    const Component = repeat !== 'one' || shuffle ? RepeatIcon : RepeatOneIcon
+
+    return (
+      <Component
+        className={classNames({
+          'player__btn': true,
+          'player__btn--repeat': true,
+          'player__btn--active': shuffle || playlist.repeat !== false,
+        })}
+        onClick={this.handleRepeatButtonClick}
+      />
+    )
+  }
+
   render() {
     const { player, playlist, app, dispatch } = this.props
-    const { isPaused, isFinished, youtubePlayerState, progressBarPercentage } = player
-    const { songs, activeSong, repeat, shuffle } = playlist
+    const { progressBarPercentage } = player
+    const { activeSong } = playlist
     const { mode } = app
 
     const style = {}
@@ -163,17 +248,12 @@ class Player extends React.Component {
       style.backgroundImage = `url(https://i.ytimg.com/vi/${activeSong.id}/maxresdefault.jpg)`
     }
 
-    const repeatButtonClass = classNames({
-      'player__btn--repeat': true,
-      'player__btn--active': shuffle || playlist.repeat !== false,
-    })
-
     return (
       <div
         className="player"
         style={style}
       >
-        {mode !== APP_MODES.CLIENT ?
+        {mode !== APP_MODES.CONTROLLER ?
           <YouTube
             className="player__youtube"
             onReady={this.onYouTubeReady}
@@ -184,27 +264,19 @@ class Player extends React.Component {
         <h3 className="player__title">
           {this.getSongTitle()}
         </h3>
-        <div className="player__cover"></div>
+        <div className="player__cover" />
         <div className="player__controller">
           <div className="player__controller__left">
             <PrevIcon
-              className="player__btn--prev"
+              className="player__btn player__btn--prev"
               onClick={this.handlePrevButtonClick}
             />
-            {!activeSong || youtubePlayerState !== YOUTUBE_STATE.PLAYING
-              ? <PlayIcon
-                className="player__btn--pp"
-                onClick={this.handlePPButtonClick}
-              />
-              : <PauseIcon
-                className="player__btn--pp"
-                onClick={this.handlePPButtonClick}
-              />
-            }
+            {this.renderPPButton()}
             <NextIcon
-              className="player__btn--next"
+              className="player__btn player__btn--next"
               onClick={this.handleNextButtonClick}
             />
+            {this.renderVolumeButton()}
           </div>
           <div className="player__controller__center">
             <ProgressBar
@@ -222,22 +294,13 @@ class Player extends React.Component {
           <div className="player__controller__right">
             <ShuffleIcon
               className={classNames({
-                'player__btn--shuffle': true,
-                'player__btn--active': playlist.shuffle,
+                'player__btn player__btn--shuffle': true,
+                'player__btn player__btn--active': playlist.shuffle,
               })
               }
               onClick={this.handleShuffleButtonClick}
             />
-            {repeat !== 'one' || shuffle
-              ? <RepeatIcon
-                className={repeatButtonClass}
-                onClick={this.handleRepeatButtonClick}
-              />
-              : <RepeatOneIcon
-                className={repeatButtonClass}
-                onClick={this.handleRepeatButtonClick}
-              />
-            }
+            {this.renderRepeatButton()}
           </div>
 
         </div>

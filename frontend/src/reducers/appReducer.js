@@ -1,5 +1,7 @@
 import { replacePlaylistState, initialState as playlistInitialState } from './playlistReducer'
-import { replacePlayerState, registerPlayer, initialState as playerInitialState } from './playerReducer'
+import {
+  replacePlayerState, registerPlayer, initialState as playerInitialState,
+} from './playerReducer'
 
 export const actions = {
   CHANGE_APP_MODE_ATTEMPTED: 'CHANGE_APP_MODE_ATTEMPTED',
@@ -10,13 +12,13 @@ export const actions = {
 
 export const APP_MODES = {
   STANDALONE: 'STANDALONE',
-  HOST_CLIENT: 'HOST_CLIENT',
-  CLIENT: 'CLIENT',
+  SPEAKER: 'SPEAKER',
+  CONTROLLER: 'CONTROLLER',
 }
 
 export function changeAppMode(newMode) {
   return (dispatch, getState) => {
-    const { isModeChanging, wsConnection, mode } = getState().app
+    const { isModeChanging, wsConnection } = getState().app
 
     if (isModeChanging) {
       return;
@@ -52,13 +54,21 @@ export function changeAppMode(newMode) {
           wsConnection: newWsConnection,
           mode: newMode,
         })
-        if (newMode === APP_MODES.CLIENT) {
+        if (newMode === APP_MODES.CONTROLLER) {
+          const noop = () => null
           dispatch(registerPlayer({
-            pauseVideo: () => null,
-            playVideo: () => null,
-            seekTo: () => null,
+            pauseVideo: noop,
+            playVideo: noop,
+            seekTo: noop,
+            setVolume: noop,
           }))
         }
+        newWsConnection.send(JSON.stringify({
+          action: 'init',
+          body: {
+            type: newMode,
+          },
+        }))
       }
       newWsConnection.onmessage = (msg) => {
         let res
@@ -76,6 +86,10 @@ export function changeAppMode(newMode) {
           dispatch(replacePlayerState(player))
         }
       }
+      newWsConnection.onclose = () => {
+        alert('Oops! something went wrong. please try again.')
+        window.location = '/'
+      }
     } catch (e) {
       dispatch({ type: actions.CHANGE_APP_MODE_FAILED })
     }
@@ -84,7 +98,7 @@ export function changeAppMode(newMode) {
 
 export function disconnectWSConnection(cb) {
   return (dispatch, getState) => {
-    const { isModeChanging, wsConnection } = getState().app
+    const { wsConnection } = getState().app
 
     dispatch({ type: actions.CHANGE_APP_MODE_ATTEMPTED })
 

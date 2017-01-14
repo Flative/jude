@@ -1,6 +1,5 @@
 import axios from 'axios'
 import { API_KEY } from '../appInfo'
-import { startFetch, finishSong, finishFetch } from '../reducers/playerReducer'
 
 const fetch = axios.create({
   baseURL: 'https://www.googleapis.com/youtube/v3/',

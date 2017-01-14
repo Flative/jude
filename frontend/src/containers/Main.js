@@ -12,26 +12,22 @@ class Main extends React.Component {
     this.handlePlaylistItemClick = this.handlePlaylistItemClick.bind(this)
   }
 
-  handlePlaylistRemoveButtonClick(item) {
-    const { dispatch, app } = this.props
-
-    dispatch(removeSong(item))
-  }
-
-  handlePlaylistItemClick(item) {
-    const { dispatch, app } = this.props
-
-    dispatch(updateActiveSong(item))
-  }
-
   componentDidMount() {
     const pathname = window.location.pathname
 
     if (pathname.indexOf('controller') !== -1) {
-      this.props.dispatch(changeAppMode(APP_MODES.CLIENT))
+      this.props.dispatch(changeAppMode(APP_MODES.CONTROLLER))
     } else if (pathname.indexOf('speaker') !== -1) {
-      this.props.dispatch(changeAppMode(APP_MODES.HOST_CLIENT))
+      this.props.dispatch(changeAppMode(APP_MODES.SPEAKER))
     }
+  }
+
+  handlePlaylistRemoveButtonClick(item) {
+    this.props.dispatch(removeSong(item))
+  }
+
+  handlePlaylistItemClick(item) {
+    this.props.dispatch(updateActiveSong(item))
   }
 
   render() {

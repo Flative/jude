@@ -8,10 +8,12 @@ import (
 )
 
 type Client struct {
-	ID      uuid.UUID
-	Manager *Manager
-	Conn    *websocket.Conn
-	mu      sync.Mutex
+	ID              uuid.UUID
+	Manager         *Manager
+	Conn            *websocket.Conn
+	mu              sync.Mutex
+	isSpeaker       bool
+	isAuthenticated bool
 }
 
 func newClient(manager *Manager, conn *websocket.Conn) *Client {
@@ -20,4 +22,26 @@ func newClient(manager *Manager, conn *websocket.Conn) *Client {
 		Manager: manager,
 		Conn:    conn,
 	}
+}
+
+func (c *Client) send(message []byte) error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if err := c.Conn.WriteMessage(1, message); err != nil {
+		c.Conn.Close()
+		return err
+	}
+
+	return nil
+}
+
+func (c *Client) ping() error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if err := c.Conn.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
+		c.Conn.Close()
+		return err
+	}
+
+	return nil
 }

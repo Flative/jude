@@ -1,5 +1,4 @@
 import { updateActiveSong, getNextSong, updateUpdatingFlag } from './playlistReducer'
-import { sleep } from '../utils/util'
 
 export const actions = {
   PLAYER_REGISTERED: 'PLAYER_REGISTERED',
@@ -12,6 +11,7 @@ export const actions = {
   PLAYER_FETCHING_FINISHED: 'PLAYER_FETCHING_FINISHED',
   PLAYER_PROGRESSBAR_PERCENTAGE_UPDATED: 'PLAYER_PROGRESSBAR_PERCENTAGE_UPDATED',
   PLAYER_YOUTUBE_STATE_UPDATED: 'PLAYER_YOUTUBE_STATE_UPDATED',
+  PLAYER_VOLUME_UPDATED: 'PLAYER_VOLUME_UPDATED',
   PLAYER_STATE_REPLACED: 'PLAYER_STATE_REPLACED',
 }
 
@@ -26,10 +26,11 @@ export const YOUTUBE_STATE = {
 
 // Store player instance to redux state tree when initializing
 export function registerPlayer(youtubePlayer) {
-  return (dispatch, getState) => {
+  youtubePlayer.setVolume(50)
+
+  return (dispatch) => {
     if (youtubePlayer.addEventListener) {
       const { ENDED, PLAYING, PAUSED, BUFFERING, CUED } = YOUTUBE_STATE
-      const { player } = getState()
 
       let hasBufferingStarted = false
       let prevTime = -1
@@ -54,44 +55,28 @@ export function registerPlayer(youtubePlayer) {
         dispatch(updateYoutubePlayerState(e.data))
         switch (e.data) {
           case PLAYING:
-            console.log('PLAYING')
             timer.stop()
             timer.start()
             if (hasBufferingStarted) {
               hasBufferingStarted = false
             }
             break
-
           case BUFFERING:
             hasBufferingStarted = true
             break
-
           case PAUSED:
             timer.stop()
             updateTime()
-            console.log('PAUSED:', youtubePlayer.getCurrentTime(), currentTime)
             break
-
           case ENDED:
-            console.log('ENDED')
             dispatch(finishSong())
             break
-
           case CUED:
-            console.log('CUED')
-            // if (getState().playlist.activeSong) {
-            //   // TODO: Send duration info to server if app mode is host
-            //   dispatch(playSong())
-            // }
-            break
-
           default:
             break
         }
       })
     }
-
-
     dispatch({ type: actions.PLAYER_REGISTERED, youtubePlayer })
   }
 }
@@ -126,7 +111,7 @@ export function replacePlayerState(payload) {
 }
 
 export function updateYoutubePlayerState(youtubePlayerState) {
-  return (dispatch, getState) => {
+  return (dispatch) => {
     if (youtubePlayerState === YOUTUBE_STATE.PLAYING || youtubePlayerState === YOUTUBE_STATE.CUED) {
       dispatch(updateUpdatingFlag()) // let playlist know activeItem has changed successfully
     }
@@ -137,10 +122,14 @@ export function updateYoutubePlayerState(youtubePlayerState) {
 // Play next song and update playlist when the song finished
 export function finishSong() {
   return (dispatch, getState) => {
-    const { player, playlist } = getState()
+    const { playlist } = getState()
     dispatch({ type: actions.PLAYER_FINISHED })
     dispatch(updateActiveSong(getNextSong(playlist)))
   }
+}
+
+export function setVolume(volume) {
+  return { type: actions.PLAYER_VOLUME_UPDATED, volume }
 }
 
 export const initialState = {
@@ -150,6 +139,7 @@ export const initialState = {
   youtubePlayerState: null,
   isPaused: false,
   isFinished: false,
+  volume: 50,
 }
 
 export default (state = initialState, action) => {
@@ -192,6 +182,11 @@ export default (state = initialState, action) => {
         isPaused: action.isPaused,
         youtubePlayerState: action.youtubePlayerState,
         progressBarPercentage: action.progressBarPercentage || 0,
+        volume: action.volume,
+      }
+    case actions.PLAYER_VOLUME_UPDATED:
+      return { ...state,
+        volume: action.volume,
       }
     default:
       return state

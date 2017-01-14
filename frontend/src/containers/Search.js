@@ -5,7 +5,6 @@ import SearchIcon from 'react-icons/lib/md/search'
 import { searchVideos } from '../utils/youtube'
 import { SearchResult } from '../components'
 import { addSong } from '../reducers/playlistReducer'
-import { APP_MODES } from '../reducers/appReducer'
 
 class Search extends React.Component {
   constructor(props) {
@@ -20,10 +19,6 @@ class Search extends React.Component {
     }
   }
 
-  componentDidMount() {
-    // For development
-  }
-
   handleSearchInputKeyPress(e) {
     if (e.key === 'Enter') {
       this.search(e.target.value)
@@ -31,11 +26,11 @@ class Search extends React.Component {
   }
 
   handleSearchIconClick() {
-    this.search(this.refs.searchInput.value)
+    this.search(this.searchInput.value)
   }
 
   handleSearchResultItemClick(id, title) {
-    const { app, playlist, player, dispatch } = this.props
+    const { playlist, player, dispatch } = this.props
     const { activeSong, songs } = playlist
 
     // TODO
@@ -49,7 +44,6 @@ class Search extends React.Component {
     dispatch(addSong(id, title, uuid, index))
   }
 
-  // TODO: Need to display some interaction stuff while fetching
   search(query) {
     searchVideos(query)
       .then((searchResult) => {
@@ -71,7 +65,7 @@ class Search extends React.Component {
             />
             <input
               className="search__input"
-              ref="searchInput"
+              ref={searchInput => { this.searchInput = searchInput }}
               placeholder="Well, what do you want to listen?"
               type="text"
               onKeyPress={this.handleSearchInputKeyPress}
