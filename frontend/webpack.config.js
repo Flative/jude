@@ -1,9 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
 const merge = require('webpack-merge');
-// const Dashboard = require('webpack-dashboard');
-// const DashboardPlugin = require('webpack-dashboard/plugin');
-// const dashboard = new Dashboard();
 
 const APP_PATH = {
   jude: 'src/index.js',
@@ -12,10 +9,6 @@ const BUILD_PATH = 'static/';
 const PORT = 8001;
 
 const common = {
-  stats: {
-    // colors: true,
-    // reasons: true,
-  },
   module: {
     loaders: [{
       test: /\.scss$/,
@@ -74,7 +67,7 @@ const prod = merge(common, {
     loaders: [{
       test: /\.js$/,
       exclude: /node_modules/,
-      loader: 'react-hot!babel!strip-loader?strip[]=console.log',
+      loader: 'babel!strip-loader?strip[]=console.log',
     }],
   },
   entry: {
