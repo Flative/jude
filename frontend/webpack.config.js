@@ -86,6 +86,9 @@ const prod = merge(common, {
     }),
     new webpack.optimize.UglifyJsPlugin({
       sourceMap: false,
+      compress: {
+        warnings: false,
+      },
     }),
   ],
 });
