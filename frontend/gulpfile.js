@@ -19,8 +19,7 @@ gulp.task('webpack:build', () => {
   return gulp.src(webpackConfig.APP_PATH.jude)
     .pipe(gulpWebpack(webpackConfig.prod))
     .pipe(gulp.dest('./static'))
-  }
-);
+});
 
 // Development server
 gulp.task('default', ['webpack-dev-server']);
