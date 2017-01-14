@@ -28,6 +28,18 @@ func (c *Client) send(message []byte) error {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	if err := c.Conn.WriteMessage(1, message); err != nil {
+		c.Conn.Close()
+		return err
+	}
+
+	return nil
+}
+
+func (c *Client) ping() error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if err := c.Conn.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
+		c.Conn.Close()
 		return err
 	}
 

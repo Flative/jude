@@ -52,6 +52,10 @@ func main() {
 
 			switch event.Action {
 			case "init":
+				if client.isAuthenticated {
+					continue
+				}
+
 				typeInit := EventTypeInit{}
 				if err = json.Unmarshal(event.Body, &typeInit); err != nil {
 					log.Println(err)
@@ -61,8 +65,9 @@ func main() {
 				if strings.Compare(typeInit.Name, "speaker") == 0 {
 					isFirstSpeaker := true
 					for _, client := range manager.Clients {
-						if client.isAuthenticated && client.isSpeaker {
+						if err := client.ping(); err == nil && client.isAuthenticated && client.isSpeaker {
 							isFirstSpeaker = false
+							break
 						}
 					}
 
