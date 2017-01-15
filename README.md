@@ -14,7 +14,9 @@
 
 [https://flative.github.io/jude/](https://flative.github.io/jude/)
 
+## Downlaod
 
+[Latest Release](https://github.com/Flative/jude/releases) (Available on Windows, MacOS, Linux)
 
 ## Features
 
@@ -26,17 +28,6 @@
 - Shuffle
 - Repeat
 - Prev / Next
-
-
-
-
-## Purpose
-
-1. We have a speaker that is connected with public laptop in the office
-2. We have to do the journey if we want to control the music player (4~5M, distance)
-3. So the music player has never been controlled
-
-
 
 ## Get Started
 
