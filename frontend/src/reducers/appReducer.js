@@ -87,8 +87,9 @@ export function changeAppMode(newMode) {
         }
       }
       newWsConnection.onclose = () => {
-        alert('Oops! something went wrong. please try again.')
-        window.location = '/'
+        setTimeout(() => {
+          window.location.reload()
+        }, 3000)
       }
     } catch (e) {
       dispatch({ type: actions.CHANGE_APP_MODE_FAILED })
